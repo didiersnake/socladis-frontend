@@ -42,18 +42,12 @@ const items = [
       <CircumIcon name="shopping_cart" size={18} />
     </div>
   ),
+
   getItem(
-    "Utilisateurs",
-    "users",
+    "Reconciliation",
+    "team report",
     <div className="px-1 ">
-      <CircumIcon name="user" size={18} />
-    </div>
-  ),
-  getItem(
-    "Group",
-    "teams",
-    <div className="px-1 ">
-      <CircumIcon name="user" size={18} />
+      <CircumIcon name="delivery_truck" size={18} />
     </div>
   ),
   getItem(
@@ -64,6 +58,22 @@ const items = [
     </div>,
     [getItem("Approvisionement", "income"), getItem("Depenses", "expenses")]
   ),
+
+  getItem(
+    "Utilisateurs",
+    "users",
+    <div className="px-1 ">
+      <CircumIcon name="user" size={18} />
+    </div>
+  ),
+  getItem(
+    "Equipes",
+    "teams",
+    <div className="px-1 ">
+      <CircumIcon name="user" size={18} />
+    </div>
+  ),
+
   getItem(
     "Rapports",
     "reports",
