@@ -1,10 +1,10 @@
 import React from "react";
-import { Col, Card, Statistic } from "antd";
-import ColCardIcon from "./ColCardIcon";
-import Sales from "../../assets/png/shopping-cart.svg";
+import { Card, Statistic } from "antd";
+import CountUp from "react-countup";
 
 //card info
 const ColCard = ({ title, value, prefix, suffix, icon, color }) => {
+  const formatter = (value) => <CountUp end={value} separator="," />;
   return (
     <>
       <Card
@@ -25,6 +25,7 @@ const ColCard = ({ title, value, prefix, suffix, icon, color }) => {
           }}
           prefix={prefix}
           suffix={suffix}
+          formatter={formatter}
         />
       </Card>
     </>
