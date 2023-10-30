@@ -1,38 +1,33 @@
 import React from "react";
 import { Col, Card, Statistic } from "antd";
+import ColCardIcon from "./ColCardIcon";
+import Sales from "../../assets/png/shopping-cart.svg";
 
 //card info
-const ColCard = ({ title, value, prefix, suffix, precision, color }) => {
-  const format = (price) => {
-    const cfa = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "XAF",
-    });
-    return cfa.format(price);
-  };
-
+const ColCard = ({ title, value, prefix, suffix, icon, color }) => {
   return (
-    <Col span={12}>
-      <Card bordered={false}>
+    <>
+      <Card
+        bordered={false}
+        size="small"
+        bodyStyle={{ padding: 10, paddingLeft: 18 }}
+      >
+        <div>{icon}</div>
         <Statistic
-          formatter={format(value)}
           title={title}
           value={value}
-          precision={precision}
           valueStyle={{
             color: `${color}`,
-            fontWeight: "bolder",
-            padding: "0 0px",
-            fontSize: 20,
+            fontSize: 18,
+            fontWeight: 450,
             display: "flex",
             alignItems: "center",
-            gap: 4,
           }}
           prefix={prefix}
           suffix={suffix}
         />
       </Card>
-    </Col>
+    </>
   );
 };
 

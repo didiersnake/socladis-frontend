@@ -8,12 +8,8 @@ const DashboardCard1 = ({ cardItems, title }) => {
       <Card
         size="small"
         title={title}
-        headStyle={{
-          fontSize: 18,
-          padding: "0 24px",
-        }}
         style={{
-          backgroundColor: "#ededed",
+          backgroundColor: "",
         }}
       >
         <Row gutter={[16, 16]}>{cardItems}</Row>

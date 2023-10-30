@@ -5,12 +5,13 @@ const ColCardIcon = ({ iconName, color }) => {
     <img
       src={iconName}
       style={{
-        width: 46,
-        padding: 8,
+        width: 38,
+        padding: 10,
+        margin: 4,
         backgroundColor: `${color}`,
-        borderRadius: 10,
+        borderRadius: 6,
       }}
-      alt="sales"
+      alt="img"
     />
   );
 };
