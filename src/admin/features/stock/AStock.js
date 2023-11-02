@@ -93,26 +93,14 @@ const AStock = () => {
     },
     {
       ...columnItem(8, "Statut", "status"),
-      filters: [
-        {
-          text: "Stock Faible",
-          value: "stock faible",
-        },
-        {
-          text: "En Stock",
-          value: "en stock",
-        },
-      ],
-      onFilter: (value, record) => record.status.indexOf(value) === 0,
+
       render: (status, record) => {
         return record.quantity > record.unitPrice ? (
-          (status = (
-            <>
-              <Tag key={record._id} color={"green"}>
-                en stock
-              </Tag>
-            </>
-          ))
+          <>
+            <Tag key={record._id} color={"green"}>
+              en stock
+            </Tag>
+          </>
         ) : (
           <>
             <Tag key={record._id} color={"red"}>
@@ -168,6 +156,7 @@ const AStock = () => {
   const editItem = (item) => {
     try {
       dispatch(editItemAction(item));
+      iMessage("success", "modifié");
     } catch (error) {
       console.log(error.response);
     }
@@ -176,7 +165,7 @@ const AStock = () => {
   let content = (
     <>
       {contextHolder}
-      <div className="flex justify-between mb-2 ">
+      <div className="flex justify-between mb-2">
         <Button type="primary" onClick={() => navigate("create")}>
           Ajouter un Produit
         </Button>
@@ -201,6 +190,10 @@ const AStock = () => {
 
       <Table
         className="capitalize "
+        pagination={true}
+        scroll={{
+          y: 640,
+        }}
         columns={columns.filter(
           (col) => col.dataIndex !== "_id" && col.dataIndex !== "unitPrice"
         )}
@@ -219,7 +212,6 @@ const AStock = () => {
           editItem(editingProduct);
           //take of modal after edit and display message
           resetEditing();
-          iMessage("success", "modifié");
         }}
       >
         <div className="grid gap-2 ">

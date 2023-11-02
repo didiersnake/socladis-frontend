@@ -119,8 +119,6 @@ const Expense = () => {
   const filterByDateRange = () => {
     if (startDate && endDate) {
       setIsFiltering(true);
-      console.log(formatDate(endDate));
-      console.log(formatDate(orderedExpenses[0].date));
       setDataSource(
         orderedExpenses.filter((item) => {
           let s_date = new Date(startDate).getTime();
@@ -135,6 +133,7 @@ const Expense = () => {
   const editItem = (item) => {
     try {
       dispatch(editExpenseAction(item));
+      iMessage("success", "modifié");
     } catch (error) {
       console.log(error.response);
     }
@@ -219,7 +218,6 @@ const Expense = () => {
           editItem(editingProduct);
           //take of modal after edit and display message
           resetEditing();
-          iMessage("success", "modifié");
         }}
       >
         <div className="grid gap-2 ">
@@ -231,11 +229,12 @@ const Expense = () => {
             }}
             value={editingProduct?.modif}
           >
-            <Select.Option value="depense courante">
-              Depense courante
-            </Select.Option>
             <Select.Option value="versement a la banque">
               Versement a la banque
+            </Select.Option>
+            <Select.Option value="carburant">Carburant</Select.Option>
+            <Select.Option value="depense courante">
+              Depense courante
             </Select.Option>
           </Select>
 
@@ -248,7 +247,43 @@ const Expense = () => {
             }}
           />
 
-          {editingProduct?.modif === "depense courante" ? (
+          {editingProduct?.modif === "versement a la banque" ? (
+            <Select
+              onChange={(e) => {
+                setEditingProduct((pre) => {
+                  return { ...pre, bank: e };
+                });
+              }}
+              value={editingProduct?.bank}
+            >
+              <Select.Option value="Afriland First Bank">
+                Afriland First Bank
+              </Select.Option>
+              <Select.Option value="BGFI Bank">BGFI Bank</Select.Option>
+            </Select>
+          ) : editingProduct?.modif === "carburant" ? (
+            <Input
+              name="motif"
+              onChange={(e) => {
+                setEditingProduct((pre) => {
+                  return { ...pre, bank: e.target.value };
+                });
+              }}
+              value={editingProduct?.bank}
+            />
+          ) : (
+            <Input
+              name="motif"
+              onChange={(e) => {
+                setEditingProduct((pre) => {
+                  return { ...pre, bank: e.target.value };
+                });
+              }}
+              value={editingProduct?.bank}
+            />
+          )}
+
+          {/* {editingProduct?.modif === "depense courante" ? (
             <Input
               name="amount"
               onChange={(e) =>
@@ -272,7 +307,7 @@ const Expense = () => {
               </Select.Option>
               <Select.Option value="BGFI Bank">BGFI Bank</Select.Option>
             </Select>
-          )}
+          )} */}
         </div>
       </Modal>
     </>

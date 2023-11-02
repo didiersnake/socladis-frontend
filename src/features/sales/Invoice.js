@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import InvoiceCard from "./components/InvoiceCard";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Typography, List } from "antd";
 import { selectAllInvoices } from "./invoiceSlice";
 
 const Invoice = () => {
-  const { Text, Title } = Typography;
-  const dispatch = useDispatch();
+  const { Title } = Typography;
   const navigate = useNavigate();
   const data = useSelector(selectAllInvoices);
 
@@ -67,10 +66,6 @@ const Invoice = () => {
             </List.Item>
           )}
         />
-
-        {/* {invoices.map((invoice, index) => (
-              
-            ))} */}
       </div>
     </div>
   );

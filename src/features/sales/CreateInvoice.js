@@ -191,7 +191,7 @@ const CreateInvoice = () => {
             return accumulator + currentValue;
           }, 0)
       );
-      !total_without_tax === 0 && showModal();
+      showModal();
     }
   };
 

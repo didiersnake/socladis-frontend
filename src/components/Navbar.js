@@ -20,24 +20,21 @@ const Navbar = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 100px",
+        padding: "40px 200px",
       }}
     >
-      <Title style={{ color: "whitesmoke" }} level={3}>
-        Socladis sarl
-      </Title>
+      <h2 style={{ color: "whitesmoke" }}>Socladis sarl</h2>
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          marginRight: -60,
         }}
       >
-        <Space direction="horizontal" size={20}>
-          <Button type="text" danger onClick={handleLogout}>
-            Se déconnecter
-          </Button>
-        </Space>
+        <Button type="text " danger onClick={handleLogout}>
+          Se déconnecter
+        </Button>
       </div>
     </Header>
   );

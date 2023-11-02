@@ -7,13 +7,13 @@ import FooterNav from "./FooterNav";
 
 const RLayout = () => {
   return (
-    <div className="flex items-start ">
+    <div className="">
       <SideNav
         content={
           <Layout>
-            {/* <HeaderNav /> */}
-            <Outlet />
-            <FooterNav />
+            <div className="mb-6 ">
+              <Outlet />
+            </div>
           </Layout>
         }
       />

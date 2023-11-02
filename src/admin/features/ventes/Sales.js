@@ -27,9 +27,22 @@ const Sales = () => {
     };
   }
 
+  const number_of_items = (item) =>
+    item["products"]
+      .map((product) => Number(product.quantity))
+      .reduce((accumulator, current) => {
+        return accumulator + current;
+      }, 0);
+
   const columns = [
     columnItem(1, "ID", "_id"),
     columnItem(2, "Nom", "clientName"),
+    {
+      ...columnItem(5, "Quantité", ""),
+      render: (item, record) => {
+        return number_of_items(record);
+      },
+    },
     columnItem(4, "Ristourne", "ristourne"),
     {
       ...columnItem(5, "Total HT", "total_without_tax"),
@@ -37,6 +50,7 @@ const Sales = () => {
         return Number(item).toFixed(2);
       },
     },
+
     {
       ...columnItem(5, "Total AVT", "total_with_tax"),
       render: (item) => {

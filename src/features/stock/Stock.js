@@ -63,24 +63,15 @@ const Stock = () => {
     },
     {
       ...columnItem(8, "Statut", "status"),
-      filters: [
-        {
-          text: "Stock Faible",
-          value: "stock faible",
-        },
-        {
-          text: "En Stock",
-          value: "en stock",
-        },
-      ],
-      onFilter: (value, record) => record.status.indexOf(value) === 0,
-      render: (status) => {
-        return (
-          <>
-            <Tag key={status} color={status === "en stock" ? "green" : "red"}>
-              {status}
-            </Tag>
-          </>
+      render: (status, record) => {
+        return record.quantity > record.unitPrice ? (
+          <Tag key={record._id} color={"green"}>
+            en stock
+          </Tag>
+        ) : (
+          <Tag key={record._id} color={"red"}>
+            stock faible
+          </Tag>
         );
       },
     },
@@ -132,6 +123,10 @@ const Stock = () => {
         </div>
 
         <Table
+          className="capitalize "
+          scroll={{
+            y: 640,
+          }}
           columns={columns.filter((col) => col.dataIndex !== "_id")}
           dataSource={!searchText ? orderedStock : dataSource}
         ></Table>

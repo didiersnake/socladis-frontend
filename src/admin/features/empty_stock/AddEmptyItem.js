@@ -22,6 +22,7 @@ const AddEmptyItem = () => {
   const [casiers, setCasiers] = useState(0);
   const [format, setFormat] = useState("");
   const [date, setDate] = useState("");
+
   const allTeams = useSelector(selectAllTeams);
 
   const navigate = useNavigate();
@@ -63,10 +64,18 @@ const AddEmptyItem = () => {
         setFormat("");
         setTeam("");
         iMessage("success", "Success");
+      } else {
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+        );
       }
     } catch (error) {
       if (error.response.status === 500) {
-        iMessage("error", "Veillez remplir tous les champs ");
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet "
+        );
       }
       console.log(error.response.data);
     }

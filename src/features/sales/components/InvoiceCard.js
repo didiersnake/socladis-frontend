@@ -1,5 +1,5 @@
 import React from "react";
-import PaidStatus from "./PaidStatus";
+
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { Button, Typography } from "antd";
 import format from "../../../utils/currency";

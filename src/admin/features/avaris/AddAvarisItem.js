@@ -7,6 +7,7 @@ import addAvarisAction from "./actions/addAvarisAction";
 import Title from "antd/es/typography/Title";
 import { selectAllProducts } from "../product/productSlice";
 import {
+  AutoComplete,
   Button,
   DatePicker,
   Form,
@@ -24,6 +25,7 @@ const AddAvarisItem = () => {
   const [date, setDate] = useState("");
   const [type, setType] = useState("");
   const allProducts = useSelector(selectAllProducts);
+  const [productOptions, setProductOptions] = useState([]);
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
@@ -33,28 +35,54 @@ const AddAvarisItem = () => {
     setComponentSize(size);
   };
 
+  const onProductSearch = (val) => {
+    let filtered = allProducts.filter(
+      (obj) =>
+        obj._id !== 0 &&
+        obj.name.toString().toLowerCase().includes(val.toLowerCase())
+    );
+    setProductOptions(filtered);
+  };
+
+  const onProductSelect = (value, option) => {
+    setName(option.value);
+    setCategory(option.category);
+    setFormat(option.format);
+    console.log(option);
+  };
+
   const handleAddAvaris = async () => {
     try {
-      await dispatch(
-        addAvarisAction(
-          name,
-          category,
-          format,
-          quantity.toString(),
-          type,
-          "",
-          date
-        )
-      );
-      iMessage("success", "Success");
-      setName("");
-      setCategory("");
-      setDate("");
-      setQuantity("");
-      setFormat("");
+      if (name && quantity & type & date) {
+        await dispatch(
+          addAvarisAction(
+            name,
+            category,
+            format,
+            quantity.toString(),
+            type,
+            "",
+            date
+          )
+        );
+        iMessage("success", "Success");
+        setName("");
+        setCategory("");
+        setDate("");
+        setQuantity("");
+        setFormat("");
+      } else {
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet "
+        );
+      }
     } catch (error) {
       if (error.response.status === 500) {
-        iMessage("error", "Veillez remplir tous les champs ");
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+        );
       }
       console.log(error.response.data);
     }
@@ -106,14 +134,33 @@ const AddAvarisItem = () => {
             },
           ]}
         >
-          <Select id="name" value={name} onChange={(e) => setName(e)}>
+          {/*  <Select id="name" value={name} onChange={(e) => setName(e)}>
             {getAllProducts}
-          </Select>
-          {/*  <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          /> */}
+          </Select> */}
+
+          <AutoComplete
+            size="large"
+            options={productOptions.map((product) => {
+              return {
+                label: product.name,
+                value: product.name,
+                id: product._id,
+                format: product.format,
+                category: product.category,
+              };
+            })}
+            onSearch={onProductSearch}
+            onSelect={onProductSelect}
+          >
+            <Input
+              name="name"
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+              value={name}
+              type="text"
+            />
+          </AutoComplete>
         </Form.Item>
 
         <Form.Item
@@ -125,14 +172,7 @@ const AddAvarisItem = () => {
             },
           ]}
         >
-          <Select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e)}
-          >
-            <Select.Option value="Casier">Casier</Select.Option>
-            <Select.Option value="Plastic">Plastic</Select.Option>
-          </Select>
+          <Input name="category" value={category} type="text" />
         </Form.Item>
         <Form.Item
           label="Format"
@@ -143,10 +183,7 @@ const AddAvarisItem = () => {
             },
           ]}
         >
-          <Select id="format" value={format} onChange={(e) => setFormat(e)}>
-            <Select.Option value="Grand format">Grand format</Select.Option>
-            <Select.Option value="Petit format">Petit format</Select.Option>
-          </Select>
+          <Input name="format" value={format} type="text" />
         </Form.Item>
         <Form.Item
           label="Type_d'Avaris"
@@ -158,10 +195,8 @@ const AddAvarisItem = () => {
           ]}
         >
           <Select id="type" value={type} onChange={(e) => setType(e)}>
-            <Select.Option value="Au dechargement">
-              Au dechargement
-            </Select.Option>
-            <Select.Option value="Au magasin">Au magasin</Select.Option>
+            <Select.Option value="livraison">Livraison</Select.Option>
+            <Select.Option value="magasin">Magasin</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item

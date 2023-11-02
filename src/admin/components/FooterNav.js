@@ -4,10 +4,10 @@ import { Layout } from "antd";
 const { Footer } = Layout;
 const FooterNav = () => {
   return (
-    <div className="fixed bottom-0 inset-x-52">
+    <div className="fixed bottom-0 w-full text-center ">
       <Footer
         style={{
-          textAlign: "center",
+          height: 55,
         }}
       >
         Socladis sarl ©2023

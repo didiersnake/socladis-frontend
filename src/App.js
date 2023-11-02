@@ -33,6 +33,9 @@ import AddIncome from "./admin/features/finances/income/AddIncome";
 import AddExpense from "./admin/features/finances/expenses/AddExpense";
 import Expense from "./admin/features/finances/expenses/Expense";
 import Empty from "./features/stock/Empty";
+import LowStock from "./admin/features/stock/LowStock";
+import LoadingAvaris from "./admin/features/avaris/LoadingAvaris";
+import StoreAvaris from "./admin/features/avaris/StoreAvaris";
 
 function App() {
   return (
@@ -71,6 +74,10 @@ function App() {
         <Route element={<ProtectedRoute role={"ADMINISTRATOR"} />}>
           <Route path="admin" element={<RLayout />}>
             <Route index element={<Dashboard />} />
+
+            <Route path="stock faible" element={<LowStock />} />
+            <Route path="avaris livraison" element={<LoadingAvaris />} />
+            <Route path="avaris magasin" element={<StoreAvaris />} />
 
             <Route path="sales">
               <Route index element={<Sales />} />

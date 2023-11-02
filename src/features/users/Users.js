@@ -320,6 +320,16 @@ const Users = () => {
               })
             }
           />
+
+          <Input
+            disabled={editingUser?.roles === customer}
+            value={editingUser?.password}
+            onChange={(e) =>
+              setEditingUser((pre) => {
+                return { ...pre, password: e.target.value };
+              })
+            }
+          />
         </div>
       </Modal>
     </>

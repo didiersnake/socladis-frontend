@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  AutoComplete,
   Button,
   DatePicker,
   Form,
@@ -14,6 +15,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import addItemAction from "./actions/addItemAction";
 import Title from "antd/es/typography/Title";
 import { selectAllProducts } from "../product/productSlice";
+import { selectAllInvoices } from "../../../features/sales/invoiceSlice";
 
 const AddStockItem = () => {
   const [name, setName] = useState("");
@@ -23,6 +25,8 @@ const AddStockItem = () => {
   const [unitPrice, setUnitPrice] = useState("");
   const [date, setDate] = useState("");
   const allProducts = useSelector(selectAllProducts);
+  const sales = useSelector(selectAllInvoices);
+  const [productOptions, setProductOptions] = useState([]);
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
@@ -32,6 +36,21 @@ const AddStockItem = () => {
     setComponentSize(size);
   };
 
+  /*   function quarterDataFilter(data) {
+    let startDate = new Date().getMonth() - 3;
+    let endDate = new Date().getMonth();
+    return data.filter(
+      (item) =>
+        new Date(item.date).getMonth() >= startDate &&
+        new Date(item.date).getMonth() <= endDate
+    );
+  }
+
+  const stock_indicator = () => {
+    const product_total_quarter_sale = allProducts.find((item)=> item.name === name)
+  }
+
+  console.log(quarterDataFilter(sales)); */
   // message function
   const iMessage = (type, content) => {
     setTimeout(() => {
@@ -42,27 +61,50 @@ const AddStockItem = () => {
     }, 1000);
   };
 
+  const onProductSearch = (val) => {
+    let filtered = allProducts.filter(
+      (obj) =>
+        obj._id !== 0 &&
+        obj.name.toString().toLowerCase().includes(val.toLowerCase())
+    );
+    setProductOptions(filtered);
+  };
+
+  const onProductSelect = (value, option) => {
+    setName(option.value);
+    setCategory(option.category);
+    setFormat(option.format);
+    console.log(option);
+  };
+
   const handleAddStockItem = async () => {
     try {
-      await dispatch(
-        addItemAction(
-          name,
-          category,
-          format,
-          quantity.toString(),
-          unitPrice.toString(),
-          "",
-          date,
-          ""
-        )
-      );
-      iMessage("success", "Success");
-      setName("");
-      setCategory("");
-      setDate("");
-      setUnitPrice("");
-      setQuantity("");
-      setFormat("");
+      if (name && quantity && unitPrice && date) {
+        await dispatch(
+          addItemAction(
+            name,
+            category,
+            format,
+            quantity.toString(),
+            unitPrice.toString(),
+            "",
+            date,
+            ""
+          )
+        );
+        iMessage("success", "Success");
+        setName("");
+        setCategory("");
+        setDate("");
+        setUnitPrice("");
+        setQuantity("");
+        setFormat("");
+      } else {
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet "
+        );
+      }
     } catch (error) {
       if (error.response.status === 500) {
         iMessage("error", "Veillez remplir tous les champs ");
@@ -109,9 +151,33 @@ const AddStockItem = () => {
             },
           ]}
         >
-          <Select id="name" value={name} onChange={(e) => setName(e)}>
+          {/* <Select id="name" value={name} onChange={(e) => setName(e)}>
             {getAllProducts}
-          </Select>
+          </Select> */}
+
+          <AutoComplete
+            size="large"
+            options={productOptions.map((product) => {
+              return {
+                label: product.name,
+                value: product.name,
+                id: product._id,
+                format: product.format,
+                category: product.category,
+              };
+            })}
+            onSearch={onProductSearch}
+            onSelect={onProductSelect}
+          >
+            <Input
+              name="name"
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+              value={name}
+              type="text"
+            />
+          </AutoComplete>
         </Form.Item>
 
         <Form.Item
@@ -123,14 +189,7 @@ const AddStockItem = () => {
             },
           ]}
         >
-          <Select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e)}
-          >
-            <Select.Option value="Casier">Casier</Select.Option>
-            <Select.Option value="Plastic">Plastic</Select.Option>
-          </Select>
+          <Input name="category" value={category} type="text" />
         </Form.Item>
         <Form.Item
           label="Format"
@@ -141,10 +200,7 @@ const AddStockItem = () => {
             },
           ]}
         >
-          <Select id="format" value={format} onChange={(e) => setFormat(e)}>
-            <Select.Option value="Grand format">Grand format</Select.Option>
-            <Select.Option value="Petit format">Petit format</Select.Option>
-          </Select>
+          <Input name="format" value={format} type="text" />
         </Form.Item>
         <Form.Item
           label="Quantité reçu"

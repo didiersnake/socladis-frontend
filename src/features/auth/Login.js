@@ -68,7 +68,7 @@ const Login = () => {
       await dispatch(loginAction(name, password));
 
       //load data
-      store.dispatch(readUsersAction());
+      /* store.dispatch(readUsersAction());
       store.dispatch(readProductAction());
       store.dispatch(readStockActions());
       store.dispatch(readAvarisAction());
@@ -76,7 +76,7 @@ const Login = () => {
       store.dispatch(readInvoice());
       store.dispatch(readEmptyStockAction());
       store.dispatch(readIncomeAction());
-      store.dispatch(readExpenseAction());
+      store.dispatch(readExpenseAction()); */
 
       //redirect to respective page
       const userRole = redirect();

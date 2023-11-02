@@ -32,14 +32,24 @@ const AddIncome = () => {
 
   const handleAddIncome = async () => {
     try {
-      await dispatch(addIncomeAction(income, amount, date));
-      setIncome("");
-      setAmount("");
-      setDate("");
-      iMessage("success", "Success");
+      if (income && date && amount) {
+        await dispatch(addIncomeAction(income, amount, date));
+        setIncome("");
+        setAmount("");
+        setDate("");
+        iMessage("success", "Success");
+      } else {
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+        );
+      }
     } catch (error) {
       if (error.response.status === 500) {
-        iMessage("error", "Veillez remplir tous les champs");
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+        );
         console.log(error.response.data);
       }
     }

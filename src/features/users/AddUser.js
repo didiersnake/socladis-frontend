@@ -46,7 +46,7 @@ export const AddUser = () => {
       if (roles === employee) {
         await dispatch(
           createUserAction(
-            name,
+            name.trim(),
             roles,
             category,
             "non attribué",
@@ -54,7 +54,7 @@ export const AddUser = () => {
             phone,
             location,
             "non attribué",
-            password
+            password.trim()
           )
         );
       } else {
@@ -242,7 +242,7 @@ export const AddUser = () => {
     </div>
   );
   return (
-    <div className="mb-16  mx-44">
+    <div className="mb-16 mx-44">
       <Button
         className="my-4"
         onClick={() => navigate(-1)}

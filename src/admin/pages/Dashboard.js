@@ -1,6 +1,7 @@
 import React from "react";
 import Container from "../components/Container";
 import { Card, Row, Statistic } from "antd";
+import CircumIcon from "@klarr-agency/circum-icons-react";
 
 import ColCard from "../components/dashboard/ColCard";
 import ColCardIcon from "../components/dashboard/ColCardIcon";
@@ -46,6 +47,8 @@ import {
   Filler,
 } from "chart.js";
 import { Bar, Pie, Line } from "react-chartjs-2";
+import { Link } from "react-router-dom";
+import { filterDateByMonth, filterMonthByYear } from "../../utils/dateFilters";
 
 ChartJS.register(
   CategoryScale,
@@ -76,45 +79,7 @@ const Dashbord = () => {
     return shortValue + suffixes[suffixNum];
   } */
 
-  function filterDateByMonth(data) {
-    return data.filter((item) => {
-      let month = new Date(item.date).getMonth();
-      let currentMonth = new Date().getMonth();
-      return month === currentMonth;
-    });
-  }
-
-  function filterMonthByYear(data, currentMonth) {
-    return data.filter((item) => {
-      let month = new Date(item.date).getMonth();
-      let year = new Date(item.date).getFullYear();
-      let currentYear = new Date().getFullYear();
-      return year === currentYear && month === currentMonth;
-    });
-  }
-
-  const AllUsers = useSelector(selectAllUser);
-  const allCustomers = AllUsers.filter(
-    (user) => user.roles === "CLIENT" && user
-  ).length;
-  const allEmployees = AllUsers.filter(
-    (user) => user.roles === "EMPLOYEE" && user
-  ).length;
-
-  const allTeams = useSelector(selectAllTeams).length;
-
-  const allProducts = useSelector(selectAllProducts).length;
-  const month_avaris = filterDateByMonth(
-    useSelector(selectAllAvarisProducts)
-  ).length;
-
-  const stock = useSelector(selectAllStockProducts);
-  const low_stock = stock.filter(
-    (item) => Number(item.quantity) < Number(item.unitPrice)
-  ).length;
-  const high_stock = stock.filter(
-    (item) => Number(item.quantity) > Number(item.unitPrice)
-  ).length;
+  //inventory
 
   const income = useSelector(selectAllIncomes);
   const month_total_income = filterDateByMonth(income)
@@ -124,8 +89,23 @@ const Dashbord = () => {
     }, 0);
 
   const sales = useSelector(selectAllInvoices);
-  const month_sales = filterDateByMonth(sales).length;
-  const sales_income = filterDateByMonth(sales)
+  const month_sales_quantity = filterDateByMonth(sales)
+    //get array of products
+    .map((invoice) => invoice.products)
+    //get array of quantities for each products array in invoice
+    .map((arr) => arr.map((item) => Number(item.quantity)))
+    //sum quantity for each product array
+    .map((quantities) =>
+      quantities.reduce((acc, curr) => {
+        return acc + curr;
+      }, 0)
+    )
+    //sum total
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+
+  const month_sales_income = filterDateByMonth(sales)
     .map((sale) => Number(sale.total_with_tax))
     .reduce((acc, curr) => {
       return acc + curr;
@@ -139,7 +119,89 @@ const Dashbord = () => {
     }, 0);
 
   const cost_expenses = useSelector(selectAllPurchase);
-  console.log(month_total_income);
+
+  // sales
+
+  const month_TVA = filterDateByMonth(sales)
+    .map((sale) => Number(sale.VAT_amount))
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+
+  const month_withdrawal_amount = filterDateByMonth(sales)
+    .map((sale) => Number(sale.withdrawal_amount))
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+
+  const month_sale_without_tax = filterDateByMonth(sales)
+    .map((sale) => Number(sale.total_without_tax))
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+
+  // stock
+
+  const avaris = useSelector(selectAllAvarisProducts);
+  const month_avaris_store = filterDateByMonth(avaris)
+    .map((item) => {
+      return item.type.toLowerCase() === "magasin" && Number(item.quantity);
+    })
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+
+  const month_avaris_delivery = filterDateByMonth(avaris)
+    .map((item) => {
+      return item.type.toLowerCase() === "livraison" && Number(item.quantity);
+    })
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+
+  const stock = useSelector(selectAllStockProducts);
+  const low_stock = stock.filter(
+    (item) => Number(item.quantity) < Number(item.unitPrice)
+  ).length;
+
+  const high_stock = stock.filter(
+    (item) => Number(item.quantity) > Number(item.unitPrice)
+  ).length;
+
+  // users
+
+  const AllUsers = useSelector(selectAllUser);
+  const allCustomers = AllUsers.filter(
+    (user) => user.roles === "CLIENT" && user
+  ).length;
+  const allEmployees = AllUsers.filter(
+    (user) => user.roles === "EMPLOYEE" && user
+  ).length;
+
+  const allTeams = useSelector(selectAllTeams).length;
+
+  const allProducts = useSelector(selectAllProducts);
+
+  //pack sales graph data
+
+  const packs_sale_data = allProducts
+    // get product names in an array
+    .map((item) => item.name)
+    // check packs sold for each item in invoices
+    .map((name) =>
+      filterDateByMonth(sales)
+        .map((sale) => {
+          //get product name with pack brand(name in array)
+          return sale.products.find((pdt) => pdt.name === name);
+        })
+        .filter((i) => i !== undefined)
+        //get qty
+        .map((qty) => Number(qty.quantity))
+        //sum
+        .reduce((acc, curr) => {
+          return acc + curr;
+        }, 0)
+    );
 
   const BarChart = () => {
     const labels = [
@@ -161,7 +223,7 @@ const Dashbord = () => {
       labels,
       datasets: [
         {
-          label: "Total Depenses",
+          label: "Depenses Activtés",
           data: labels.map((item, index) => {
             return filterMonthByYear(expense, index)
               .map((expense) => Number(expense.amount))
@@ -172,10 +234,10 @@ const Dashbord = () => {
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
         {
-          label: "Total Revenus",
+          label: "Revenus Activtés",
           data: labels.map((item, index) => {
-            return filterMonthByYear(income, index)
-              .map((income) => Number(income.amount))
+            return filterMonthByYear(sales, index)
+              .map((income) => Number(income.total_with_tax))
               .reduce((acc, curr) => {
                 return acc + curr;
               }, 0);
@@ -199,7 +261,7 @@ const Dashbord = () => {
     };
 
     return (
-      <div className="p-4 bg-white rounded-md h-[520px] ">
+      <div className="p-4 bg-white rounded-md h-96">
         <Bar options={options} data={data} />;
       </div>
     );
@@ -211,7 +273,7 @@ const Dashbord = () => {
       datasets: [
         {
           label: "# de packs / bouteilles",
-          data: [low_stock, month_avaris, high_stock],
+          data: [low_stock, month_avaris_store, high_stock],
           backgroundColor: [
             "rgba(255, 99, 132, 0.5)",
             "#ffeda0",
@@ -226,14 +288,17 @@ const Dashbord = () => {
         },
       ],
     };
+    const options = {
+      responsive: true,
+    };
     return (
       <div className="p-4 bg-white rounded-md h-96 ">
-        <Pie data={data} />
+        <Pie data={data} options={options} />
       </div>
     );
   };
 
-  const AreaChart = () => {
+  const SaleAreaChart = () => {
     const labels = [
       "Janvier",
       "Fevrier",
@@ -254,9 +319,19 @@ const Dashbord = () => {
       datasets: [
         {
           fill: true,
-          label: " Ventes",
+          label: "Ventes (packs)",
           data: labels.map((item, index) => {
-            return filterMonthByYear(sales, index).length;
+            return filterMonthByYear(sales, index)
+              .map((invoice) => invoice.products)
+              .map((arr) => arr.map((item) => Number(item.quantity)))
+              .map((quantities) =>
+                quantities.reduce((acc, curr) => {
+                  return acc + curr;
+                }, 0)
+              )
+              .reduce((acc, curr) => {
+                return acc + curr;
+              }, 0);
           }),
           borderColor: "rgb(53, 162, 235)",
           backgroundColor: "rgba(53, 162, 235, 0.5)",
@@ -284,21 +359,107 @@ const Dashbord = () => {
     );
   };
 
+  const FuelAreaChart = () => {
+    const labels = [
+      "Janvier",
+      "Fevrier",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Decembre",
+    ];
+
+    const data = {
+      labels,
+      datasets: [
+        {
+          fill: true,
+          label: "Carburant",
+          data: labels.map((item, index) => {
+            return filterMonthByYear(expense, index)
+              .map((exp) => exp.modif === "carburant" && Number(exp.amount))
+              .reduce((acc, curr) => {
+                return acc + curr;
+              }, 0);
+          }),
+          borderColor: "rgb(252,78,42)",
+          backgroundColor: "rgba(252,78,42, 0.5)",
+        },
+      ],
+    };
+
+    const options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "Depenses Carburant",
+        },
+      },
+    };
+
+    return (
+      <div className="p-4 bg-white rounded-md ">
+        <Line options={options} data={data} />
+      </div>
+    );
+  };
+
+  const BrandSaleAreaChart = () => {
+    const labels = allProducts.map((item) => item.name);
+
+    const data = {
+      labels,
+      datasets: [
+        {
+          fill: true,
+          label: " Packs",
+          data: labels.map((item, index) => {
+            return packs_sale_data[index];
+          }),
+          borderColor: "rgb(53, 162, 235)",
+          backgroundColor: "rgba(53, 162, 235, 0.5)",
+        },
+      ],
+    };
+
+    const options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "Ventes Marques",
+        },
+      },
+    };
+    return (
+      <div className="p-4 bg-white rounded-md ">
+        <Line options={options} data={data} />
+      </div>
+    );
+  };
+
   const dashboard_inventory_statistics = [
     {
-      title: "Nombre Ventes",
-      value: month_sales,
-      color: "#d3ecfc",
-      icon: Income,
-    },
-    {
       title: "Revenus Ventes (CFA)",
-      value: sales_income,
+      value: month_sales_income,
       color: "#fef0d9",
       icon: Downlownd,
     },
     {
-      title: "Total Renvenus (CFA)",
+      title: "Total en Caisse (CFA)",
       value: month_total_income,
       color: "#d3fce0",
       icon: TrendingUp,
@@ -315,39 +476,81 @@ const Dashbord = () => {
       color: "#fee0d2",
       icon: Share,
     },
+  ];
 
+  const SaleStat = ({ icon }) => {
+    return <div className="p-1">{icon}</div>;
+  };
+  const dashboard_sales_statistics = [
     {
-      title: "Pourcentage Profit",
-      value: "20%",
-      color: "#fcf9d3",
-      icon: Percentage,
+      title: "Ventes HT (CFA)",
+      value: month_sale_without_tax,
+      icon: (
+        <SaleStat
+          icon={<CircumIcon name="wallet" size={38} color={"blue"} />}
+        />
+      ),
+    },
+    {
+      title: "Total TVA (CFA)",
+      value: month_TVA,
+      color: "#d3fce0",
+      icon: (
+        <SaleStat
+          icon={<CircumIcon name="receipt" size={38} color={"#7a0177"} />}
+        />
+      ),
+    },
+    {
+      title: "Précomte (CFA)",
+      value: month_withdrawal_amount,
+      color: "#fabcb6",
+      icon: (
+        <SaleStat
+          icon={<CircumIcon name="coins_1" color={"#fed976"} size={38} />}
+        />
+      ),
+    },
+    {
+      title: "Ristournes (CFA)",
+      value: month_sales_quantity * 100,
+      color: "#fee0d2",
+      icon: (
+        <SaleStat
+          icon={<CircumIcon name="discount_1" color={"#e31a1c"} size={38} />}
+        />
+      ),
     },
   ];
 
   const dashboard_stock_statistics = [
     {
-      title: "Produits",
-      value: allProducts,
+      title: "Total Ventes",
+      value: month_sales_quantity,
       color: "#d3ecfc",
-      icon: Package,
+      link: "",
+      icon: Income,
     },
     {
-      title: "En Stock",
-      value: high_stock,
+      title: "Avaris Livraison",
+      value: month_avaris_delivery,
       color: "#d3fce0",
+      link: "avaris livraison",
       icon: Archive,
     },
     {
       title: "Stock Faible",
       value: low_stock,
       color: "#fabcb6",
+      link: "stock faible",
       icon: BoxList,
       text_color: "#e21818",
     },
     {
-      title: "Avaris",
-      value: month_avaris,
+      title: "Avaris Magasin",
+      value: month_avaris_store,
       color: "#fcf9d3",
+      link: "avaris magasin",
       icon: Trash,
       text_color: "red",
     },
@@ -376,69 +579,112 @@ const Dashbord = () => {
     },
   ];
 
+  const InventoryStatistics = () => {
+    return (
+      <div className="grid grid-cols-2 col-span-2 gap-1 bg-white rounded-lg">
+        {dashboard_inventory_statistics.map((item, index) => (
+          <ColCard
+            key={index + 1}
+            icon={<ColCardIcon iconName={item.icon} color={item.color} />}
+            title={item.title}
+            value={item.value}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const StockStatistics = () => {
+    return (
+      <div className="grid grid-cols-2 col-span-2 gap-1 rounded-lg">
+        {dashboard_stock_statistics.map((item, index) => (
+          <Link to={item.link} key={index + 1}>
+            <ColCard
+              title={item.title}
+              value={item.value}
+              icon={<ColCardIcon iconName={item.icon} color={item.color} />}
+              color={item?.text_color}
+            />
+          </Link>
+        ))}
+      </div>
+    );
+  };
+
+  const SalesStatistics = () => {
+    return (
+      <div className="grid grid-cols-2 col-span-2 gap-1 bg-white rounded-lg">
+        {dashboard_sales_statistics.map((item, index) => (
+          <ColCard
+            key={index + 1}
+            title={item.title}
+            value={item.value}
+            icon={item.icon}
+            color={item?.text_color}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const UsersStatistics = () => {
+    return (
+      <Card>
+        <div className="grid grid-cols-4 ">
+          {dashboard_users_statistics.map((item, index) => (
+            <div className="flex items-center gap-4 " key={index + 1}>
+              <div>
+                <img className="w-8" src={item.icon} alt={item.title} />
+              </div>
+              <Statistic
+                title={item.title}
+                value={item.value}
+                valueStyle={{
+                  color: "#000000",
+                  fontSize: 18,
+                  fontWeight: 500,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </Card>
+    );
+  };
+
   const DashboardItems = () => {
     return (
       <div className="grid gap-4 mb-8">
         <div className="grid grid-cols-6 gap-12 ">
-          <div className="grid grid-cols-3 col-span-4 gap-1 bg-white rounded-lg">
-            {dashboard_inventory_statistics.map((item, index) => (
-              <ColCard
-                key={index + 1}
-                icon={<ColCardIcon iconName={item.icon} color={item.color} />}
-                title={item.title}
-                value={item.value}
-              />
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 col-span-2 gap-1 bg-white rounded-lg">
-            {dashboard_stock_statistics.map((item, index) => (
-              <ColCard
-                key={index + 1}
-                title={item.title}
-                value={item.value}
-                icon={<ColCardIcon iconName={item.icon} color={item.color} />}
-                color={item?.text_color}
-              />
-            ))}
-          </div>
+          <InventoryStatistics />
+          <StockStatistics />
+          <SalesStatistics />
         </div>
 
-        <div className="grid grid-cols-1 mx-24 gap-0.5">
-          <Card>
-            <div className="grid grid-cols-4 ">
-              {dashboard_users_statistics.map((item, index) => (
-                <div className="flex items-center gap-4 " key={index + 1}>
-                  <div>
-                    <img className="w-8" src={item.icon} alt={item.title} />
-                  </div>
-                  <Statistic
-                    title={item.title}
-                    value={item.value}
-                    valueStyle={{
-                      color: "#000000",
-                      fontSize: 18,
-                      fontWeight: 500,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
+        <UsersStatistics />
+
         {/* Charts  */}
-        <div className="grid items-center grid-cols-9 gap-8 ">
-          <div className="col-span-6 ">
-            <AreaChart />
+        <div className="grid items-center grid-cols-8 gap-8 ">
+          <div className="col-span-4 ">
+            <SaleAreaChart />
           </div>
-          <div className="col-span-3 ">
+          <div className="col-span-4 ">
+            <FuelAreaChart />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-7 gap-8 ">
+          <div className="col-span-5 ">
+            <BarChart />
+          </div>
+          <div className="col-span-2 ">
             <PieChart />
           </div>
         </div>
 
-        <BarChart />
+        <BrandSaleAreaChart />
       </div>
     );
   };

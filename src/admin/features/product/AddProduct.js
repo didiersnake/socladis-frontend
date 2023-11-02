@@ -39,7 +39,10 @@ const AddProduct = () => {
       setName("");
     } catch (error) {
       if (error.response.status === 500) {
-        iMessage("error", "Veillez remplir tous les champs");
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+        );
         console.log(error.response.data);
       }
     }

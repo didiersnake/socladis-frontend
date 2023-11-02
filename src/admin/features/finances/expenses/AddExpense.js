@@ -31,18 +31,31 @@ const AddExpense = () => {
 
   const handleAddExpense = async () => {
     try {
-      await dispatch(addExpenseAction(modif, amount, bank, date));
-      setModif("");
-      setAmount("");
-      setDate("");
-      setBank("");
-      iMessage("success", "Success");
+      if (modif && date && amount) {
+        await dispatch(
+          addExpenseAction(
+            modif,
+            amount,
+            modif === "carburant" ? "Achat de carburant" : bank,
+            date
+          )
+        );
+        setModif("");
+        setAmount("");
+        setDate("");
+        setBank("");
+        iMessage("success", "Success");
+      } else {
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+        );
+      }
     } catch (error) {
-      console.log(error);
-      /* if (error.response.status === 500) {
+      if (error.response.status === 500) {
         iMessage("error", "Veillez remplir tous les champs");
         console.log(error.response.data);
-      } */
+      }
     }
   };
 
@@ -88,11 +101,12 @@ const AddExpense = () => {
           ]}
         >
           <Select onChange={(e) => setModif(e)} value={modif}>
-            <Select.Option value="depense courante">
-              Depense courante
-            </Select.Option>
             <Select.Option value="versement a la banque">
               Versement a la banque
+            </Select.Option>
+            <Select.Option value="carburant">Carburant</Select.Option>
+            <Select.Option value="depense courante">
+              Depense courante
             </Select.Option>
           </Select>
         </Form.Item>
@@ -115,7 +129,7 @@ const AddExpense = () => {
         </Form.Item>
 
         <Form.Item
-          label={modif === "depense courante" ? "Motif" : "Banque"}
+          label={modif === "versement a la banque" ? "Banque" : "Motif"}
           rules={[
             {
               required: true,
@@ -123,21 +137,24 @@ const AddExpense = () => {
             },
           ]}
         >
-          {modif === "depense courante" ? (
-            <Input
-              name="motif"
-              onChange={(e) => setBank(e.target.value)}
-              value={bank}
-            />
-          ) : (
+          {modif === "versement a la banque" ? (
             <Select onChange={(e) => setBank(e)} value={bank}>
               <Select.Option value="Afriland First Bank">
                 Afriland First Bank
               </Select.Option>
               <Select.Option value="BGFI Bank">BGFI Bank</Select.Option>
             </Select>
+          ) : modif === "carburant" ? (
+            <Input name="motif" disabled value={bank} />
+          ) : (
+            <Input
+              name="motif"
+              onChange={(e) => setBank(e.target.value)}
+              value={bank}
+            />
           )}
         </Form.Item>
+
         <Form.Item
           label="Date"
           rules={[

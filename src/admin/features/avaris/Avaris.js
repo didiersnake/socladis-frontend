@@ -45,12 +45,12 @@ const Avaris = () => {
       ...columnItem(3, "Type", "type"),
       filters: [
         {
-          text: "Au dechargement",
-          value: "Au dechargement",
+          text: "Livraison",
+          value: "Livraison",
         },
         {
-          text: "Au magasin",
-          value: "Au magasin",
+          text: "Magasin",
+          value: "Magasin",
         },
       ],
       onFilter: (value, record) => record.type.indexOf(value) === 0,
@@ -245,10 +245,8 @@ const Avaris = () => {
               })
             }
           >
-            <Select.Option value="Au dechargement">
-              Au dechargement
-            </Select.Option>
-            <Select.Option value="Au magasin">Au magasin</Select.Option>
+            <Select.Option value="livraison">Livraison</Select.Option>
+            <Select.Option value="magasin">Magasin</Select.Option>
           </Select>
           <Select
             id="category"
