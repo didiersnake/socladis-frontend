@@ -1,5 +1,4 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-
 import { useSelector } from "react-redux";
 import { selectUserRoles, userLoginState } from "../features/auth/authSlice";
 
@@ -11,7 +10,7 @@ const ProtectedRoute = ({ role }) => {
   return isLoggedIn && userRoles === role ? (
     <Outlet />
   ) : (
-    <Navigate to="login" state={{ from: location }} replace />
+    <Navigate to="/" state={{ from: location }} replace />
   );
 };
 

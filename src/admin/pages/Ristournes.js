@@ -19,6 +19,7 @@ import { selectAllInvoices } from "../../features/sales/invoiceSlice";
 import format from "../../utils/currency";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import exportPdf from "../../utils/exportPdf";
 
 const Ristournes = () => {
   const [start_date, setStartDate] = useState();
@@ -206,17 +207,9 @@ const Ristournes = () => {
   );
 
   const handleExportPdf = () => {
-    const capture = document.querySelector(".actual-receipt");
     setLoader(true);
-    html2canvas(capture).then((canvas) => {
-      const imgData = canvas.toDataURL("img/png");
-      const doc = new jsPDF("p", "mm", "a6");
-      const componentWidth = doc.internal.pageSize.getWidth();
-      const componentHeight = doc.internal.pageSize.getHeight();
-      doc.addImage(imgData, "PNG", 0, 0, componentWidth, componentHeight);
-      setLoader(false);
-      doc.save(`${name} ristourne.pdf`);
-    });
+    exportPdf("Rapport Ristournes");
+    setLoader(true);
   };
 
   const handleRistourneExport = () => {
@@ -244,7 +237,7 @@ const Ristournes = () => {
               <p className="font-semibold ">{formatDate(new Date())}</p>
             </div>
 
-            <Table dataSource={data} columns={columns} />
+            <Table pagination={false} dataSource={data} columns={columns} />
 
             <div className="flex items-center justify-between ml-52">
               <p className="font-semibold ">Total </p>
@@ -257,13 +250,7 @@ const Ristournes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white px-44">
-      <Button
-        className="my-4"
-        onClick={() => navigate(-1)}
-        icon={<ArrowLeftOutlined />}
-      ></Button>
-
+    <div className="min-h-screen py-6 bg-white px-44">
       <Card className="rounded-md ">{content}</Card>
 
       <RistourneModal name={name} />

@@ -9,6 +9,7 @@ import { selectInvoiceById } from "./invoiceSlice";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { selectAllUser } from "../users/userSlice";
+import exportPdf from "../../utils/exportPdf";
 
 const InvoiceView = () => {
   const { invoiceId } = useParams();
@@ -21,7 +22,6 @@ const InvoiceView = () => {
   const [user_tax_system, setUserTaxSystem] = useState();
   const [user_phone, setUserPhone] = useState();
   const [team, setTeam] = useState();
-  const [payment_method, setPaymentMode] = useState();
 
   const [loader, setLoader] = useState(false);
   const columns = [
@@ -48,20 +48,12 @@ const InvoiceView = () => {
     setUserTaxSystem(user?.tax_system);
     setUserPhone(user?.phone);
     setTeam(user?.group);
-  });
+  }, [allUsers, invoice.clientName]);
 
   const handleExportPdf = () => {
-    const capture = document.querySelector(".actual-receipt");
     setLoader(true);
-    html2canvas(capture).then((canvas) => {
-      const imgData = canvas.toDataURL("img/png");
-      const doc = new jsPDF("p", "mm", "a5");
-      const componentWidth = doc.internal.pageSize.getWidth();
-      const componentHeight = doc.internal.pageSize.getHeight();
-      doc.addImage(imgData, "PNG", 0, 0, componentWidth, componentHeight);
-      setLoader(false);
-      doc.save(`${invoice.clientName}.pdf`);
-    });
+    exportPdf(invoice.clientName);
+    setLoader(false);
   };
 
   return (
@@ -112,13 +104,12 @@ const InvoiceView = () => {
           </div>
 
           <div className="grid grid-cols-5 px-12">
-            <Text className="col-span-2 ">
-              {invoice.payment_method.map((item) => `${item},  `)}
-            </Text>
+            <Text className="col-span-2 ">{}</Text>
             <Text>{team} </Text>
           </div>
 
           <Table
+            pagination={false}
             className="px-12 mt-4"
             dataSource={invoice.products}
             columns={columns}
@@ -153,43 +144,6 @@ const InvoiceView = () => {
               </tr>
             </tbody>
           </table>
-
-          {/* Invoices total  */}
-          {/*  <div className="flex justify-between ">
-            <div></div>
-            <div>
-              <div className="flex items-center justify-between gap-6 ">
-                <p className="font-semibold ">Total HT</p>
-                <p className="font-semibold ">
-                  {Number(invoice.total_without_tax).toFixed(2)}
-                </p>
-              </div>
-              <div className="flex items-center justify-between gap-6">
-                <p className="font-semibold ">Montant TVA</p>
-                <p className="font-semibold ">
-                  {Number(invoice.VAT_amount).toFixed(2)}
-                </p>
-              </div>
-              <div className="flex items-center justify-between gap-6">
-                <p className="font-semibold ">Précompte </p>
-                <p className="font-semibold ">
-                  {Number(invoice.withdrawal_amount).toFixed(2)}
-                </p>
-              </div>
-              <div className="flex items-center justify-between gap-6">
-                <p className="font-semibold ">Ristourne </p>
-                <p className="font-semibold ">
-                  {Number(invoice.ristourne).toFixed(2)}
-                </p>
-              </div>
-              <div className="flex items-center justify-between gap-6">
-                <p className="font-semibold ">Total TTC </p>
-                <p className="font-semibold ">
-                  {format(Number(invoice.total_with_tax).toFixed(2))}
-                </p>
-              </div>
-            </div>
-          </div> */}
         </div>
       </div>
     </div>

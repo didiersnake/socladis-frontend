@@ -1,7 +1,7 @@
 import React from "react";
 
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { Button, Typography } from "antd";
+import { Typography } from "antd";
 import format from "../../../utils/currency";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../utils/formatDate";

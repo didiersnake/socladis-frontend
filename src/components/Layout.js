@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import FooterNav from "../admin/components/FooterNav";
@@ -8,7 +8,9 @@ export const Layout = () => {
     <>
       <Navbar />
       <div className="mb-6 ">
-        <Outlet />
+        <Suspense fallback={<h2>Chargement...</h2>}>
+          <Outlet />
+        </Suspense>
       </div>
       <FooterNav />
     </>
