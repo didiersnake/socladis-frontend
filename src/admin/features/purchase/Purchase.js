@@ -1,19 +1,35 @@
-import { Button, DatePicker, Input, Modal, Select, Table, message } from "antd";
+import {
+  AutoComplete,
+  Button,
+  DatePicker,
+  Input,
+  Modal,
+  Select,
+  Table,
+  message,
+} from "antd";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined, FilterOutlined } from "@ant-design/icons";
 import { formatDate } from "../../../utils/formatDate";
 import Container from "../../components/Container";
+import { selectAllPurchase } from "./purchaseSlice";
+import editPurchaseAction from "./actions/editPurchaseAction";
+import { selectAllProducts } from "../product/productSlice";
 
 const Purchase = () => {
   const [isEditing, setIsEditing] = useState(false); //toggle edit button state
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
 
   const dispatch = useDispatch();
-  const allProducts = [];
-  const [dataSource, setDataSource] = useState(allProducts); // table data state
+  const allPurchase = useSelector(selectAllPurchase);
+  const [dataSource, setDataSource] = useState(allPurchase); // table data state
+  const allProducts = useSelector(selectAllProducts);
+
+  const [productOptions, setProductOptions] = useState([]);
 
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -44,7 +60,7 @@ const Purchase = () => {
   const columns = [
     columnItem(0, "ID", "_id"),
     columnItem(2, "Nom", "name"),
-    columnItem(2, "Prix D'achat", "cost_price"),
+    columnItem(2, "Prix Achat", "purchase_price"),
     {
       ...columnItem(4, "Format", "format"),
       filters: [
@@ -81,9 +97,51 @@ const Purchase = () => {
         return formatDate(iDate);
       },
     },
+    {
+      ...columnItem(4, "Actions"),
+      render: (record) => {
+        return (
+          <>
+            <EditOutlined
+              onClick={() => {
+                onEditProduct(record);
+              }}
+            />
+          </>
+        );
+      },
+    },
   ];
 
-  let orderedStock = allProducts
+  const iMessage = (type, content) => {
+    setTimeout(() => {
+      messageApi.open({
+        type: type,
+        content: content,
+      });
+    }, 1000);
+  };
+
+  const onEditProduct = (record) => {
+    //open edit modal
+    setIsEditing(true);
+    setEditingProduct({ ...record });
+  };
+
+  const resetEditing = () => {
+    //reset edited data
+    setIsEditing(false);
+    setEditingProduct(null);
+  };
+
+  const editItem = (item) => {
+    try {
+      dispatch(editPurchaseAction(item));
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+  let orderedStock = allPurchase
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
 
@@ -101,8 +159,67 @@ const Purchase = () => {
     }
   };
 
+  const DateFilters = () => {
+    return (
+      <div className="flex items-center gap-2 ">
+        <DatePicker
+          style={{ width: 150 }}
+          onChange={(dateString) => {
+            setStartDate(dateString);
+            setIsFiltering(false);
+          }}
+          value={startDate}
+          placeholder="Debut"
+          showTime={false}
+          format={"DD/MM/YYYY"}
+        />
+        <DatePicker
+          style={{ width: 150 }}
+          onChange={(dateString) => {
+            setEndDate(dateString);
+            setIsFiltering(false);
+          }}
+          value={endDate}
+          placeholder="fin"
+          showTime={false}
+          format={"DD/MM/YYYY"}
+        />
+
+        <Button
+          type="primary"
+          size="small"
+          style={{ padding: "1px 4px" }}
+          icon={<FilterOutlined />}
+          onClick={filterByDateRange}
+        ></Button>
+      </div>
+    );
+  };
+
+  const onProductSearch = (val) => {
+    let filtered = allProducts.filter(
+      (obj) =>
+        obj._id !== 0 &&
+        obj.name.toString().toLowerCase().includes(val.toLowerCase())
+    );
+    setProductOptions(filtered);
+  };
+
+  const onProductSelect = (value, option) => {
+    setEditingProduct((pre) => {
+      return {
+        ...pre,
+        name: option.value,
+        format: option.format,
+        unitPrice: option.unitPrice,
+        category: option.category,
+        purchase_price: option.unitPrice,
+      };
+    });
+  };
   let content = (
     <>
+      {contextHolder}
       <div className="flex justify-between mb-2 ">
         <Button type="primary" onClick={() => navigate("create")}>
           Ajouter un Produit
@@ -110,39 +227,7 @@ const Purchase = () => {
         {/* search bar */}
 
         <div className="flex gap-4 ">
-          <div className="flex items-center gap-2 ">
-            <DatePicker
-              style={{ width: 150 }}
-              onChange={(dateString) => {
-                setStartDate(dateString);
-                setIsFiltering(false);
-              }}
-              value={startDate}
-              placeholder="Debut"
-              showTime={false}
-              format={"DD/MM/YYYY"}
-            />
-            <DatePicker
-              style={{ width: 150 }}
-              onChange={(dateString) => {
-                setEndDate(dateString);
-                setIsFiltering(false);
-              }}
-              value={endDate}
-              placeholder="fin"
-              showTime={false}
-              format={"DD/MM/YYYY"}
-            />
-
-            <Button
-              type="primary"
-              size="small"
-              style={{ padding: "1px 4px" }}
-              icon={<FilterOutlined />}
-              onClick={filterByDateRange}
-            ></Button>
-          </div>
-
+          <DateFilters />
           <Input.Search
             style={{ maxWidth: 300 }}
             placeholder="Recherche..."
@@ -150,7 +235,7 @@ const Purchase = () => {
             onChange={(e) => {
               setSearchText(e.target.value);
               setDataSource(
-                allProducts.filter((record) =>
+                allPurchase.filter((record) =>
                   record?.name
                     .toLowerCase()
                     .includes(e.target.value.toLowerCase())
@@ -168,6 +253,55 @@ const Purchase = () => {
         )}
         dataSource={!searchText && !isFiltering ? orderedStock : dataSource}
       ></Table>
+
+      <Modal
+        title="Modifier le produit"
+        open={isEditing}
+        okText="Sauvegarder"
+        cancelText="Annuler"
+        onCancel={() => {
+          resetEditing();
+        }}
+        onOk={() => {
+          editItem(editingProduct);
+          //take of modal after edit and display message
+          resetEditing();
+          iMessage("success", "modifié");
+        }}
+      >
+        <div className="grid gap-2 ">
+          <AutoComplete
+            size="large"
+            options={productOptions.map((product) => {
+              return {
+                label: product.name,
+                value: product.name,
+                id: product._id,
+                format: product.format,
+                category: product.category,
+                unitPrice: product.unitPrice,
+              };
+            })}
+            onSearch={onProductSearch}
+            onSelect={onProductSelect}
+          >
+            <Input name="name" value={editingProduct?.name} type="text" />
+          </AutoComplete>
+          <Input id="category" value={editingProduct?.category}></Input>
+
+          <Input id="format" value={editingProduct?.format}></Input>
+
+          <Input value={editingProduct?.purchase_price} />
+          <Input
+            value={editingProduct?.quantity}
+            onChange={(e) => {
+              setEditingProduct((pre) => {
+                return { ...pre, quantity: e.target.value };
+              });
+            }}
+          />
+        </div>
+      </Modal>
     </>
   );
   return (

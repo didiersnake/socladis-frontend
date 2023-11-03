@@ -79,7 +79,11 @@ const items = [
     "reports",
     <div className="px-1 ">
       <CircumIcon name="view_list" size={18} />
-    </div>
+    </div>,
+    [
+      getItem("Ristournes", "ristourn"),
+      getItem("Generer rapport", "generate reports"),
+    ]
   ),
 ];
 

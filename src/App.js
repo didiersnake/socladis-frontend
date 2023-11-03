@@ -36,6 +36,7 @@ import Empty from "./features/stock/Empty";
 import LowStock from "./admin/features/stock/LowStock";
 import LoadingAvaris from "./admin/features/avaris/LoadingAvaris";
 import StoreAvaris from "./admin/features/avaris/StoreAvaris";
+import Ristournes from "./admin/pages/Ristournes";
 
 function App() {
   return (
@@ -74,6 +75,8 @@ function App() {
         <Route element={<ProtectedRoute role={"ADMINISTRATOR"} />}>
           <Route path="admin" element={<RLayout />}>
             <Route index element={<Dashboard />} />
+
+            <Route path="ristourn" element={<Ristournes />} />
 
             <Route path="stock faible" element={<LowStock />} />
             <Route path="avaris livraison" element={<LoadingAvaris />} />

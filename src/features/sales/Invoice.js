@@ -24,15 +24,14 @@ const Invoice = () => {
 
   return (
     <div>
-      <div className=" scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] py-[34px] px-2 md:px-8 lg:px-36 lg:py-[50px]  ">
+      <div className=" scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] py-[34px] mx-12">
         {/* Center Header */}
 
-        <div className=" min-w-full max-h-[64px] flex items-center justify-between">
-          <div>
-            <Title className="text-xl font-semibold tracking-wide lg:text-4xl md:text-2xl ">
-              Factures
-            </Title>
-          </div>
+        <div className="max-h-[64px] mx-6 flex items-center justify-between">
+          <Title className="text-xl font-semibold tracking-wide lg:text-4xl ">
+            Factures
+          </Title>
+
           <Button
             icon={<PlusOutlined />}
             type="primary"

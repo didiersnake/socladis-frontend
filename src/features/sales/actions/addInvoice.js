@@ -11,7 +11,8 @@ const addInvoice =
     total_with_tax,
     ristourne,
     status,
-    date
+    date,
+    payment_method
   ) =>
   async (dispatch) => {
     const response = await api.post("/api/new/sales", {
@@ -24,6 +25,7 @@ const addInvoice =
       ristourne,
       status,
       date,
+      payment_method,
     });
 
     const invoice = response.data[0].saleInfo;

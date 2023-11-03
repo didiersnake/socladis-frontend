@@ -445,7 +445,7 @@ const Dashbord = () => {
       },
     };
     return (
-      <div className="p-4 bg-white rounded-md ">
+      <div className="p-4 bg-white rounded-md w-12/12 h-96 ">
         <Line options={options} data={data} />
       </div>
     );

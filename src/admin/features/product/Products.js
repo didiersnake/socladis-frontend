@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Table, Modal, message, Input, Select } from "antd";
 import Container from "../../components/Container";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,6 @@ import readProductAction from "./actions/readProductAction";
 import { selectAllProducts } from "./productSlice";
 import format from "../../../utils/currency";
 import editProductAction from "./actions/editProductAction";
-import deleteProductAction from "./actions/deleteProductAction";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -40,9 +39,6 @@ const Products = () => {
     };
   }
 
-  /*  const filter = (value, record) => {
-    return String(record?.name).toLowerCase().includes(value.toLowerCase());
-  }; */
   const columns = [
     columnItem(0, "ID", "_id"),
     columnItem(1, "Nom", "name"),

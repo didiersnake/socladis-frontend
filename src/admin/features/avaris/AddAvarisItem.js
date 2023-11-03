@@ -53,7 +53,7 @@ const AddAvarisItem = () => {
 
   const handleAddAvaris = async () => {
     try {
-      if (name && quantity & type & date) {
+      if (name && quantity && type && date) {
         await dispatch(
           addAvarisAction(
             name,
@@ -69,6 +69,7 @@ const AddAvarisItem = () => {
         setName("");
         setCategory("");
         setDate("");
+        setType("");
         setQuantity("");
         setFormat("");
       } else {

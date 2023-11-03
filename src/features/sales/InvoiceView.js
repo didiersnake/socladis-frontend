@@ -21,6 +21,7 @@ const InvoiceView = () => {
   const [user_tax_system, setUserTaxSystem] = useState();
   const [user_phone, setUserPhone] = useState();
   const [team, setTeam] = useState();
+  const [payment_method, setPaymentMode] = useState();
 
   const [loader, setLoader] = useState(false);
   const columns = [
@@ -43,7 +44,6 @@ const InvoiceView = () => {
 
   useEffect(() => {
     const user = allUsers.find((item) => item.name === invoice.clientName);
-    console.log(user);
     setUserCategory(user?.category);
     setUserTaxSystem(user?.tax_system);
     setUserPhone(user?.phone);
@@ -55,7 +55,7 @@ const InvoiceView = () => {
     setLoader(true);
     html2canvas(capture).then((canvas) => {
       const imgData = canvas.toDataURL("img/png");
-      const doc = new jsPDF("p", "mm", "a4");
+      const doc = new jsPDF("p", "mm", "a5");
       const componentWidth = doc.internal.pageSize.getWidth();
       const componentHeight = doc.internal.pageSize.getHeight();
       doc.addImage(imgData, "PNG", 0, 0, componentWidth, componentHeight);
@@ -112,7 +112,9 @@ const InvoiceView = () => {
           </div>
 
           <div className="grid grid-cols-5 px-12">
-            <Text className="col-span-2 ">Emballage, Especes, ristournes</Text>
+            <Text className="col-span-2 ">
+              {invoice.payment_method.map((item) => `${item},  `)}
+            </Text>
             <Text>{team} </Text>
           </div>
 

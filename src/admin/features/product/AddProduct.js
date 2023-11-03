@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input, Select, Form } from "antd";
+import { Button, Input, Select, Form, Card } from "antd";
 import { useDispatch } from "react-redux";
 import { message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -67,7 +67,6 @@ const AddProduct = () => {
       </div>
       <Form
         className="grid gap-6 mx-auto"
-        layout="horizontal"
         colon={false}
         labelCol={{ span: 6 }}
         initialValues={{
@@ -145,7 +144,7 @@ const AddProduct = () => {
           />
         </Form.Item>
 
-        <Form.Item className="">
+        <Form.Item>
           <Button
             className="w-full text-white bg-slate-900"
             onClick={handleAddProduct}
@@ -157,7 +156,7 @@ const AddProduct = () => {
     </div>
   );
   return (
-    <div className="mx-44">
+    <div className="min-h-screen bg-white px-44">
       {contextHolder}
 
       <Button
@@ -165,9 +164,7 @@ const AddProduct = () => {
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <div className="border border-gray-700 border-solid rounded-md ">
-        {content}
-      </div>
+      <Card className="rounded-md ">{content}</Card>
     </div>
   );
 };

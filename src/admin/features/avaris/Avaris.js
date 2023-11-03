@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { EditOutlined, FilterOutlined } from "@ant-design/icons";
-import { Button, Table, Modal, message, Input, DatePicker, Select } from "antd";
+import {
+  Button,
+  Table,
+  Modal,
+  message,
+  Input,
+  DatePicker,
+  Select,
+  AutoComplete,
+} from "antd";
 import Container from "../../components/Container";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +23,7 @@ const Avaris = () => {
   const [searchText, setSearchText] = useState("");
   const allProducts = useSelector(selectAllAvarisProducts);
   const dispatch = useDispatch();
+  const [productOptions, setProductOptions] = useState([]);
   const [messageApi, contextHolder] = message.useMessage(); // message state
   const [dataSource, setDataSource] = useState(); // table data state
   const [startDate, setStartDate] = useState();
@@ -146,6 +156,27 @@ const Avaris = () => {
     setEditingProduct(null);
   };
 
+  const onProductSearch = (val) => {
+    let filtered = allProducts.filter(
+      (obj) =>
+        obj._id !== 0 &&
+        obj.name.toString().toLowerCase().includes(val.toLowerCase())
+    );
+    setProductOptions(filtered);
+  };
+
+  const onProductSelect = (value, option) => {
+    setEditingProduct((pre) => {
+      return {
+        ...pre,
+        name: option.value,
+        format: option.format,
+        unitPrice: option.unitPrice,
+        category: option.category,
+      };
+    });
+  };
+
   let content = (
     <>
       {contextHolder}
@@ -228,14 +259,26 @@ const Avaris = () => {
         }}
       >
         <div className="grid gap-2 ">
-          <Input
-            value={editingProduct?.name}
-            onChange={(e) => {
-              setEditingProduct((pre) => {
-                return { ...pre, name: e.target.value };
-              });
-            }}
-          />
+          <AutoComplete
+            size="large"
+            options={productOptions.map((product) => {
+              return {
+                label: product.name,
+                value: product.name,
+                id: product._id,
+                format: product.format,
+                category: product.category,
+              };
+            })}
+            onSearch={onProductSearch}
+            onSelect={onProductSelect}
+          >
+            <Input name="name" value={editingProduct?.name} type="text" />
+          </AutoComplete>
+
+          <Input id="category" value={editingProduct?.category}></Input>
+
+          <Input id="format" value={editingProduct?.format}></Input>
           <Select
             id="type"
             value={editingProduct?.type}
@@ -247,31 +290,6 @@ const Avaris = () => {
           >
             <Select.Option value="livraison">Livraison</Select.Option>
             <Select.Option value="magasin">Magasin</Select.Option>
-          </Select>
-          <Select
-            id="category"
-            value={editingProduct?.category}
-            onChange={(e) => {
-              setEditingProduct((pre) => {
-                return { ...pre, category: e };
-              });
-            }}
-          >
-            <Select.Option value="Casier">Casier</Select.Option>
-            <Select.Option value="Plastic">Plastic</Select.Option>
-          </Select>
-
-          <Select
-            id="format"
-            value={editingProduct?.format}
-            onChange={(e) => {
-              setEditingProduct((pre) => {
-                return { ...pre, format: e };
-              });
-            }}
-          >
-            <Select.Option value="Grand format">Grand format</Select.Option>
-            <Select.Option value="Petit format">Petit format</Select.Option>
           </Select>
 
           <Input

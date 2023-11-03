@@ -8,6 +8,7 @@ import {
   Table,
   message,
   Select,
+  Card,
 } from "antd";
 import React, { useState } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -15,7 +16,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectAllUser } from "../users/userSlice";
 import AddItem from "./components/AddItem";
 import { useNavigate } from "react-router-dom";
-import { nanoid } from "nanoid";
 import format from "../../utils/currency";
 import { formatDate } from "../../utils/formatDate";
 import addInvoice from "./actions/addInvoice";
@@ -32,6 +32,7 @@ const CreateInvoice = () => {
   const showModal = () => {
     setOpen(true);
   };
+  const OPTIONS = ["Espèces", "Emballages", "Ristourne", "Credit"];
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -39,7 +40,7 @@ const CreateInvoice = () => {
   const [location, setLocation] = useState("");
   const [group, setGroup] = useState("");
   const [date, setDate] = useState("");
-  const [paymentMode, setPaymentMode] = useState();
+  const [paymentMode, setPaymentMode] = useState([]);
   const [item, setItem] = useState([
     {
       name: "",
@@ -48,6 +49,8 @@ const CreateInvoice = () => {
       total: 0,
     },
   ]);
+
+  const filteredOptions = OPTIONS.filter((o) => !paymentMode.includes(o));
 
   const columns = [
     {
@@ -98,6 +101,7 @@ const CreateInvoice = () => {
     }
     return result;
   };
+
   const total_with_tax =
     VAT_amount + total_without_tax + ristourne + withdrawal_amount();
 
@@ -117,25 +121,21 @@ const CreateInvoice = () => {
           total_with_tax.toString(),
           ristourne.toString(),
           "",
-          date
+          date,
+          paymentMode
         )
       );
+      setName("");
+      setDate("");
+      setItem([...item]);
+      setOpen(false);
+      iMessage("success", "Facture Enregistrer");
     } catch (error) {
       if (error.response.status === 500) {
         iMessage("error", "Veillez remplir tous les champs ");
       }
       console.log(error.response.data);
     }
-    setName("");
-    setDate("");
-    setItem([...item]);
-    setOpen(false);
-    iMessage("success", "Facture Enregistrer");
-  };
-
-  const handleInvoiceCancel = () => {
-    console.log("Clicked cancel button");
-    setOpen(false);
   };
 
   const onNameSearch = (val) => {
@@ -195,27 +195,10 @@ const CreateInvoice = () => {
     }
   };
 
-  /* const onProductSearch = (val) => {
-    let filtered = allProducts.filter(
-      (obj) =>
-        obj._id !== 0 &&
-        obj.name.toString().toLowerCase().includes(val.toLowerCase())
-    );
-    setProductOptions(filtered);
+  const handleInvoiceCancel = () => {
+    console.log("Clicked cancel button");
+    setOpen(false);
   };
-
-  const onProductSelect = (value, option) => {
-    setProductName(option.value);
-    setFormat(option.format);
-    setPrice(option.price);
-    console.log(option);
-  }; */
-
-  /* const itemTotal = parseInt(price) * quantity;
-  const onFinish = (values) => {
-    console.log("Received values of form:", values);
-  };
- */
 
   const ConfirmInvoiceModal = ({ name, date }) => {
     return (
@@ -223,6 +206,7 @@ const CreateInvoice = () => {
         <Modal
           title="Confirmer la Facture"
           open={open}
+          okText="Confirmer"
           onOk={handleInvoiceConfirm}
           onCancel={handleInvoiceCancel}
         >
@@ -237,26 +221,15 @@ const CreateInvoice = () => {
             <Table dataSource={item} columns={columns} />
 
             <p className="text-red-500 ">
-              Assurez-vous de confirmer cette facture avant de continuer, car
-              elle ne peut pas être annulée.
+              Veillez confirmer cette facture avant de continuer, car elle ne
+              peut pas être annulée.
             </p>
 
             <div className="flex items-center justify-between ml-52">
               <p className="font-semibold ">Total HT</p>
               <p className="font-semibold ">{total_without_tax.toFixed(2)}</p>
             </div>
-            {/* <div className="flex items-center justify-between ml-52">
-              <p className="font-semibold ">Montant TVA</p>
-              <p className="font-semibold ">{VAT_amount.toFixed(2)}</p>
-            </div>
-            <div className="flex items-center justify-between ml-52">
-              <p className="font-semibold ">Précompte </p>
-              <p className="font-semibold ">{withdrawal_amount().toFixed(2)}</p>
-            </div>
-            <div className="flex items-center justify-between ml-52">
-              <p className="font-semibold ">Ristourne </p>
-              <p className="font-semibold ">{ristourne.toFixed(2)}</p>
-            </div> */}
+
             <div className="flex items-center justify-between ml-52">
               <p className="font-semibold ">Total TTC </p>
               <p className="font-semibold ">
@@ -280,12 +253,12 @@ const CreateInvoice = () => {
         ></Button>
       </div>
 
-      <div className="px-12 py-8 mb-24 border border-gray-700 border-solid rounded-md mx-36">
+      <Card bodyStyle={{ color: "gray" }} className="px-12 py-8 mb-24 mx-36">
         <div>
           <Title level={4}>Formulaire de facture</Title>
         </div>
 
-        <div className="">
+        <div>
           <h3 className="text-base ">Nom du client</h3>
           <AutoComplete
             size="large"
@@ -323,14 +296,16 @@ const CreateInvoice = () => {
           <div>
             <h3 className="text-base ">Mode de paiement </h3>
             <Select
-              onChange={(e) => setPaymentMode(e)}
+              mode="multiple"
+              placeholder="Mode de paiement"
               value={paymentMode}
-              placeholder="mode de paiement"
-            >
-              <Select.Option value="cash">Espèces</Select.Option>
-              <Select.Option value="packaging">Emballages</Select.Option>
-              <Select.Option value="ristourne">Ristourne</Select.Option>
-            </Select>
+              onChange={setPaymentMode}
+              style={{ width: "350px" }}
+              options={filteredOptions.map((item) => ({
+                value: item,
+                label: item,
+              }))}
+            />
           </div>
           <div>
             <h3 className="text-base ">Date </h3>
@@ -395,7 +370,7 @@ const CreateInvoice = () => {
         </div>
 
         <ConfirmInvoiceModal name={name} date={date} />
-      </div>
+      </Card>
     </>
   );
 };

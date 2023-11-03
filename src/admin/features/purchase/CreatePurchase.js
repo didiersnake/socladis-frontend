@@ -2,6 +2,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import {
   AutoComplete,
   Button,
+  Card,
   DatePicker,
   Form,
   Input,
@@ -14,6 +15,7 @@ import { selectAllProducts } from "../product/productSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Title from "antd/es/typography/Title";
+import addPurchase from "./actions/addPurchase";
 
 const CreatePurchase = () => {
   const navigate = useNavigate();
@@ -44,13 +46,38 @@ const CreatePurchase = () => {
     }, 1000);
   };
 
-  const handleAddStockItem = () => {};
-
-  const getAllProducts = allProducts.map((item) => (
-    <Select.Option key={item.id} value={item.name}>
-      {item.name}
-    </Select.Option>
-  ));
+  const handleAddPurchase = async () => {
+    try {
+      console.log(name);
+      if (name && date && quantity) {
+        await dispatch(
+          addPurchase(
+            name,
+            cost_price,
+            format,
+            quantity.toString(),
+            category,
+            date
+          )
+        );
+        setName("");
+        setCategory("");
+        setCostPrice("");
+        setDate("");
+        setFormat("");
+        setQuantity("");
+        iMessage("success", "Success");
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+        );
+      }
+      console.log(error);
+    }
+  };
 
   const onProductSearch = (val) => {
     let filtered = allProducts.filter(
@@ -65,7 +92,7 @@ const CreatePurchase = () => {
     setName(option.value);
     setCategory(option.category);
     setFormat(option.format);
-    console.log(option);
+    setCostPrice(option.unitPrice);
   };
 
   let content = (
@@ -80,6 +107,7 @@ const CreatePurchase = () => {
         className="grid gap-4 mx-auto"
         layout="horizontal"
         colon={false}
+        labelCol={{ span: 3 }}
         initialValues={{
           size: componentSize,
         }}
@@ -88,10 +116,10 @@ const CreatePurchase = () => {
         style={{
           minWidth: 600,
         }}
+        onFinish={handleAddPurchase}
       >
         <Form.Item
           label="Nom"
-          labelCol={{ span: 3 }}
           rules={[
             {
               required: true,
@@ -108,6 +136,7 @@ const CreatePurchase = () => {
                 id: product._id,
                 format: product.format,
                 category: product.category,
+                unitPrice: product.unitPrice,
               };
             })}
             onSearch={onProductSearch}
@@ -124,17 +153,16 @@ const CreatePurchase = () => {
           </AutoComplete>
         </Form.Item>
 
-        <Form.Item label="Category" labelCol={{ span: 3 }}>
+        <Form.Item label="Category">
           <Input id="category" value={category}></Input>
         </Form.Item>
 
-        <Form.Item label="Format" labelCol={{ span: 3 }}>
+        <Form.Item label="Format">
           <Input id="format" value={format} />
         </Form.Item>
 
         <Form.Item
           label="Prix "
-          labelCol={{ span: 3 }}
           rules={[
             {
               required: true,
@@ -142,16 +170,11 @@ const CreatePurchase = () => {
             },
           ]}
         >
-          <Input
-            id="costPrice"
-            value={cost_price}
-            onChange={(e) => setCostPrice(e.target.value)}
-          />
+          <Input id="costPrice" value={cost_price} />
         </Form.Item>
 
         <Form.Item
           label="Quantité"
-          labelCol={{ span: 3 }}
           rules={[
             {
               required: true,
@@ -168,7 +191,6 @@ const CreatePurchase = () => {
 
         <Form.Item
           label="Date"
-          labelCol={{ span: 3 }}
           rules={[
             {
               required: true,
@@ -184,11 +206,8 @@ const CreatePurchase = () => {
           />
         </Form.Item>
 
-        <Form.Item labelCol={{ span: 3 }}>
-          <Button
-            className="w-full text-white bg-slate-900 "
-            onClick={handleAddStockItem}
-          >
+        <Form.Item>
+          <Button htmlType="submit" className="w-full text-white bg-slate-900 ">
             Sauvegarder
           </Button>
         </Form.Item>
@@ -196,15 +215,13 @@ const CreatePurchase = () => {
     </div>
   );
   return (
-    <div className="mb-16 mx-44">
+    <div className="min-h-screen bg-white px-44">
       <Button
         className="my-4"
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <div className="border border-gray-700 border-solid rounded-md ">
-        {content}
-      </div>
+      <Card className="rounded-md ">{content}</Card>
     </div>
   );
 };
