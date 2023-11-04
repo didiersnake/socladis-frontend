@@ -73,7 +73,7 @@ const Products = () => {
     },
 
     {
-      ...columnItem(3, "Prix Unitaire", "unitPrice"),
+      ...columnItem(3, "Prix TTC", "unitPrice"),
       render: (price) => {
         return format(price);
       },

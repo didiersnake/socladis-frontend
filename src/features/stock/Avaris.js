@@ -174,7 +174,7 @@ const Avaris = () => {
       ></Table>
     </>
   );
-  return <div style={{ padding: "0px 70px" }}>{content}</div>;
+  return <div className="mx-16 my-10 ">{content}</div>;
 };
 
 export default Avaris;

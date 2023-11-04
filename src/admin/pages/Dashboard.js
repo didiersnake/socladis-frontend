@@ -1,6 +1,6 @@
 import React from "react";
 import Container from "../components/Container";
-import { Card, Row, Statistic } from "antd";
+import { Card, Statistic } from "antd";
 import CircumIcon from "@klarr-agency/circum-icons-react";
 
 import ColCard from "../components/dashboard/ColCard";
@@ -8,8 +8,6 @@ import ColCardIcon from "../components/dashboard/ColCardIcon";
 import Income from "../assets/png/shopping-bag.svg";
 
 import Trash from "../assets/png/trash-2.svg";
-import Percentage from "../assets/png/percent.svg";
-import Package from "../assets/png/package.svg";
 import BoxList from "../assets/png/layers (1).svg";
 
 import TrendingUp from "../assets/png/trending-up.svg";
@@ -118,7 +116,11 @@ const Dashbord = () => {
       return acc + curr;
     }, 0);
 
-  const cost_expenses = useSelector(selectAllPurchase);
+  const cost_expenses = filterDateByMonth(expense)
+    .map((exp) => exp.modif === "versement a la banque" && Number(exp.amount))
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
 
   // sales
 
@@ -187,11 +189,11 @@ const Dashbord = () => {
   const packs_sale_data = allProducts
     // get product names in an array
     .map((item) => item.name)
-    // check packs sold for each item in invoices
+    // check packs sold for each product in invoices
     .map((name) =>
       filterDateByMonth(sales)
         .map((sale) => {
-          //get product name with pack brand(name in array)
+          ///get sale item name with product brand(name in array)
           return sale.products.find((pdt) => pdt.name === name);
         })
         .filter((i) => i !== undefined)
@@ -261,8 +263,8 @@ const Dashbord = () => {
     };
 
     return (
-      <div className="p-4 bg-white rounded-md h-96">
-        <Bar options={options} data={data} />;
+      <div className="p-4 bg-white rounded-md h-96 w-12/12">
+        <Bar options={options} data={data} />
       </div>
     );
   };
@@ -347,7 +349,7 @@ const Dashbord = () => {
         },
         title: {
           display: true,
-          text: "Statistique Ventes",
+          text: "Packs Vendu",
         },
       },
     };
@@ -445,7 +447,7 @@ const Dashbord = () => {
       },
     };
     return (
-      <div className="p-4 bg-white rounded-md w-12/12 h-96 ">
+      <div className="p-4 bg-white rounded-md w-12/12 ">
         <Line options={options} data={data} />
       </div>
     );
@@ -453,71 +455,71 @@ const Dashbord = () => {
 
   const dashboard_inventory_statistics = [
     {
-      title: "Revenus Ventes (CFA)",
+      title: "Revenus Ventes",
       value: month_sales_income,
       color: "#fef0d9",
       icon: Downlownd,
     },
     {
-      title: "Total en Caisse (CFA)",
+      title: "Total en Caisse",
       value: month_total_income,
       color: "#d3fce0",
       icon: TrendingUp,
     },
     {
-      title: "Total Depenses (CFA)",
+      title: "Total Depenses",
       value: total_expenses,
       color: "#fabcb6",
       icon: TrendingDown,
     },
     {
-      title: "Depenses Achat (CFA)",
-      value: "###",
+      title: "Depenses Achat",
+      value: cost_expenses,
       color: "#fee0d2",
       icon: Share,
     },
   ];
 
   const SaleStat = ({ icon }) => {
-    return <div className="p-1">{icon}</div>;
+    return <div className="p-2">{icon}</div>;
   };
   const dashboard_sales_statistics = [
     {
-      title: "Ventes HT (CFA)",
+      title: "Ventes HT",
       value: month_sale_without_tax,
       icon: (
         <SaleStat
-          icon={<CircumIcon name="wallet" size={38} color={"blue"} />}
+          icon={<CircumIcon name="wallet" size={28} color={"blue"} />}
         />
       ),
     },
     {
-      title: "Total TVA (CFA)",
+      title: "Total TVA",
       value: month_TVA,
       color: "#d3fce0",
       icon: (
         <SaleStat
-          icon={<CircumIcon name="receipt" size={38} color={"#7a0177"} />}
+          icon={<CircumIcon name="receipt" size={28} color={"#7a0177"} />}
         />
       ),
     },
     {
-      title: "Précomte (CFA)",
+      title: "Précomte",
       value: month_withdrawal_amount,
       color: "#fabcb6",
       icon: (
         <SaleStat
-          icon={<CircumIcon name="coins_1" color={"#fed976"} size={38} />}
+          icon={<CircumIcon name="coins_1" color={"#fed976"} size={28} />}
         />
       ),
     },
     {
-      title: "Ristournes (CFA)",
+      title: "Ristournes",
       value: month_sales_quantity * 100,
       color: "#fee0d2",
       icon: (
         <SaleStat
-          icon={<CircumIcon name="discount_1" color={"#e31a1c"} size={38} />}
+          icon={<CircumIcon name="discount_1" color={"#e31a1c"} size={28} />}
         />
       ),
     },
@@ -581,14 +583,16 @@ const Dashbord = () => {
 
   const InventoryStatistics = () => {
     return (
-      <div className="grid grid-cols-2 col-span-2 gap-1 bg-white rounded-lg">
+      <div className="grid grid-cols-2 col-span-2 gap-2 rounded-lg">
         {dashboard_inventory_statistics.map((item, index) => (
-          <ColCard
-            key={index + 1}
-            icon={<ColCardIcon iconName={item.icon} color={item.color} />}
-            title={item.title}
-            value={item.value}
-          />
+          <Link>
+            <ColCard
+              key={index + 1}
+              icon={<ColCardIcon iconName={item.icon} color={item.color} />}
+              title={item.title}
+              value={item.value}
+            />
+          </Link>
         ))}
       </div>
     );
@@ -596,7 +600,7 @@ const Dashbord = () => {
 
   const StockStatistics = () => {
     return (
-      <div className="grid grid-cols-2 col-span-2 gap-1 rounded-lg">
+      <div className="grid grid-cols-2 col-span-2 gap-2 rounded-lg">
         {dashboard_stock_statistics.map((item, index) => (
           <Link to={item.link} key={index + 1}>
             <ColCard
@@ -613,15 +617,17 @@ const Dashbord = () => {
 
   const SalesStatistics = () => {
     return (
-      <div className="grid grid-cols-2 col-span-2 gap-1 bg-white rounded-lg">
+      <div className="grid grid-cols-2 col-span-2 gap-2 rounded-lg">
         {dashboard_sales_statistics.map((item, index) => (
-          <ColCard
-            key={index + 1}
-            title={item.title}
-            value={item.value}
-            icon={item.icon}
-            color={item?.text_color}
-          />
+          <Link>
+            <ColCard
+              key={index + 1}
+              title={item.title}
+              value={item.value}
+              icon={item.icon}
+              color={item?.text_color}
+            />
+          </Link>
         ))}
       </div>
     );
@@ -659,8 +665,8 @@ const Dashbord = () => {
       <div className="grid gap-4 mb-8">
         <div className="grid grid-cols-6 gap-12 ">
           <InventoryStatistics />
-          <StockStatistics />
           <SalesStatistics />
+          <StockStatistics />
         </div>
 
         <UsersStatistics />

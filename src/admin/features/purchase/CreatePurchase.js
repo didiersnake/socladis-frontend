@@ -7,7 +7,6 @@ import {
   Form,
   Input,
   InputNumber,
-  Select,
   message,
 } from "antd";
 import React, { useState } from "react";

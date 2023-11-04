@@ -4,19 +4,21 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import addAvarisAction from "./actions/addAvarisAction";
 
-import Title from "antd/es/typography/Title";
 import { selectAllProducts } from "../product/productSlice";
 import {
   AutoComplete,
   Button,
+  Card,
   DatePicker,
   Form,
   Input,
   InputNumber,
   message,
   Select,
+  Typography,
 } from "antd";
 
+const { Title } = Typography;
 const AddAvarisItem = () => {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -98,12 +100,6 @@ const AddAvarisItem = () => {
     }, 1000);
   };
 
-  const getAllProducts = allProducts.map((item) => (
-    <Select.Option key={item.id} value={item.name}>
-      {item.name}
-    </Select.Option>
-  ));
-
   let content = (
     <div className="flex flex-col gap-8 ">
       {contextHolder}
@@ -135,10 +131,6 @@ const AddAvarisItem = () => {
             },
           ]}
         >
-          {/*  <Select id="name" value={name} onChange={(e) => setName(e)}>
-            {getAllProducts}
-          </Select> */}
-
           <AutoComplete
             size="large"
             options={productOptions.map((product) => {
@@ -246,15 +238,13 @@ const AddAvarisItem = () => {
   );
 
   return (
-    <div className="mb-16 mx-44">
+    <div className="min-h-screen bg-white px-44">
       <Button
         className="my-4"
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <div className="border border-gray-700 border-solid rounded-md ">
-        {content}
-      </div>
+      <Card className="rounded-md ">{content}</Card>
     </div>
   );
 };

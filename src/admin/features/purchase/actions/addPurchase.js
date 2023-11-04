@@ -2,11 +2,10 @@ import api from "../../../../app/api/axios";
 import { createPurchase } from "../purchaseSlice";
 
 const addPurchase =
-  (name, purchase_price, format, quantity, category, date) =>
-  async (dispatch) => {
+  (name, unitPrice, format, quantity, category, date) => async (dispatch) => {
     const response = await api.post("/api/new/achats/", {
       name,
-      purchase_price,
+      unitPrice,
       format,
       quantity,
       category,

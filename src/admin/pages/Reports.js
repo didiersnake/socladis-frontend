@@ -7,6 +7,11 @@ import { useNavigate } from "react-router-dom";
 const SalesReport = lazy(() => import("../features/reports/ SalesReport"));
 const FuelReport = lazy(() => import("../features/reports/FuelReport"));
 const PurchaseReport = lazy(() => import("../features/reports/PurchaseReport"));
+const StoreAvaris = lazy(() => import("../features/reports/StoreAvaris"));
+const DeliveryAvaris = lazy(() => import("../features/reports/DeliveryAvaris"));
+const BrandSalesReport = lazy(() =>
+  import("../features/reports/BrandSalesReport")
+);
 
 const Reports = () => {
   const [start_date, setStartDate] = useState();
@@ -16,9 +21,10 @@ const Reports = () => {
 
   const navigate = useNavigate();
 
-  const onFinish = (values) => {
-    setGenerate(true);
-    console.log(values);
+  const onFinish = () => {
+    if (name && start_date && end_date) {
+      setGenerate(true);
+    }
   };
 
   const layout = {
@@ -121,12 +127,41 @@ const Reports = () => {
     </div>
   );
 
+  const report =
+    name === "revenus activités" ? (
+      <SalesReport start_date={start_date} end_date={end_date} />
+    ) : name === "depenses carburant" ? (
+      <FuelReport start_date={start_date} end_date={end_date} />
+    ) : name === "depenses achat" ? (
+      <PurchaseReport start_date={start_date} end_date={end_date} />
+    ) : name === "avaris magasin" ? (
+      <StoreAvaris start_date={start_date} end_date={end_date} />
+    ) : name === "avaris livraison" ? (
+      <DeliveryAvaris start_date={start_date} end_date={end_date} />
+    ) : name === "ventes par marques" ? (
+      <BrandSalesReport start_date={start_date} end_date={end_date} />
+    ) : (
+      ""
+    );
+
   return !generate ? (
     <div className="min-h-screen py-6 bg-white px-44">
       <Card className="rounded-md ">{content}</Card>
     </div>
-  ) : (
+  ) : name === "revenus activités" ? (
+    <SalesReport start_date={start_date} end_date={end_date} />
+  ) : name === "depenses carburant" ? (
+    <FuelReport start_date={start_date} end_date={end_date} />
+  ) : name === "depenses achat" ? (
     <PurchaseReport start_date={start_date} end_date={end_date} />
+  ) : name === "avaris magasin" ? (
+    <StoreAvaris start_date={start_date} end_date={end_date} />
+  ) : name === "avaris livraison" ? (
+    <DeliveryAvaris start_date={start_date} end_date={end_date} />
+  ) : name === "ventes par marques" ? (
+    <BrandSalesReport start_date={start_date} end_date={end_date} />
+  ) : (
+    ""
   );
 };
 

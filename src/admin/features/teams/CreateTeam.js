@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Input, Form, Space, message, Select } from "antd";
+import { Button, Input, Form, Space, message, Select, Card } from "antd";
 import {
   MinusCircleOutlined,
   PlusOutlined,
@@ -145,16 +145,14 @@ const CreateTeam = () => {
   );
 
   return (
-    <div className="px-44">
+    <div className="min-h-screen bg-white px-44">
       {contextHolder}
       <Button
         className="my-4 "
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <div className="border border-gray-700 border-solid rounded-md ">
-        {content}
-      </div>
+      <Card className="rounded-md ">{content}</Card>
     </div>
   );
 };

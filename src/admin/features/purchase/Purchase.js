@@ -4,7 +4,6 @@ import {
   DatePicker,
   Input,
   Modal,
-  Select,
   Table,
   message,
 } from "antd";
@@ -54,13 +53,12 @@ const Purchase = () => {
 
   useEffect(() => {
     readStockItems();
-  }, []);
- */
+  }, []); */
 
   const columns = [
     columnItem(0, "ID", "_id"),
     columnItem(2, "Nom", "name"),
-    columnItem(2, "Prix Achat", "purchase_price"),
+    columnItem(2, "Prix Achat", "unitPrice"),
     {
       ...columnItem(4, "Format", "format"),
       filters: [

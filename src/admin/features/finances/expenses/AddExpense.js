@@ -7,6 +7,7 @@ import {
   Select,
   message,
   Typography,
+  Card,
 } from "antd";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -182,16 +183,16 @@ const AddExpense = () => {
   );
 
   return (
-    <div className="mx-44">
+    <div className="min-h-screen bg-white px-44">
       {contextHolder}
       <Button
         className="my-4"
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <div className="border border-gray-700 border-solid rounded-md ">
+      <Card className="rounded-md ">
         {content}
-      </div>
+      </Card>
     </div>
   );
 };

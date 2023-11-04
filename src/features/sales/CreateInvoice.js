@@ -32,7 +32,7 @@ const CreateInvoice = () => {
   const showModal = () => {
     setOpen(true);
   };
-  const OPTIONS = ["Espèces", "Emballages", "Ristourne", "Credit"];
+  const OPTIONS = ["Cash", "Emballages", "Ristourne", "Credit"];
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -127,7 +127,14 @@ const CreateInvoice = () => {
       );
       setName("");
       setDate("");
-      setItem([...item]);
+      setItem([
+        {
+          name: "",
+          quantity: 1,
+          price: 0,
+          total: 0,
+        },
+      ]);
       setOpen(false);
       iMessage("success", "Facture Enregistrer");
     } catch (error) {
@@ -183,7 +190,7 @@ const CreateInvoice = () => {
   };
 
   const handleInvoice = () => {
-    if (name && date) {
+    if (name && date && paymentMode) {
       setTotalWithoutTax(
         item
           .map((item) => item.total)
@@ -192,6 +199,11 @@ const CreateInvoice = () => {
           }, 0)
       );
       showModal();
+    } else {
+      iMessage(
+        "error",
+        "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+      );
     }
   };
 
@@ -318,8 +330,8 @@ const CreateInvoice = () => {
           </div>
         </div>
 
-        <div className="">
-          <div className="flex items-center justify-between gap-32 p-2">
+        <div className="my-8 ">
+          <div className="flex items-center justify-between p-2">
             <Text>
               <strong> Category </strong>: {category}
             </Text>
@@ -342,6 +354,7 @@ const CreateInvoice = () => {
             setItem={setItem}
             onDelete={onDelete}
             itemDetails={itemDetails}
+            customerCategory={category}
           />
         ))}
 

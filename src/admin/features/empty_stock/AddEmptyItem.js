@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
+  Card,
   DatePicker,
   Form,
   Input,
@@ -218,15 +219,13 @@ const AddEmptyItem = () => {
 
   return (
     <div>
-      <div className="mb-16 mx-44">
+      <div className="min-h-screen bg-white px-44">
         <Button
           className="my-4"
           onClick={() => navigate(-1)}
           icon={<ArrowLeftOutlined />}
         ></Button>
-        <div className="border border-gray-700 border-solid rounded-md ">
-          {content}
-        </div>
+        <Card className="rounded-md">{content}</Card>
       </div>
     </div>
   );

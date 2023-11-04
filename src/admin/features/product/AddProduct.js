@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input, Select, Form, Card } from "antd";
+import { Button, Input, Select, Form, Card, InputNumber } from "antd";
 import { useDispatch } from "react-redux";
 import { message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -18,25 +18,56 @@ const AddProduct = () => {
   const [category, setCategory] = useState("");
   const [format, setFormat] = useState("");
   const [unitPrice, setUnitPrice] = useState("");
+  const [grossiste, setGrossiste] = useState();
+  const [semi, setSemi] = useState();
+  const [detaillant, setDetaillant] = useState();
 
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
 
+  const sale_price = [
+    {
+      grossiste: grossiste,
+      Semi_grossiste: semi,
+      detaillant: detaillant,
+      random: detaillant,
+    },
+  ];
   const handleAddProduct = async () => {
     try {
-      await dispatch(
-        createProductAction(
-          format === "Grand format" ? `${name} 1L` : name,
-          category,
-          format,
-          unitPrice
-        )
-      );
-      iMessage("success", "Success");
-      setCategory("");
-      setFormat("");
-      setUnitPrice("");
-      setName("");
+      if (
+        name &&
+        category &&
+        format &&
+        unitPrice &&
+        grossiste &&
+        semi &&
+        detaillant
+      ) {
+        console.log(sale_price);
+        await dispatch(
+          createProductAction(
+            format === "Grand format" ? `${name} 1L` : name,
+            category,
+            format,
+            unitPrice,
+            sale_price
+          )
+        );
+        iMessage("success", "Success");
+        setCategory("");
+        setFormat("");
+        setUnitPrice("");
+        setName("");
+        setGrossiste("");
+        setSemi("");
+        setDetaillant("");
+      } else {
+        iMessage(
+          "error",
+          "Veillez remplir tous les champs ou vérifier votre connexion Internet"
+        );
+      }
     } catch (error) {
       if (error.response.status === 500) {
         iMessage(
@@ -127,7 +158,7 @@ const AddProduct = () => {
           </Select>
         </Form.Item>
         <Form.Item
-          label="Prix de distribution"
+          label="Prix d'achat TTC"
           rules={[
             {
               required: true,
@@ -139,8 +170,60 @@ const AddProduct = () => {
             name="price"
             onChange={(e) => setUnitPrice(e.target.value)}
             value={unitPrice}
-            suffix="FCFA"
-            prefix="🏷️"
+            addonBefore="CFA"
+            min={0}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Prix grossiste"
+          rules={[
+            {
+              required: true,
+              message: "Entrez le prix ",
+            },
+          ]}
+        >
+          <Input
+            onChange={(e) => setGrossiste(e.target.value)}
+            value={grossiste}
+            addonBefore="CFA"
+            min={0}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Prix semi-grossiste"
+          rules={[
+            {
+              required: true,
+              message: "Entrez le prix ",
+            },
+          ]}
+        >
+          <Input
+            name="price"
+            onChange={(e) => setSemi(e.target.value)}
+            value={semi}
+            addonBefore="CFA"
+            min={0}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Prix detaillant"
+          rules={[
+            {
+              required: true,
+              message: "Entrez le prix ",
+            },
+          ]}
+        >
+          <Input
+            name="price"
+            onChange={(e) => setDetaillant(e.target.value)}
+            value={detaillant}
+            addonBefore="CFA"
+            min={0}
           />
         </Form.Item>
 

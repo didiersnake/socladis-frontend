@@ -2,23 +2,21 @@ import React from "react";
 import { selectAllProducts } from "../../../admin/features/product/productSlice";
 import { DeleteFilled } from "@ant-design/icons";
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { nanoid } from "nanoid";
-import {
-  AutoComplete,
-  Input,
-  InputNumber,
-  Space,
-  Button,
-  Typography,
-  Form,
-} from "antd";
+import { useSelector } from "react-redux";
+import { AutoComplete, Input, Button } from "antd";
 
-const AddItem = ({ itemDetails, handelOnChange, setItem, onDelete }) => {
+const AddItem = ({
+  itemDetails,
+  handelOnChange,
+  setItem,
+  onDelete,
+  customerCategory,
+}) => {
   const allProducts = useSelector(selectAllProducts);
   const [productOptions, setProductOptions] = useState([]);
   const [name, setName] = useState();
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState();
+  const [format, setFormat] = useState();
 
   const onProductSearch = (val) => {
     let filtered = allProducts.filter(
@@ -31,9 +29,26 @@ const AddItem = ({ itemDetails, handelOnChange, setItem, onDelete }) => {
 
   const onProductSelect = (value, option) => {
     setName(option.value);
-    setPrice(option.price);
+    setPrice(option.prices);
+    setFormat(option.format);
     console.log(option);
   };
+
+  function getPrice() {
+    if (name) {
+      return customerCategory === "grossiste"
+        ? Number(price[0]?.grossiste)
+        : customerCategory === "semi-grossiste"
+        ? Number(price[0]?.Semi_grossiste)
+        : customerCategory === "detaillant"
+        ? Number(price[0]?.detaillant)
+        : customerCategory === "random"
+        ? Number(price[0]?.detaillant)
+        : 0;
+    } else {
+      return 0;
+    }
+  }
 
   return (
     <div>
@@ -48,7 +63,7 @@ const AddItem = ({ itemDetails, handelOnChange, setItem, onDelete }) => {
                   label: product.name,
                   value: product.name,
                   id: product._id,
-                  price: product.unitPrice,
+                  prices: product.sale_price,
                   format: product.format,
                 };
               })}
@@ -79,12 +94,22 @@ const AddItem = ({ itemDetails, handelOnChange, setItem, onDelete }) => {
             />
           </div>
 
-          <div className="flex flex-col items-start px-2 py-2 ">
+          <div className="flex flex-col items-start px-2 py-2">
+            <h4>Format </h4>
+            <Input
+              name="format"
+              type="text"
+              value={(itemDetails.format = format)}
+              min={0}
+            />
+          </div>
+
+          <div className="flex flex-col items-start px-2 py-2">
             <h4>Prix </h4>
             <Input
               name="price"
               type="number"
-              value={(itemDetails.price = Number(price))}
+              value={(itemDetails.price = getPrice())}
               min={0}
             />
           </div>

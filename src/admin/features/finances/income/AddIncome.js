@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   DatePicker,
   Form,
   Input,
@@ -151,7 +152,7 @@ const AddIncome = () => {
   );
 
   return (
-    <div className="mx-44">
+    <div className="min-h-screen bg-white px-44">
       {contextHolder}
 
       <Button
@@ -159,9 +160,7 @@ const AddIncome = () => {
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <div className="border border-gray-700 border-solid rounded-md ">
-        {content}
-      </div>
+      <Card className="rounded-md ">{content}</Card>
     </div>
   );
 };

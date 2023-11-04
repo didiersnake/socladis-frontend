@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Button, Input, Select, Form } from "antd";
+import { Button, Input, Select, Form, Card, Typography } from "antd";
 import { createUserAction } from "./actions/createUserAction";
 import { useDispatch } from "react-redux";
 import { message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import Title from "antd/es/typography/Title";
+
+const { Title } = Typography;
 
 export const AddUser = () => {
   const [componentSize, setComponentSize] = useState("large");
@@ -242,15 +243,15 @@ export const AddUser = () => {
     </div>
   );
   return (
-    <div className="mb-16 mx-44">
+    <div className="min-h-screen bg-white px-44">
       <Button
         className="my-4"
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <div className="border border-gray-700 border-solid rounded-md ">
-        {content}
-      </div>
+      <Card className="rounded-md">{content}</Card>
     </div>
   );
 };
+
+export default AddUser;

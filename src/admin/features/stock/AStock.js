@@ -38,9 +38,9 @@ const AStock = () => {
     };
   }
 
-  /* const readStockItems = async () => {
+  const readStockItems = async () => {
     try {
-      await dispatch(readStockActions);
+      await dispatch(readStockActions());
     } catch (error) {
       console.log(error.response);
     }
@@ -49,7 +49,6 @@ const AStock = () => {
   useEffect(() => {
     readStockItems();
   }, []);
- */
 
   const columns = [
     columnItem(0, "ID", "_id"),
@@ -201,7 +200,7 @@ const AStock = () => {
       ></Table>
 
       <Modal
-        title="Modifier le produit"
+        title="Modifiez le seuil de stock"
         open={isEditing}
         okText="Sauvegarder"
         cancelText="Annuler"
@@ -216,47 +215,13 @@ const AStock = () => {
       >
         <div className="grid gap-2 ">
           <Input
-            value={editingProduct?.name}
+            placeholder="seuil de stock"
+            value={editingProduct?.unitPrice}
             onChange={(e) => {
               setEditingProduct((pre) => {
-                return { ...pre, name: e.target.value };
+                return { ...pre, unitPrice: e.target.value };
               });
             }}
-          />
-          <Select
-            id="category"
-            value={editingProduct?.category}
-            onChange={(e) => {
-              setEditingProduct((pre) => {
-                return { ...pre, category: e };
-              });
-            }}
-          >
-            <Select.Option value="Casier">Casier</Select.Option>
-            <Select.Option value="Plastic">Plastic</Select.Option>
-          </Select>
-
-          <Select
-            id="format"
-            value={editingProduct?.format}
-            onChange={(e) => {
-              setEditingProduct((pre) => {
-                return { ...pre, format: e };
-              });
-            }}
-          >
-            <Select.Option value="Grand format">Grand format</Select.Option>
-            <Select.Option value="Petit format">Petit format</Select.Option>
-          </Select>
-
-          <Input
-            id="quantity"
-            value={editingProduct?.quantity}
-            onChange={(e) =>
-              setEditingProduct((pre) => {
-                return { ...pre, quantity: e.target.value };
-              })
-            }
           />
         </div>
       </Modal>

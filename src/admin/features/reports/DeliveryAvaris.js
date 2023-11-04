@@ -1,10 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { selectAllAvarisProducts } from "../avaris/avarisSlice";
 import { filterByDateRange } from "../../../utils/dateFilters";
-import { selectAllExpenses } from "../finances/expenses/expenseSlice";
-import exportPdf from "../../../utils/exportPdf";
-import format from "../../../utils/currency";
 import { formatDate } from "../../../utils/formatDate";
+import exportPdf from "../../../utils/exportPdf";
 import { Button, Card, Table, Typography } from "antd";
 
 function columnItem(key, title, dataIndex) {
@@ -14,54 +13,59 @@ function columnItem(key, title, dataIndex) {
     dataIndex,
   };
 }
+
 const { Title } = Typography;
-const FuelReport = ({ start_date, end_date }) => {
-  const data = useSelector(selectAllExpenses);
+
+const DeliveryAvaris = ({ start_date, end_date }) => {
+  const data = useSelector(selectAllAvarisProducts);
   const [loader, setLoader] = useState();
   const filteredData = filterByDateRange(data, start_date, end_date).filter(
-    (exp) => exp.modif === "carburant" && exp
+    (item) => {
+      return item.type.toLowerCase() === "livraison" && item;
+    }
   );
-  const total_fuel_expense = filteredData
-    .map((exp) => exp.modif === "carburant" && Number(exp.amount))
+
+  const total_deluvery_avaris = filteredData
+    .map((item) => {
+      return item.type.toLowerCase() === "livraison" && Number(item.quantity);
+    })
     .reduce((acc, curr) => {
       return acc + curr;
     }, 0);
 
   const columns = [
     {
-      ...columnItem(3, "Date", "date"),
-      render: (date) => {
-        return formatDate(date);
+      ...columnItem(7, "Date", "date"),
+      render: (iDate) => {
+        return formatDate(iDate);
       },
     },
+    columnItem(2, "Nom", "name"),
     {
-      ...columnItem(1, "Sortie", "modif"),
-    },
-
-    {
-      ...columnItem(2, "Montant", "amount"),
-      render: (date) => {
-        return format(date);
-      },
+      ...columnItem(3, "Type", "type"),
     },
     {
-      ...columnItem(0, " Motif", "bank"),
+      ...columnItem(4, "Category", "category"),
     },
+    {
+      ...columnItem(5, "Format", "format"),
+    },
+    columnItem(6, "Nombre", "quantity"),
   ];
 
   let content = (
     <div className="flex flex-col gap-8">
       <div className="text-center px-14 bg-slate-900">
         <Title level={4} style={{ color: "white" }}>
-          Rapport depense carburant sur la periode du
+          Rapport avaris a la livraison sur la periode du
           {` ${formatDate(start_date)}`} au
           {` ${formatDate(end_date)}`}
         </Title>
       </div>
       <div className="grid grid-cols-2 mx-24">
         <div className="flex items-center gap-4 ">
-          <p> Totol depense en carburant </p>
-          <h4> {total_fuel_expense.toFixed(2)} </h4>
+          <p> Totol avaris a la livraison </p>
+          <h4> {total_deluvery_avaris} </h4>
         </div>
       </div>
       <Table
@@ -75,7 +79,7 @@ const FuelReport = ({ start_date, end_date }) => {
 
   const handleExportPdf = () => {
     setLoader(true);
-    exportPdf("Rapport Depense Carburant");
+    exportPdf("Rapport Avaris Livraison");
     setLoader(false);
   };
   return (
@@ -90,4 +94,4 @@ const FuelReport = ({ start_date, end_date }) => {
   );
 };
 
-export default FuelReport;
+export default DeliveryAvaris;

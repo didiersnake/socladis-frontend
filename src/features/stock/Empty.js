@@ -73,7 +73,7 @@ const Empty = () => {
   };
 
   return (
-    <div style={{ padding: "0px 70px" }}>
+    <div className="mx-16 my-10 ">
       <div className="py-6">
         <Button
           className=""
