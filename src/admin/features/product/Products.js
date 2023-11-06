@@ -4,10 +4,10 @@ import { Button, Table, Modal, message, Input, Select } from "antd";
 import Container from "../../components/Container";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import readProductAction from "./actions/readProductAction";
 import { selectAllProducts } from "./productSlice";
 import format from "../../../utils/currency";
 import editProductAction from "./actions/editProductAction";
+import readProductAction from "./actions/readProductAction";
 
 const Products = () => {
   const navigate = useNavigate();

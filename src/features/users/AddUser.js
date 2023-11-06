@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Button, Input, Select, Form, Card, Typography } from "antd";
 import { createUserAction } from "./actions/createUserAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { selectAllTeams } from "../../admin/features/teams/teamSlice";
 
 const { Title } = Typography;
 
@@ -14,6 +15,7 @@ export const AddUser = () => {
     setComponentSize(size);
   };
   const navigate = useNavigate();
+  const allgroups = useSelector(selectAllTeams);
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
   const [name, setName] = useState("");
@@ -55,7 +57,8 @@ export const AddUser = () => {
             phone,
             location,
             "non attribué",
-            password.trim()
+            password.trim(),
+            ""
           )
         );
       } else {
@@ -69,7 +72,8 @@ export const AddUser = () => {
             phone,
             location,
             group,
-            ""
+            "",
+            uniqueId
           )
         );
       }
@@ -217,11 +221,17 @@ export const AddUser = () => {
         </Form.Item>
 
         <Form.Item label="Equipe">
-          <Input
+          <Select
             disabled={roles === employee}
             value={group}
-            onChange={(e) => setGroup(e.target.value)}
-          />
+            onChange={(e) => setGroup(e)}
+          >
+            {allgroups.map((i, index) => (
+              <Select.Option key={index} value={i.name}>
+                {i.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item label="Mot_de_passe">
           <Input

@@ -1,5 +1,4 @@
 import React from "react";
-import Container from "../components/Container";
 import { Card, Statistic } from "antd";
 import CircumIcon from "@klarr-agency/circum-icons-react";
 
@@ -7,6 +6,7 @@ import ColCard from "../components/dashboard/ColCard";
 import ColCardIcon from "../components/dashboard/ColCardIcon";
 import Income from "../assets/png/shopping-bag.svg";
 
+import Container from "../components/Container";
 import Trash from "../assets/png/trash-2.svg";
 import BoxList from "../assets/png/layers (1).svg";
 
@@ -29,7 +29,6 @@ import { selectAllAvarisProducts } from "../features/avaris/avarisSlice";
 import { selectAllStockProducts } from "../features/stock/aStockSlice";
 import { selectAllIncomes } from "../features/finances/income/incomeSlice";
 import { selectAllExpenses } from "../features/finances/expenses/expenseSlice";
-import { selectAllPurchase } from "../features/purchase/purchaseSlice";
 
 import {
   Chart as ChartJS,

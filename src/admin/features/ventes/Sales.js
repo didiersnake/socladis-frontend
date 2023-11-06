@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import Container from "../../components/Container";
+import React, { lazy, useState } from "react";
 import { Button, DatePicker, Input, Table } from "antd";
 import { formatDate } from "../../../utils/formatDate";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectAllInvoices } from "../../../features/sales/invoiceSlice";
 import format from "../../../utils/currency";
 import { EyeOutlined, FilterOutlined } from "@ant-design/icons";
+const Container = lazy(() => import("../../components/Container"));
 
 const Sales = () => {
   const [searchText, setSearchText] = useState("");

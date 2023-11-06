@@ -1,4 +1,4 @@
-import { ArrowLeftOutlined } from "@ant-design/icons";
+
 import {
   AutoComplete,
   Button,
@@ -8,8 +8,8 @@ import {
   Input,
   Modal,
   Table,
+  Typography,
 } from "antd";
-import Title from "antd/es/typography/Title";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -17,10 +17,9 @@ import { selectAllUser } from "../../features/users/userSlice";
 import { formatDate } from "../../utils/formatDate";
 import { selectAllInvoices } from "../../features/sales/invoiceSlice";
 import format from "../../utils/currency";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import exportPdf from "../../utils/exportPdf";
 
+const { Title } = Typography;
 const Ristournes = () => {
   const [start_date, setStartDate] = useState();
   const [end_date, setEndDate] = useState();

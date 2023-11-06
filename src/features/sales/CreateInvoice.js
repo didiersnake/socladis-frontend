@@ -141,6 +141,11 @@ const CreateInvoice = () => {
       if (error.response.status === 500) {
         iMessage("error", "Veillez remplir tous les champs ");
       }
+      if (error.response.status === 400) {
+        setOpen(false);
+        iMessage("error", "Stock Insufisant pour vendre");
+      }
+
       console.log(error.response.data);
     }
   };

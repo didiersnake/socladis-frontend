@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Button, Input, Select, Form, Card, InputNumber } from "antd";
+import { Button, Input, Select, Form, Card, message, Typography } from "antd";
 import { useDispatch } from "react-redux";
-import { message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import createProductAction from "./actions/createProductAction";
 import { useNavigate } from "react-router-dom";
-import Title from "antd/es/typography/Title";
 
+const { Title } = Typography;
 const AddProduct = () => {
   const [componentSize, setComponentSize] = useState("large");
   const onFormLayoutChange = ({ size }) => {

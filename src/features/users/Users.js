@@ -25,7 +25,7 @@ const Users = () => {
   const finance = "ventes";
   const commercial = "commercial";
 
-  /*  const readUsers = async () => {
+  const readUsers = async () => {
     try {
       await dispatch(readUsersAction());
     } catch (error) {
@@ -35,7 +35,7 @@ const Users = () => {
 
   useEffect(() => {
     readUsers();
-  }, []); */
+  }, []);
 
   function columnItem(key, title, dataIndex) {
     return {
@@ -109,6 +109,7 @@ const Users = () => {
       ],
       onFilter: (value, record) => record.tax_system.indexOf(value) === 0,
     },
+    columnItem(9, "Code", "uniqueCode"),
     columnItem(5, "Tel", "phone"),
     columnItem(6, "Localisation", "location"),
     columnItem(7, "Equipe", "group"),
@@ -277,6 +278,16 @@ const Users = () => {
           ) : (
             ""
           )}
+
+          <Input
+            disabled={editingUser?.roles === employee}
+            value={editingUser?.uniqueCode}
+            onChange={(e) => {
+              setEditingUser((pre) => {
+                return { ...pre, uniqueCode: e.target.value };
+              });
+            }}
+          />
           <Select
             disabled={editingUser?.roles === employee}
             value={editingUser?.tax_system}
