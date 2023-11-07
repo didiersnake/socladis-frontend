@@ -53,7 +53,7 @@ export const AddUser = () => {
             roles,
             category,
             "non attribué",
-            "non attribué",
+
             phone,
             location,
             "non attribué",
