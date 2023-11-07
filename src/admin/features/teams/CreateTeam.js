@@ -30,21 +30,29 @@ const CreateTeam = () => {
 
   const handleCreateTeam = async (data) => {
     console.log(data);
-    let members = data.users.map((user) => {
-      return {
-        userName: user.userName,
-        userId: users.find((i) => i.name === user.userName)._id,
-      };
-    });
-    console.log(members);
-    try {
-      await dispatch(addTeamAction(data.team, members, ""));
-      iMessage("success", "Success");
-    } catch (error) {
-      if (error.response.status === 500) {
-        iMessage("error", "Veillez remplir tous les champs ");
+    if (data.users && data.team) {
+      let members = data.users.map((user) => {
+        return {
+          userName: user.userName,
+          userId: users.find((i) => i.name === user.userName)._id,
+        };
+      });
+
+      try {
+        await dispatch(addTeamAction(data.team, members, ""));
+        iMessage("success", "Success");
+        navigate(-1);
+      } catch (error) {
+        if (error.response.status === 500) {
+          iMessage("error", "Veillez remplir tous les champs ");
+        }
+        console.log(error.response.data);
       }
-      console.log(error.response.data);
+    } else {
+      iMessage(
+        "error",
+        "Veillez remplir tous les champs ou verifiez votre connexion"
+      );
     }
   };
 

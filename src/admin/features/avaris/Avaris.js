@@ -15,13 +15,15 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllAvarisProducts } from "./avarisSlice";
 import editAvarisAction from "./actions/editAvarisAction";
+import { selectAllProducts } from "../product/productSlice";
 import { formatDate } from "../../../utils/formatDate";
 
 const Avaris = () => {
   const [isEditing, setIsEditing] = useState(false); //toggle edit button state
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchText, setSearchText] = useState("");
-  const allProducts = useSelector(selectAllAvarisProducts);
+  const allAvarisProducts = useSelector(selectAllAvarisProducts);
+  const allProducts = useSelector(selectAllProducts);
   const dispatch = useDispatch();
   const [productOptions, setProductOptions] = useState([]);
   const [messageApi, contextHolder] = message.useMessage(); // message state
@@ -116,7 +118,7 @@ const Avaris = () => {
     },
   ];
 
-  let orderedStock = allProducts
+  let orderedStock = allAvarisProducts
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
 
@@ -226,7 +228,7 @@ const Avaris = () => {
             onChange={(e) => {
               setSearchText(e.target.value);
               setDataSource(
-                allProducts.filter((record) =>
+                allAvarisProducts.filter((record) =>
                   record?.name
                     .toLowerCase()
                     .includes(e.target.value.toLowerCase())

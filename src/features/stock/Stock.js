@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tag, Table, Input, Button } from "antd";
-import { ArrowRightOutlined } from "@ant-design/icons";
 
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectAllStockProducts } from "../../admin/features/stock/aStockSlice";
 import { formatDate } from "../../utils/formatDate";
+import readStockActions from "../../admin/features/stock/actions/readStockActions";
 
 function columnItem(key, title, dataIndex) {
   return {
@@ -21,6 +21,7 @@ const Stock = () => {
   const [dataSource, setDataSource] = useState(allProducts); // table data state
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const columns = [
     columnItem(0, "ID", "_id"),
@@ -77,6 +78,18 @@ const Stock = () => {
     },
   ];
 
+  const readStockItems = async () => {
+    try {
+      await dispatch(readStockActions());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readStockItems();
+  });
+
   let orderedStock = allProducts
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
@@ -100,9 +113,9 @@ const Stock = () => {
       </div>
       <>
         <div className="flex justify-between mb-2 ">
-          <Button type="primary" onClick={() => navigate("create")}>
+          {/*  <Button type="primary" onClick={() => navigate("create")}>
             Ajouter un produit
-          </Button>
+          </Button> */}
 
           {/* search bar */}
           <Input.Search

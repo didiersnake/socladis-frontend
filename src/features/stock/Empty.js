@@ -73,8 +73,8 @@ const Empty = () => {
   };
 
   return (
-    <div className="mx-16 my-10 ">
-      <div className="py-6">
+    <div className="pb-6 mx-16 my-10 ">
+      <div className="">
         <Button
           className=""
           onClick={() => navigate(-1)}

@@ -37,7 +37,7 @@ const StoreAvaris = () => {
   ];
   return (
     <div className="mx-8 ">
-      <h2>Avaris a la livraison</h2>
+      <h2>Avaris au magasin</h2>
       <Button
         className="my-4"
         onClick={() => navigate(-1)}

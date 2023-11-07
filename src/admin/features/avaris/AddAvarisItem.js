@@ -87,6 +87,9 @@ const AddAvarisItem = () => {
           "Veillez remplir tous les champs ou vérifier votre connexion Internet"
         );
       }
+      if (error.response.status === 400) {
+        iMessage("error", "La nombre indiqué n'est disponible en stock");
+      }
       console.log(error.response.data);
     }
   };

@@ -48,6 +48,7 @@ const InvoiceView = () => {
     setUserTaxSystem(user?.tax_system);
     setUserPhone(user?.phone);
     setTeam(user?.group);
+    setUserCode(user?.uniqueCode);
   }, [allUsers, invoice.clientName]);
 
   const handleExportPdf = () => {
@@ -81,30 +82,41 @@ const InvoiceView = () => {
             <Title level={5}>{formatDate(invoice.date)}</Title>
           </div>
         </div>
-        <div className="flex flex-col gap-2 px-12 py-6 my-4">
-          <div className="grid grid-cols-6 px-12 border border-black outline">
-            <p className="col-span-2 font-semibold">Client </p>
-            <p className="font-semibold">Code </p>
-            <p className="font-semibold">Tel </p>
+        <div className="flex flex-col gap-4 px-12 py-6 my-4">
+          <div className="flex items-center justify-between w-1/3 ">
+            <p className="font-semibold">Facture de: </p>
+            <h3>{invoice.clientName}</h3>
+          </div>
+
+          <div className="grid grid-cols-4 px-12 border border-black outline">
+            <p className="font-semibold">Code client </p>
+            <p className="font-semibold">Telephone </p>
             <p className="font-semibold"> Regime </p>
             <p className="font-semibold"> Category </p>
           </div>
 
-          <div className="grid grid-cols-6 px-12 ">
-            <Text className="col-span-2 ">{invoice.clientName}</Text>
-            <Text>#023873</Text>
+          <div className="grid grid-cols-4 px-12 ">
+            <Text>{userCode}</Text>
             <Text>{user_phone}</Text>
             <Text>{user_tax_system}</Text>
             <Text>{user_category}</Text>
           </div>
 
-          <div className="grid grid-cols-5 px-12 mt-4 border border-black outline">
+          <div className="grid grid-cols-4 px-12 mt-4 border border-black outline">
             <p className="col-span-2 font-semibold">Mode de paiement </p>
+            <p className="font-semibold "># Facture</p>
             <p className="font-semibold ">Equipe </p>
           </div>
 
-          <div className="grid grid-cols-5 px-12">
-            <Text className="col-span-2 ">{}</Text>
+          <div className="grid grid-cols-4 px-12">
+            <div className="col-span-2 ">
+              {invoice?.payment_method.map((i, index) => (
+                <Text key={index} className="px-1 ">
+                  {i}
+                </Text>
+              ))}
+            </div>
+            <Text>{invoice.invoice_number} </Text>
             <Text>{team} </Text>
           </div>
 

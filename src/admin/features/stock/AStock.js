@@ -39,7 +39,7 @@ const AStock = () => {
 
   useEffect(() => {
     readStockItems();
-  }, []);
+  });
 
   const columns = [
     columnItem(0, "ID", "_id"),
@@ -85,7 +85,7 @@ const AStock = () => {
       ...columnItem(8, "Statut", "status"),
 
       render: (status, record) => {
-        return record.quantity > record.unitPrice ? (
+        return Number(record.quantity) > Number(record.unitPrice) ? (
           <>
             <Tag key={record._id} color={"green"}>
               en stock

@@ -661,7 +661,7 @@ const Dashbord = () => {
 
   const DashboardItems = () => {
     return (
-      <div className="grid gap-4 mb-8">
+      <div className="grid w-full gap-4 mb-8 ">
         <div className="grid grid-cols-6 gap-12 ">
           <InventoryStatistics />
           <SalesStatistics />

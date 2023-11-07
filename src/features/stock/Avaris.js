@@ -101,7 +101,7 @@ const Avaris = () => {
 
   let content = (
     <>
-      <div className="py-6">
+      <div className="">
         <Button
           className=""
           onClick={() => navigate(-1)}
@@ -174,7 +174,7 @@ const Avaris = () => {
       ></Table>
     </>
   );
-  return <div className="mx-16 my-10 ">{content}</div>;
+  return <div className="pb-6 mx-16 my-10 ">{content}</div>;
 };
 
 export default Avaris;

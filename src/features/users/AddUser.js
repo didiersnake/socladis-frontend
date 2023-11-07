@@ -58,7 +58,7 @@ export const AddUser = () => {
             location,
             "non attribué",
             password.trim(),
-            ""
+            "non attribué"
           )
         );
       } else {
@@ -67,12 +67,11 @@ export const AddUser = () => {
             name,
             roles,
             category,
-            uniqueId,
             tax_system,
             phone,
             location,
             group,
-            "",
+            "non attribué",
             uniqueId
           )
         );
@@ -86,6 +85,7 @@ export const AddUser = () => {
       setRoles("");
       setPassword("");
       setTaxSystem("");
+      setUniqueId("");
     } catch (error) {
       if (error.response.status === 500) {
         iMessage(
@@ -143,6 +143,14 @@ export const AddUser = () => {
           </Select>
         </Form.Item>
 
+        <Form.Item label="Code Client">
+          <Input
+            disabled={roles === employee}
+            value={uniqueId}
+            onChange={(e) => setUniqueId(e.target.value)}
+          />
+        </Form.Item>
+
         <Form.Item label="Category">
           {roles === employee ? (
             <Select value={category} onChange={(e) => setCategory(e)}>
@@ -167,13 +175,6 @@ export const AddUser = () => {
           ) : (
             ""
           )}
-        </Form.Item>
-
-        <Form.Item label="Numero ID">
-          <Input
-            value={uniqueId}
-            onChange={(e) => setUniqueId(e.target.value)}
-          />
         </Form.Item>
 
         <Form.Item label="Regime_Fiscale">

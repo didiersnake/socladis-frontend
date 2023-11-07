@@ -64,6 +64,8 @@ const Users = () => {
       ],
       onFilter: (value, record) => record.roles.indexOf(value) === 0,
     },
+    columnItem(9, "Code", "uniqueCode"),
+
     {
       title: "Category",
       dataIndex: "category",
@@ -109,7 +111,6 @@ const Users = () => {
       ],
       onFilter: (value, record) => record.tax_system.indexOf(value) === 0,
     },
-    columnItem(9, "Code", "uniqueCode"),
     columnItem(5, "Tel", "phone"),
     columnItem(6, "Localisation", "location"),
     columnItem(7, "Equipe", "group"),
@@ -240,6 +241,15 @@ const Users = () => {
             <Select.Option value={employee}>Employé</Select.Option>
             <Select.Option value={customer}>Client</Select.Option>
           </Select>
+          <Input
+            disabled={editingUser?.roles === employee}
+            value={editingUser?.uniqueCode}
+            onChange={(e) => {
+              setEditingUser((pre) => {
+                return { ...pre, uniqueCode: e.target.value };
+              });
+            }}
+          />
           {editingUser?.roles === employee ? (
             <Select
               value={editingUser?.category}
@@ -279,15 +289,6 @@ const Users = () => {
             ""
           )}
 
-          <Input
-            disabled={editingUser?.roles === employee}
-            value={editingUser?.uniqueCode}
-            onChange={(e) => {
-              setEditingUser((pre) => {
-                return { ...pre, uniqueCode: e.target.value };
-              });
-            }}
-          />
           <Select
             disabled={editingUser?.roles === employee}
             value={editingUser?.tax_system}
