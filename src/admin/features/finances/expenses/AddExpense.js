@@ -79,9 +79,9 @@ const AddExpense = () => {
       </div>
       <Form
         onFinish={handleAddExpense}
-        className="grid gap-6 mx-auto"
+        className="grid mx-auto"
         layout="horizontal"
-        labelCol={{ span: 3 }}
+        labelCol={{ span: 5 }}
         colon={false}
         initialValues={{
           size: componentSize,
@@ -89,7 +89,7 @@ const AddExpense = () => {
         onValuesChange={onFormLayoutChange}
         size={componentSize}
         style={{
-          minWidth: 600,
+          minWidth: 500,
         }}
       >
         <Form.Item
@@ -183,16 +183,14 @@ const AddExpense = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white px-44">
+    <div className="min-h-screen px-2 mx-auto bg-white">
       {contextHolder}
       <Button
         className="my-4"
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <Card className="rounded-md ">
-        {content}
-      </Card>
+      <Card className="rounded-md ">{content}</Card>
     </div>
   );
 };

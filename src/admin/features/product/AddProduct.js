@@ -96,16 +96,16 @@ const AddProduct = () => {
         </Title>
       </div>
       <Form
-        className="grid gap-6 mx-auto"
+        className="grid mx-auto"
         colon={false}
-        labelCol={{ span: 6 }}
+        labelCol={{ span: 8 }}
         initialValues={{
           size: componentSize,
         }}
         onValuesChange={onFormLayoutChange}
         size={componentSize}
         style={{
-          minWidth: 600,
+          minWidth: 500,
         }}
       >
         <Form.Item
@@ -238,7 +238,7 @@ const AddProduct = () => {
     </div>
   );
   return (
-    <div className="min-h-screen bg-white px-44">
+    <div className="min-h-screen px-2 mx-auto bg-white">
       {contextHolder}
 
       <Button
@@ -246,7 +246,7 @@ const AddProduct = () => {
         onClick={() => navigate(-1)}
         icon={<ArrowLeftOutlined />}
       ></Button>
-      <Card className="rounded-md ">{content}</Card>
+      <Card className="rounded-md px-auto ">{content}</Card>
     </div>
   );
 };

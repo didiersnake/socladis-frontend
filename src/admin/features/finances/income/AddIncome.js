@@ -75,9 +75,9 @@ const AddIncome = () => {
       </div>
       <Form
         onFinish={handleAddIncome}
-        className="grid gap-6 mx-auto"
+        className="grid mx-auto"
         layout="horizontal"
-        labelCol={{ span: 3 }}
+        labelCol={{ span: 5 }}
         colon={false}
         initialValues={{
           size: componentSize,
@@ -85,7 +85,7 @@ const AddIncome = () => {
         onValuesChange={onFormLayoutChange}
         size={componentSize}
         style={{
-          minWidth: 600,
+          minWidth: 500,
         }}
       >
         <Form.Item
@@ -152,7 +152,7 @@ const AddIncome = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white px-44">
+    <div className="min-h-screen mx-auto bg-white">
       {contextHolder}
 
       <Button

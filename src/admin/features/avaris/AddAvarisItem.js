@@ -112,17 +112,17 @@ const AddAvarisItem = () => {
         </Title>
       </div>
       <Form
-        className="grid gap-6 mx-auto"
+        className="grid mx-auto"
         colon={false}
         layout="horizontal"
-        labelCol={{ span: 4 }}
+        labelCol={{ span: 6 }}
         initialValues={{
           size: componentSize,
         }}
         onValuesChange={onFormLayoutChange}
         size={componentSize}
         style={{
-          minWidth: 600,
+          minWidth: 500,
         }}
       >
         <Form.Item
@@ -241,7 +241,7 @@ const AddAvarisItem = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white px-44">
+    <div className="min-h-screen px-2 mx-auto bg-white">
       <Button
         className="my-4"
         onClick={() => navigate(-1)}

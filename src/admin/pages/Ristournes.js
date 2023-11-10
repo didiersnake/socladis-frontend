@@ -1,4 +1,3 @@
-
 import {
   AutoComplete,
   Button,
@@ -18,6 +17,7 @@ import { formatDate } from "../../utils/formatDate";
 import { selectAllInvoices } from "../../features/sales/invoiceSlice";
 import format from "../../utils/currency";
 import exportPdf from "../../utils/exportPdf";
+import { EyeOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 const Ristournes = () => {
@@ -39,8 +39,11 @@ const Ristournes = () => {
   };
 
   const users = useSelector(selectAllUser);
+  const allCustomers = users.filter((obj) => obj.roles.toString() === "CLIENT");
   const invoices = useSelector(selectAllInvoices);
   const navigate = useNavigate();
+  const [searchText, setSearchText] = useState();
+  const [dataSource, setDataSource] = useState();
   const columns = [
     {
       title: "Date",
@@ -70,9 +73,57 @@ const Ristournes = () => {
     },
   ];
 
+  function columnItem(key, title, dataIndex) {
+    return {
+      key,
+      title,
+      dataIndex,
+    };
+  }
+
+  const columns_1 = [
+    columnItem(2, "Nom", "name"),
+    columnItem(4, "Ristourne", "ristourne"),
+    {
+      ...columnItem(7, "Date", "date"),
+      render: () => {
+        return formatDate(new Date());
+      },
+    },
+    {
+      ...columnItem(9, "Actions"),
+      render: (record) => {
+        return (
+          <>
+            <EyeOutlined
+              onClick={() => {
+                setName(record.name);
+                setOpen(true);
+              }}
+            />
+          </>
+        );
+      },
+    },
+  ];
+
   const data = filterByDateRange(invoices).filter(
     (sale) => sale.clientName === name
   );
+
+  const allRistournes = allCustomers.map((cust) => {
+    return {
+      name: cust.name,
+      ristourne: filterByDateRange(invoices)
+        .filter((sale) => sale.clientName === cust.name)
+        .map((item) => Number(item.ristourne))
+        .reduce((acc, curr) => {
+          return acc + curr;
+        }, 0),
+    };
+  });
+
+  console.log(allRistournes);
 
   const total_ristourn = data
     .map((item) => Number(item.ristourne))
@@ -80,31 +131,13 @@ const Ristournes = () => {
       return acc + curr;
     }, 0);
 
-  const onNameSearch = (val) => {
-    let filtered = users.filter(
-      (obj) =>
-        obj.roles.toString() === "CLIENT" &&
-        obj.name.toString().toLowerCase().includes(val.toLowerCase())
-    );
-    setNameOptions(filtered);
-  };
-
-  const onNameSelect = (value, option) => {
-    setName(option.value);
-  };
-
   const onFinish = (values) => {
     setOpen(true);
     console.log(values);
   };
 
   const layout = {
-    labelCol: {
-      span: 8,
-    },
-    wrapperCol: {
-      span: 16,
-    },
+    labelCol: {},
   };
 
   let content = (
@@ -114,94 +147,73 @@ const Ristournes = () => {
           Ristournes
         </Title>
       </div>
-      <Form
-        {...layout}
-        name="nest-messages"
-        onFinish={onFinish}
-        style={{
-          maxWidth: 600,
-        }}
-      >
-        <Form.Item
-          name={["user", "name"]}
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: "Entrez le nom",
-            },
-          ]}
-        >
-          <AutoComplete
-            size="large"
-            className="w-full"
-            options={nameOptions.map((name) => ({
-              label: name.name,
-              value: name.name,
-              id: name._id,
-              phone: name.phone,
-            }))}
-            onSearch={onNameSearch}
-            onSelect={onNameSelect}
+      <div className="flex items-end justify-around ">
+        <div>
+          <Form
+            {...layout}
+            name="nest-messages"
+            onFinish={onFinish}
+            style={{
+              maxWidth: 500,
+            }}
           >
-            <Input
-              name="name"
-              size="large"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-              placeholder="entrez le nom du client..."
-            />
-          </AutoComplete>
-        </Form.Item>
-
-        <Form.Item
-          name={["user", "start_date"]}
-          label="Date de début"
-          rules={[
-            {
-              required: true,
-              message: "date de bebut",
-            },
-          ]}
-        >
-          <DatePicker
-            onChange={(dateString) => setStartDate(dateString)}
-            value={start_date}
-            showTime={false}
-            format={"DD/MM/YYYY"}
-          />
-        </Form.Item>
-        <Form.Item
-          name={["user", "end_date"]}
-          label="Date de fin"
-          rules={[
-            {
-              required: true,
-              message: "date de fin",
-            },
-          ]}
-        >
-          <DatePicker
-            onChange={(dateString) => setEndDate(dateString)}
-            value={end_date}
-            showTime={false}
-            format={"DD/MM/YYYY"}
-          />
-        </Form.Item>
-
-        <Form.Item
-          wrapperCol={{
-            ...layout.wrapperCol,
-            offset: 8,
+            <Form.Item
+              name={["user", "start_date"]}
+              label="Date de début"
+              rules={[
+                {
+                  required: true,
+                  message: "date de bebut",
+                },
+              ]}
+            >
+              <DatePicker
+                onChange={(dateString) => setStartDate(dateString)}
+                value={start_date}
+                showTime={false}
+                format={"DD/MM/YYYY"}
+              />
+            </Form.Item>
+            <Form.Item
+              name={["user", "end_date"]}
+              label="Date de fin"
+              rules={[
+                {
+                  required: true,
+                  message: "date de fin",
+                },
+              ]}
+            >
+              <DatePicker
+                onChange={(dateString) => setEndDate(dateString)}
+                value={end_date}
+                showTime={false}
+                format={"DD/MM/YYYY"}
+              />
+            </Form.Item>
+          </Form>
+        </div>
+        <Input.Search
+          style={{ maxWidth: 300 }}
+          placeholder="Recherche..."
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            setDataSource(
+              allRistournes.filter((record) =>
+                record?.name
+                  .toLowerCase()
+                  .includes(e.target.value.toLowerCase())
+              )
+            );
           }}
-        >
-          <Button className="w-full text-white bg-slate-900" htmlType="submit">
-            Calcul Ristourne
-          </Button>
-        </Form.Item>
-      </Form>
+        />
+      </div>
+
+      <Table
+        dataSource={!searchText ? allRistournes : dataSource}
+        columns={columns_1}
+      />
     </div>
   );
 
@@ -227,6 +239,11 @@ const Ristournes = () => {
           onCancel={() => setOpen(false)}
         >
           <div className="p-5 actual-receipt">
+            <div className="text-center  px-14 bg-slate-900">
+              <Title level={4} style={{ color: "white" }}>
+                Socladis sarl
+              </Title>
+            </div>
             <div className="flex items-start justify-between w-1/2 ">
               <p className="font-semibold ">Client</p>
               <p className="font-semibold ">{name}</p>
@@ -249,7 +266,7 @@ const Ristournes = () => {
   };
 
   return (
-    <div className="min-h-screen py-6 bg-white px-44">
+    <div className="min-h-screen px-2 py-6 mx-auto bg-white">
       <Card className="rounded-md ">{content}</Card>
 
       <RistourneModal name={name} />

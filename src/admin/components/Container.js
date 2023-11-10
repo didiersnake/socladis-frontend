@@ -8,7 +8,7 @@ const Container = ({ content, contentName, iconName }) => {
   return (
     <Content
       style={{
-        margin: "0 16px",
+        margin: "0 8px",
       }}
     >
       <Title className="flex items-center gap-2 px-6 py-2 " level={5}>
@@ -16,7 +16,6 @@ const Container = ({ content, contentName, iconName }) => {
       </Title>
       <div
         style={{
-          padding: 24,
           minHeight: 360,
           background: "#ededed",
         }}

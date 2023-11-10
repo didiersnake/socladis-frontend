@@ -91,7 +91,7 @@ const AddEmptyItem = () => {
         </Title>
       </div>
       <Form
-        className="grid gap-6 mx-auto"
+        className="grid mx-auto"
         layout="horizontal"
         colon={false}
         initialValues={{
@@ -100,7 +100,7 @@ const AddEmptyItem = () => {
         onValuesChange={onFormLayoutChange}
         size={componentSize}
         style={{
-          minWidth: 600,
+          minWidth: 500,
         }}
       >
         <Form.Item
@@ -219,7 +219,7 @@ const AddEmptyItem = () => {
 
   return (
     <div>
-      <div className="min-h-screen bg-white px-44">
+      <div className="min-h-screen px-2 mx-auto bg-white">
         <Button
           className="my-4"
           onClick={() => navigate(-1)}

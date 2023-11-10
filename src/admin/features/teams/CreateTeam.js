@@ -153,7 +153,7 @@ const CreateTeam = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white px-44">
+    <div className="min-h-screen mx-auto bg-white">
       {contextHolder}
       <Button
         className="my-4 "
