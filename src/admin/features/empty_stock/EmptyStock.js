@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, DatePicker, Input, Modal, Select, Table, message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { formatDate } from "../../../utils/formatDate";
 import { selectAllEmptyStock } from "./emptyStockSlice";
 import { selectAllTeams } from "../teams/teamSlice";
 import editEmptyStockAction from "./actions/editEmptyStockAction";
+import readEmptyStockAction from "./actions/readEmptyStockAction";
 
 const EmptyStock = () => {
   const [isEditing, setIsEditing] = useState(false); //toggle edit button state
@@ -32,6 +33,18 @@ const EmptyStock = () => {
       dataIndex,
     };
   }
+
+  const readUsers = async () => {
+    try {
+      await dispatch(readEmptyStockAction());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readUsers();
+  }, []);
 
   const editItem = (item) => {
     try {

@@ -1,6 +1,8 @@
 import { Layout } from "./components/Layout";
 import { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
+import Reconciliation from "./admin/features/reconciliation/Reconciliation";
+
 const Dashboard = lazy(() => import("./admin/pages/Dashboard"));
 const Stock = lazy(() => import("./features/stock/Stock"));
 const AStock = lazy(() => import("./admin/features/stock/AStock"));
@@ -18,6 +20,8 @@ const Invoice = lazy(() => import("./features/sales/Invoice"));
 const Avaris = lazy(() => import("./admin/features/avaris/Avaris"));
 const Teams = lazy(() => import("./admin/features/teams/Teams"));
 const CreateTeam = lazy(() => import("./admin/features/teams/CreateTeam"));
+const ReturnLoad = lazy(() => import("./admin/features/stock/ReturnLoad"));
+const StockLoad = lazy(() => import("./admin/features/stock/StockLoad"));
 const AddAvarisItem = lazy(() =>
   import("./admin/features/avaris/AddAvarisItem")
 );
@@ -136,6 +140,10 @@ function App() {
               <Route index element={<AStock />} />
               <Route path="create" element={<AddStockItem />} />
             </Route>
+
+            <Route path="load" element={<StockLoad />} />
+            <Route path="return" element={<ReturnLoad />} />
+            <Route path="team report" element={<Reconciliation />} />
 
             <Route path="users">
               <Route index element={<Users />} />

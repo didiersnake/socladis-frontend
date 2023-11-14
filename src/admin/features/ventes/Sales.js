@@ -1,11 +1,12 @@
-import React, { lazy, useState } from "react";
+import React, { lazy, useEffect, useState } from "react";
 import { Button, DatePicker, Input, Table } from "antd";
 import { formatDate } from "../../../utils/formatDate";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectAllInvoices } from "../../../features/sales/invoiceSlice";
 import format from "../../../utils/currency";
 import { EyeOutlined, FilterOutlined } from "@ant-design/icons";
+import readInvoice from "../../../features/sales/actions/readInvoice";
 const Container = lazy(() => import("../../components/Container"));
 
 const Sales = () => {
@@ -18,6 +19,7 @@ const Sales = () => {
   const allInvoices = useSelector(selectAllInvoices);
   const [dataSource, setDataSource] = useState(allInvoices);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function columnItem(key, title, dataIndex) {
     return {
@@ -26,6 +28,18 @@ const Sales = () => {
       dataIndex,
     };
   }
+
+  const readUsers = async () => {
+    try {
+      await dispatch(readInvoice());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readUsers();
+  }, []);
 
   const number_of_items = (item) =>
     item["products"]

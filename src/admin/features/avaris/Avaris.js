@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EditOutlined, FilterOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -17,6 +17,7 @@ import { selectAllAvarisProducts } from "./avarisSlice";
 import editAvarisAction from "./actions/editAvarisAction";
 import { selectAllProducts } from "../product/productSlice";
 import { formatDate } from "../../../utils/formatDate";
+import readAvarisAction from "./actions/readAvarisAction";
 
 const Avaris = () => {
   const [isEditing, setIsEditing] = useState(false); //toggle edit button state
@@ -49,6 +50,18 @@ const Avaris = () => {
       console.log(error.response);
     }
   };
+
+  const readAvaris = async () => {
+    try {
+      await dispatch(readAvarisAction());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readAvaris();
+  }, []);
 
   const columns = [
     columnItem(0, "ID", "_id"),

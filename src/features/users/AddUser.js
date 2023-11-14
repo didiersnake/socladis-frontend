@@ -30,7 +30,7 @@ export const AddUser = () => {
 
   const employee = "EMPLOYEE";
   const customer = "CLIENT";
-  const stock = "Stock";
+  const stock = "stock";
   const finance = "ventes";
   const commercial = "commercial";
 
@@ -47,19 +47,23 @@ export const AddUser = () => {
   const handleAddUser = async () => {
     try {
       if (roles === employee) {
-        await dispatch(
-          createUserAction(
-            name.trim(),
-            roles,
-            category,
-            "non attribué",
-            phone,
-            location,
-            "non attribué",
-            password.trim(),
-            "non attribué"
-          )
-        );
+        if (password.trim().length < 6) {
+          iMessage("error", "Mots de passe invalid");
+        } else {
+          await dispatch(
+            createUserAction(
+              name.trim(),
+              roles,
+              category,
+              "non attribué",
+              phone,
+              location,
+              "non attribué",
+              password.trim(),
+              "non attribué"
+            )
+          );
+        }
       } else {
         await dispatch(
           createUserAction(
@@ -237,6 +241,7 @@ export const AddUser = () => {
           <Input
             disabled={roles === customer}
             value={password}
+            placeholder="6 caractères minimum"
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Item>

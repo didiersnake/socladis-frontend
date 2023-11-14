@@ -6,7 +6,6 @@ const readInvoice = () => async (dispatch) => {
 
   const invoices = response.data;
   dispatch(setInvoice(invoices));
-  console.log(invoices);
 };
 
 export default readInvoice;

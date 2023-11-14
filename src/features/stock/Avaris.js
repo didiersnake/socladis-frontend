@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FilterOutlined } from "@ant-design/icons";
 import { Button, Table, Input, DatePicker } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllAvarisProducts } from "../../admin/features/avaris/avarisSlice";
 import { formatDate } from "../../utils/formatDate";
+import readAvarisAction from "../../admin/features/avaris/actions/readAvarisAction";
 
 const Avaris = () => {
   const [searchText, setSearchText] = useState("");
@@ -26,6 +27,18 @@ const Avaris = () => {
       dataIndex,
     };
   }
+
+  const readAvaris = async () => {
+    try {
+      await dispatch(readAvarisAction());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readAvaris();
+  }, []);
 
   const columns = [
     columnItem(0, "ID", "_id"),

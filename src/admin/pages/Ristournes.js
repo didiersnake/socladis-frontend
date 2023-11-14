@@ -1,17 +1,7 @@
-import {
-  AutoComplete,
-  Button,
-  Card,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Typography,
-} from "antd";
+import { Card, DatePicker, Form, Input, Modal, Table, Typography } from "antd";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+
 import { selectAllUser } from "../../features/users/userSlice";
 import { formatDate } from "../../utils/formatDate";
 import { selectAllInvoices } from "../../features/sales/invoiceSlice";
@@ -25,7 +15,6 @@ const Ristournes = () => {
   const [end_date, setEndDate] = useState();
   const [name, setName] = useState();
 
-  const [nameOptions, setNameOptions] = useState([]);
   const [open, setOpen] = useState(false);
   const [loader, setLoader] = useState();
 
@@ -41,7 +30,6 @@ const Ristournes = () => {
   const users = useSelector(selectAllUser);
   const allCustomers = users.filter((obj) => obj.roles.toString() === "CLIENT");
   const invoices = useSelector(selectAllInvoices);
-  const navigate = useNavigate();
   const [searchText, setSearchText] = useState();
   const [dataSource, setDataSource] = useState();
   const columns = [
@@ -239,7 +227,7 @@ const Ristournes = () => {
           onCancel={() => setOpen(false)}
         >
           <div className="p-5 actual-receipt">
-            <div className="text-center  px-14 bg-slate-900">
+            <div className="text-center px-14 bg-slate-900">
               <Title level={4} style={{ color: "white" }}>
                 Socladis sarl
               </Title>

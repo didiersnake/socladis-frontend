@@ -4,16 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 import { useDispatch } from "react-redux";
 import { loginAction, redirect } from "./actions/loginAction";
-import { store } from "../../app/store";
-import readProductAction from "../../admin/features/product/actions/readProductAction";
-import readStockActions from "../../admin/features/stock/actions/readStockActions";
-import readUsersAction from "../users/actions/readUsersAction";
-import readAvarisAction from "../../admin/features/avaris/actions/readAvarisAction";
-import readTeamAction from "../../admin/features/teams/actions/readTeamAction";
-import readInvoice from "../sales/actions/readInvoice";
-import readEmptyStockAction from "../../admin/features/empty_stock/actions/readEmptyStockAction";
-import readIncomeAction from "../../admin/features/finances/income/actions/readIncomeAction";
-import readExpenseAction from "../../admin/features/finances/expenses/actions/readExpenseAction";
 
 const Login = () => {
   const onFinishFailed = (errorInfo) => {
@@ -67,24 +57,15 @@ const Login = () => {
     try {
       await dispatch(loginAction(name, password));
 
-      //load data
-      /* store.dispatch(readUsersAction());
-      store.dispatch(readProductAction());
-      store.dispatch(readStockActions());
-      store.dispatch(readAvarisAction());
-      store.dispatch(readTeamAction());
-      store.dispatch(readInvoice());
-      store.dispatch(readEmptyStockAction());
-      store.dispatch(readIncomeAction());
-      store.dispatch(readExpenseAction()); */
-
       //redirect to respective page
       const userRole = redirect();
       userRole === "admin"
         ? navigate("/admin")
         : userRole === "stock"
         ? navigate("/products")
-        : navigate("/sales");
+        : userRole === "ventes"
+        ? navigate("/sales")
+        : iMessage("error", "Access non authorisé");
     } catch (error) {
       if (error.response?.status === 400) {
         iMessage("error", "Nom d'utilisateur ou mot de passe incorrecte");

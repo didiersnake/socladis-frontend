@@ -30,7 +30,11 @@ const items = [
     [
       getItem("produits", "products"),
       getItem("Achats", "purchase"),
-      getItem("Stock", "stock"),
+      getItem("Stock", "", "", [
+        getItem("Magasin", "stock"),
+        getItem("Chargement", "load"),
+        getItem("Retour", "return"),
+      ]),
       getItem("Avaris", "issue"),
       getItem("Magasin Vide", "empty"),
     ]
@@ -43,13 +47,6 @@ const items = [
     </div>
   ),
 
-  getItem(
-    "Reconciliation",
-    "team report",
-    <div className="px-1 ">
-      <CircumIcon name="delivery_truck" size={18} />
-    </div>
-  ),
   getItem(
     "Finances",
     "finances",
@@ -82,6 +79,7 @@ const items = [
     </div>,
     [
       getItem("Ristournes", "ristourn"),
+      getItem("Reconciliation", "team report"),
       getItem("Generer rapport", "generate reports"),
     ]
   ),

@@ -2,8 +2,6 @@ import { Button, Card, DatePicker, Form, Select } from "antd";
 import Title from "antd/es/typography/Title";
 import React, { lazy, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-
 const SalesReport = lazy(() => import("../features/reports/ SalesReport"));
 const FuelReport = lazy(() => import("../features/reports/FuelReport"));
 const PurchaseReport = lazy(() => import("../features/reports/PurchaseReport"));
@@ -18,8 +16,6 @@ const Reports = () => {
   const [end_date, setEndDate] = useState();
   const [name, setName] = useState();
   const [generate, setGenerate] = useState(false);
-
-  const navigate = useNavigate();
 
   const onFinish = () => {
     if (name && start_date && end_date) {
@@ -127,25 +123,8 @@ const Reports = () => {
     </div>
   );
 
-  const report =
-    name === "revenus activités" ? (
-      <SalesReport start_date={start_date} end_date={end_date} />
-    ) : name === "depenses carburant" ? (
-      <FuelReport start_date={start_date} end_date={end_date} />
-    ) : name === "depenses achat" ? (
-      <PurchaseReport start_date={start_date} end_date={end_date} />
-    ) : name === "avaris magasin" ? (
-      <StoreAvaris start_date={start_date} end_date={end_date} />
-    ) : name === "avaris livraison" ? (
-      <DeliveryAvaris start_date={start_date} end_date={end_date} />
-    ) : name === "ventes par marques" ? (
-      <BrandSalesReport start_date={start_date} end_date={end_date} />
-    ) : (
-      ""
-    );
-
   return !generate ? (
-    <div className="min-h-screen py-6 bg-white px-44">
+    <div className="min-h-screen px-2 py-6 mx-auto bg-white">
       <Card className="rounded-md ">{content}</Card>
     </div>
   ) : name === "revenus activités" ? (

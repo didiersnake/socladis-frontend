@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { formatDate } from "../../utils/formatDate";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, DatePicker, Input, Table } from "antd";
 import { ArrowLeftOutlined, FilterOutlined } from "@ant-design/icons";
 import { selectAllEmptyStock } from "../../admin/features/empty_stock/emptyStockSlice";
+import readEmptyStockAction from "../../admin/features/empty_stock/actions/readEmptyStockAction";
 
 const Empty = () => {
   const [searchText, setSearchText] = useState("");
   const allProducts = useSelector(selectAllEmptyStock);
   const [dataSource, setDataSource] = useState(allProducts); // table data state
-
+  const dispatch = useDispatch();
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [isFiltering, setIsFiltering] = useState(false);
@@ -57,6 +58,18 @@ const Empty = () => {
   let orderedStock = allProducts
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
+
+  const readUsers = async () => {
+    try {
+      await dispatch(readEmptyStockAction());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readUsers();
+  }, []);
 
   const filterByDateRange = () => {
     if (startDate && endDate) {

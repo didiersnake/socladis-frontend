@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import format from "../../utils/currency";
 import { formatDate } from "../../utils/formatDate";
 import addInvoice from "./actions/addInvoice";
+import addTeamInvoice from "./actions/addTeamInvoice";
 
 const CreateInvoice = () => {
   const users = useSelector(selectAllUser);
@@ -32,7 +33,6 @@ const CreateInvoice = () => {
   const showModal = () => {
     setOpen(true);
   };
-  const OPTIONS = ["Cash", "Emballages", "Ristourne", "Credit"];
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -41,6 +41,12 @@ const CreateInvoice = () => {
   const [group, setGroup] = useState("");
   const [date, setDate] = useState("");
   const [paymentMode, setPaymentMode] = useState([]);
+  const [cash, setCash] = useState(0);
+  const [credit, setCredit] = useState(0);
+  const [emballages, setEmballages] = useState(0);
+  const [ristourn, setRistourn] = useState(0);
+  const [type, setType] = useState();
+
   const [item, setItem] = useState([
     {
       name: "",
@@ -49,8 +55,6 @@ const CreateInvoice = () => {
       total: 0,
     },
   ]);
-
-  const filteredOptions = OPTIONS.filter((o) => !paymentMode.includes(o));
 
   const columns = [
     {
@@ -95,7 +99,7 @@ const CreateInvoice = () => {
     } else if (tax_system === "simplifié CGA") {
       result = total_without_tax * 0.025;
     } else if (tax_system === "réel CGA") {
-      result = total_without_tax * 0.001;
+      result = total_without_tax * 0.01;
     } else {
       result = total_without_tax * 0.1;
     }
@@ -106,47 +110,100 @@ const CreateInvoice = () => {
     VAT_amount + total_without_tax + ristourne + withdrawal_amount();
 
   const handleInvoiceConfirm = async () => {
-    try {
-      await dispatch(
-        addInvoice(
-          name,
-          item.map((obj) =>
-            Object.fromEntries(
-              Object.entries(obj).map(([key, val]) => [key, String(val)])
+    if (type === "Magasin") {
+      try {
+        await dispatch(
+          addInvoice(
+            name,
+            item.map((obj) =>
+              Object.fromEntries(
+                Object.entries(obj).map(([key, val]) => [key, String(val)])
+              )
+            ),
+            total_without_tax.toString(),
+            VAT_amount.toString(),
+            withdrawal_amount().toString(),
+            total_with_tax.toString(),
+            ristourne.toString(),
+            "",
+            date,
+            paymentMode.map((obj) =>
+              Object.fromEntries(
+                Object.entries(obj).map(([key, val]) => [key, String(val)])
+              )
             )
-          ),
-          total_without_tax.toString(),
-          VAT_amount.toString(),
-          withdrawal_amount().toString(),
-          total_with_tax.toString(),
-          ristourne.toString(),
-          "",
-          date,
-          paymentMode
-        )
-      );
-      setName("");
-      setDate("");
-      setItem([
-        {
-          name: "",
-          quantity: 1,
-          price: 0,
-          total: 0,
-        },
-      ]);
-      setOpen(false);
-      iMessage("success", "Facture Enregistrer");
-    } catch (error) {
-      if (error.response.status === 500) {
-        iMessage("error", "Veillez remplir tous les champs ");
-      }
-      if (error.response.status === 400) {
+          )
+        );
+        setName("");
+        setDate("");
+        setItem([
+          {
+            name: "",
+            quantity: 1,
+            price: 0,
+            total: 0,
+          },
+        ]);
         setOpen(false);
-        iMessage("error", "Stock Insufisant pour vendre");
-      }
+        iMessage("success", "Facture Enregistrer");
+      } catch (error) {
+        if (error.response.status === 400) {
+          setOpen(false);
+          iMessage("error", "Stock Insufisant pour vendre");
+        }
+        if (error.response.status === 500) {
+          iMessage("error", "Veillez remplir tous les champs ");
+        }
 
-      console.log(error.response.data);
+        console.log(error.response);
+      }
+    }
+
+    if (type === "Commercial") {
+      try {
+        await dispatch(
+          addTeamInvoice(
+            name,
+            item.map((obj) =>
+              Object.fromEntries(
+                Object.entries(obj).map(([key, val]) => [key, String(val)])
+              )
+            ),
+            total_without_tax.toString(),
+            VAT_amount.toString(),
+            withdrawal_amount().toString(),
+            total_with_tax.toString(),
+            ristourne.toString(),
+            "",
+            date,
+            paymentMode.map((obj) =>
+              Object.fromEntries(
+                Object.entries(obj).map(([key, val]) => [key, String(val)])
+              )
+            )
+          )
+        );
+        setName("");
+        setDate("");
+        setItem([
+          {
+            name: "",
+            quantity: 1,
+            price: 0,
+            total: 0,
+          },
+        ]);
+        setOpen(false);
+        iMessage("success", "Facture Enregistrer");
+      } catch (error) {
+        if (error.response.status === 400) {
+          setOpen(false);
+          iMessage("error", "Stock Insufisant pour vendre");
+        }
+        if (error.response.status === 500) {
+          iMessage("error", "Veillez remplir tous les champs ");
+        }
+      }
     }
   };
 
@@ -165,7 +222,6 @@ const CreateInvoice = () => {
     setTaxSystem(option.tax_system);
     setLocation(option.location);
     setGroup(option.group);
-    console.log(option);
   };
 
   const onDelete = (name) => {
@@ -195,7 +251,7 @@ const CreateInvoice = () => {
   };
 
   const handleInvoice = () => {
-    if (name && date && paymentMode) {
+    if (name && date && type) {
       setTotalWithoutTax(
         item
           .map((item) => item.total)
@@ -203,6 +259,15 @@ const CreateInvoice = () => {
             return accumulator + currentValue;
           }, 0)
       );
+
+      setPaymentMode([
+        {
+          cash: cash,
+          credit: credit,
+          ristourn: ristourn,
+          emballages: emballages,
+        },
+      ]);
       showModal();
     } else {
       iMessage(
@@ -221,6 +286,7 @@ const CreateInvoice = () => {
     return (
       <>
         <Modal
+          className="w-1/2 "
           title="Confirmer la Facture"
           open={open}
           okText="Confirmer"
@@ -228,11 +294,16 @@ const CreateInvoice = () => {
           onCancel={handleInvoiceCancel}
         >
           <div>
+            <p className="font-semibold ">{`Nom du client : ${name}`}</p>
+
+            <p className="font-semibold ">{`Type de facture : ${type} `}</p>
+            <p className="font-semibold ">{`Date : ${formatDate(date)} `}</p>
+
             <div className="flex items-start justify-between ">
-              <p className="font-semibold ">{name}</p>
-            </div>
-            <div className="flex items-start justify-between ">
-              <p className="font-semibold ">{formatDate(date)}</p>
+              <p className="font-semibold ">{`cash : ${paymentMode[0]?.cash}`}</p>
+              <p className="font-semibold ">{`credit : ${paymentMode[0]?.credit}`}</p>
+              <p className="font-semibold ">{`ristourne : ${paymentMode[0]?.ristourn}`}</p>
+              <p className="font-semibold ">{`emballages : ${paymentMode[0]?.emballages}`}</p>
             </div>
 
             <Table dataSource={item} columns={columns} />
@@ -271,11 +342,21 @@ const CreateInvoice = () => {
       </div>
 
       <Card bodyStyle={{ color: "gray" }} className="px-12 py-8 mb-24 mx-36">
-        <div>
+        <div className="flex items-center justify-between ">
           <Title level={4}>Formulaire de facture</Title>
         </div>
 
         <div>
+          <h3>Type de facture</h3>
+          <Select
+            name="type"
+            onChange={(e) => setType(e)}
+            value={type}
+            placeholder="Type de facture"
+          >
+            <Select.Option value="Magasin">Magasin</Select.Option>
+            <Select.Option value="Commercial">Commercial</Select.Option>
+          </Select>
           <h3 className="text-base ">Nom du client</h3>
           <AutoComplete
             size="large"
@@ -310,20 +391,6 @@ const CreateInvoice = () => {
         </div>
 
         <div className="flex mb-6 justify-items-start gap-36">
-          <div>
-            <h3 className="text-base ">Mode de paiement </h3>
-            <Select
-              mode="multiple"
-              placeholder="Mode de paiement"
-              value={paymentMode}
-              onChange={setPaymentMode}
-              style={{ width: "350px" }}
-              options={filteredOptions.map((item) => ({
-                value: item,
-                label: item,
-              }))}
-            />
-          </div>
           <div>
             <h3 className="text-base ">Date </h3>
             <DatePicker
@@ -381,8 +448,41 @@ const CreateInvoice = () => {
           + Ajouter un champ
         </Button>
 
-        <div className="p-3 mx-auto">
-          <Button type="primary" onClick={handleInvoice}>
+        <div className="grid w-1/3 gap-1">
+          <h3 className="text-base ">Mode de paiement </h3>
+          <Input
+            name="cash"
+            onChange={(e) => setCash(e.target.value)}
+            value={cash}
+            placeholder="Montant Cash"
+            min={0}
+          />
+          <Input
+            name="credit"
+            onChange={(e) => setCredit(e.target.value)}
+            placeholder="Montant Credit"
+            value={credit}
+            min={0}
+          />
+          <Input
+            name="ristourn"
+            onChange={(e) => setRistourn(e.target.value)}
+            value={ristourn}
+            placeholder="Montant Ristourne"
+            defaultValue={"0"}
+            min={0}
+          />
+          <Input
+            name="emballage"
+            onChange={(e) => setEmballages(e.target.value)}
+            value={emballages}
+            placeholder="Montant Emballages"
+            defaultValue={0}
+          />
+        </div>
+
+        <div className="py-4 ">
+          <Button className="w-1/3" type="primary" onClick={handleInvoice}>
             Enregistrer et generez une facture
           </Button>
         </div>

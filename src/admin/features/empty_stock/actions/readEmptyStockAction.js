@@ -6,7 +6,6 @@ const readEmptyStockAction = () => async (dispatch) => {
 
   const emptyStock = response.data;
   dispatch(setEmptyStockItems(emptyStock));
-  console.log(emptyStock);
 };
 
 export default readEmptyStockAction;

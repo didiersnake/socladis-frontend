@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { lazy, useEffect, useState } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Table, Modal, message, Input, Select } from "antd";
 import Container from "../../components/Container";
@@ -7,7 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAllProducts } from "./productSlice";
 import format from "../../../utils/currency";
 import editProductAction from "./actions/editProductAction";
-import readProductAction from "./actions/readProductAction";
+
+const readProductAction = lazy(() => import("./actions/readProductAction"));
 
 const Products = () => {
   const navigate = useNavigate();
@@ -18,8 +19,11 @@ const Products = () => {
   const [searchText, setSearchText] = useState("");
   const allProducts = useSelector(selectAllProducts);
   const [dataSource, setDataSource] = useState(allProducts); // table data state
+  let grossiste;
+  let semi_grossiste;
+  let detaillant;
 
-  /* const readProducts = async () => {
+  const readProducts = async () => {
     try {
       await dispatch(readProductAction());
     } catch (error) {
@@ -29,7 +33,7 @@ const Products = () => {
 
   useEffect(() => {
     readProducts();
-  }, []); */
+  }, []);
 
   function columnItem(key, title, dataIndex) {
     return {
@@ -222,10 +226,58 @@ const Products = () => {
           </Select>
 
           <Input
-            value={editingProduct?.unitPrice}
+            placeholder="prix grossiste"
+            value={(grossiste = editingProduct?.sale_price[0].grossiste)}
             onChange={(e) => {
               setEditingProduct((pre) => {
-                return { ...pre, unitPrice: e.target.value };
+                return {
+                  ...pre,
+                  sale_price: [
+                    {
+                      grossiste: e.target.value,
+                      Semi_grossiste: semi_grossiste,
+                      detaillant: detaillant,
+                    },
+                  ],
+                };
+              });
+            }}
+          />
+          <Input
+            placeholder="prix semi grossiste"
+            value={
+              (semi_grossiste = editingProduct?.sale_price[0].Semi_grossiste)
+            }
+            onChange={(e) => {
+              setEditingProduct((pre) => {
+                return {
+                  ...pre,
+                  sale_price: [
+                    {
+                      grossiste: grossiste,
+                      Semi_grossiste: e.target.value,
+                      detaillant: detaillant,
+                    },
+                  ],
+                };
+              });
+            }}
+          />
+          <Input
+            placeholder="prix detaillant"
+            value={(detaillant = editingProduct?.sale_price[0].detaillant)}
+            onChange={(e) => {
+              setEditingProduct((pre) => {
+                return {
+                  ...pre,
+                  sale_price: [
+                    {
+                      grossiste: grossiste,
+                      Semi_grossiste: semi_grossiste,
+                      detaillant: e.target.value,
+                    },
+                  ],
+                };
               });
             }}
           />

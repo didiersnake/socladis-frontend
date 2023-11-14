@@ -7,7 +7,7 @@ import {
   Table,
   message,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined, FilterOutlined } from "@ant-design/icons";
@@ -16,6 +16,7 @@ import Container from "../../components/Container";
 import { selectAllPurchase } from "./purchaseSlice";
 import editPurchaseAction from "./actions/editPurchaseAction";
 import { selectAllProducts } from "../product/productSlice";
+import readPurchaseAction from "./actions/readPurchaseAction";
 
 const Purchase = () => {
   const [isEditing, setIsEditing] = useState(false); //toggle edit button state
@@ -43,9 +44,9 @@ const Purchase = () => {
     };
   }
 
-  /* const readStockItems = async () => {
+  const readStockItems = async () => {
     try {
-      await dispatch(readStockActions);
+      await dispatch(readPurchaseAction());
     } catch (error) {
       console.log(error.response);
     }
@@ -53,12 +54,13 @@ const Purchase = () => {
 
   useEffect(() => {
     readStockItems();
-  }, []); */
+  }, []);
 
   const columns = [
     columnItem(0, "ID", "_id"),
-    columnItem(2, "Nom", "name"),
-    columnItem(2, "Prix Achat", "unitPrice"),
+    columnItem(1, "Nom", "name"),
+    columnItem(2, "Facture", "invoice_number"),
+    columnItem(3, "Prix Achat", "unitPrice"),
     {
       ...columnItem(4, "Format", "format"),
       filters: [
@@ -74,7 +76,7 @@ const Purchase = () => {
       onFilter: (value, record) => record.format.indexOf(value) === 0,
     },
     {
-      ...columnItem(3, "Category", "category"),
+      ...columnItem(6, "Category", "category"),
       filters: [
         {
           text: "Casier",
@@ -96,7 +98,7 @@ const Purchase = () => {
       },
     },
     {
-      ...columnItem(4, "Actions"),
+      ...columnItem(8, "Actions"),
       render: (record) => {
         return (
           <>

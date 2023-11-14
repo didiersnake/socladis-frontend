@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, List, Typography } from "antd";
 import Container from "../../components/Container";
@@ -6,8 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTeams, selectAllTeams } from "./teamSlice";
 import readTeamAction from "./actions/readTeamAction";
-import editTeamAction from "./actions/editTeamAction";
-import deleteTeamAction from "./actions/deleteTeamAction";
 import api from "../../../app/api/axios";
 
 const Teams = () => {
@@ -16,7 +14,7 @@ const Teams = () => {
   const { Title, Text } = Typography;
   const dispatch = useDispatch();
 
-  /* const readTeams = async () => {
+  const readTeams = async () => {
     try {
       await dispatch(readTeamAction);
     } catch (error) {
@@ -26,7 +24,7 @@ const Teams = () => {
 
   useEffect(() => {
     readTeams();
-  }, []); */
+  }, []);
 
   const handleDelete = async (item) => {
     try {

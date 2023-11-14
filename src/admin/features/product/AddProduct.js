@@ -73,7 +73,6 @@ const AddProduct = () => {
           "error",
           "Veillez remplir tous les champs ou vérifier votre connexion Internet"
         );
-        console.log(error.response.data);
       }
     }
   };

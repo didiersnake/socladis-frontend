@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "../../../components/Container";
 import { Button, DatePicker, Input, Modal, Select, Table, message } from "antd";
 import { EditOutlined, FilterOutlined } from "@ant-design/icons";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllExpenses } from "./expenseSlice";
 import editExpenseAction from "./actions/editExpenseAction";
+import readExpenseAction from "./actions/readExpenseAction";
 
 const Expense = () => {
   const navigate = useNavigate();
@@ -31,6 +32,18 @@ const Expense = () => {
       dataIndex,
     };
   }
+
+  const readUsers = async () => {
+    try {
+      await dispatch(readExpenseAction());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readUsers();
+  }, []);
 
   const onEditProduct = (record) => {
     //open edit modal

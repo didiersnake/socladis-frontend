@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import InvoiceCard from "./components/InvoiceCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Typography, List } from "antd";
 import { selectAllInvoices } from "./invoiceSlice";
+import readInvoice from "./actions/readInvoice";
 
+const { Title } = Typography;
 const Invoice = () => {
-  const { Title } = Typography;
   const navigate = useNavigate();
   const data = useSelector(selectAllInvoices);
+  const dispatch = useDispatch();
 
   const number_of_items = (item) =>
     item["products"]
@@ -21,6 +23,18 @@ const Invoice = () => {
   let orderedInvoices = data
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
+
+  const readUsers = async () => {
+    try {
+      await dispatch(readInvoice());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readUsers();
+  }, []);
 
   return (
     <div>

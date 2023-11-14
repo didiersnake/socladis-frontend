@@ -336,6 +336,7 @@ const Users = () => {
           <Input
             disabled={editingUser?.roles === customer}
             value={editingUser?.password}
+            placeholder="mot de passe"
             onChange={(e) =>
               setEditingUser((pre) => {
                 return { ...pre, password: e.target.value };

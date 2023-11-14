@@ -6,7 +6,6 @@ const readStockActions = () => async (dispatch) => {
 
   const stock = response.data;
   dispatch(setStockItems(stock));
-  console.log(stock);
 };
 
 export default readStockActions;

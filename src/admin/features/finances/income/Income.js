@@ -1,5 +1,5 @@
 import { Button, DatePicker, Input, Modal, Select, Table, message } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined, FilterOutlined } from "@ant-design/icons";
@@ -9,6 +9,7 @@ import Container from "../../../components/Container";
 import { selectAllIncomes } from "./incomeSlice";
 import { formatDate } from "../../../../utils/formatDate";
 import editIncome from "./actions/editIncome";
+import readIncomeAction from "./actions/readIncomeAction";
 
 const Income = () => {
   const navigate = useNavigate();
@@ -33,6 +34,18 @@ const Income = () => {
       dataIndex,
     };
   }
+
+  const readUsers = async () => {
+    try {
+      await dispatch(readIncomeAction());
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    readUsers();
+  }, []);
 
   const onEditProduct = (record) => {
     //open edit modal
