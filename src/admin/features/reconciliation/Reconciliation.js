@@ -1,9 +1,13 @@
 import { Button, Card, DatePicker, Form } from "antd";
 import Title from "antd/es/typography/Title";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Reconciliation1 from "./Reconciliation1";
+import api from "../../../app/api/axios";
 
 const Reconciliation = () => {
   const [date, setDate] = useState();
+  const [charge, setCharge] = useState([]);
+  const [load_return, setLoadReturn] = useState([]);
   const [generate, setGenerate] = useState(false);
 
   const layout = {
@@ -68,12 +72,28 @@ const Reconciliation = () => {
     </div>
   );
 
+  useEffect(() => {
+    readCharge();
+    readReturn();
+  }, []);
+
+  const readCharge = async () => {
+    const response = await api.get("/api/all/charge/", {});
+    const res = response.data;
+    setCharge(res);
+  };
+  const readReturn = async () => {
+    const response = await api.get("/api/all/retours/", {});
+    const res = response.data;
+    setLoadReturn(res);
+  };
+
   return !generate ? (
     <div className="min-h-screen px-2 py-6 mx-auto bg-white">
       <Card className="rounded-md ">{content}</Card>
     </div>
   ) : (
-    ""
+    <Reconciliation1 date={date} charge={charge} load_return={load_return} />
   );
 };
 

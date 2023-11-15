@@ -11,16 +11,16 @@ const Container = ({ content, contentName, iconName }) => {
         margin: "0 8px",
       }}
     >
-      <Title className="flex items-center gap-2 px-6 py-2 " level={5}>
+      <Title className="flex items-center gap-2 px-2 py-2 " level={5}>
         <CircumIcon name={iconName} size={22} /> {contentName}
       </Title>
       <div
         style={{
           minHeight: 360,
-          background: "#ededed",
+          padding: 4,
         }}
       >
-        {content}
+        <div className="">{content}</div>
       </div>
     </Content>
   );

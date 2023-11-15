@@ -6,8 +6,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectInvoiceById } from "./invoiceSlice";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { selectAllUser } from "../users/userSlice";
 import exportPdf from "../../utils/exportPdf";
 
@@ -58,7 +56,7 @@ const InvoiceView = () => {
   };
 
   return (
-    <div className="mx-36">
+    <div className="mx-2">
       <div className="flex items-center justify-between py-6">
         <Button
           className=""

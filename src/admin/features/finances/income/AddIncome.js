@@ -152,7 +152,7 @@ const AddIncome = () => {
   );
 
   return (
-    <div className="min-h-screen mx-auto bg-white">
+    <div className="min-h-screen px-2 mx-auto bg-white">
       {contextHolder}
 
       <Button

@@ -61,7 +61,7 @@ const Avaris = () => {
 
   useEffect(() => {
     readAvaris();
-  }, []);
+  });
 
   const columns = [
     columnItem(0, "ID", "_id"),
