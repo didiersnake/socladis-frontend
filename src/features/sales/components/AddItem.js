@@ -31,7 +31,6 @@ const AddItem = ({
     setName(option.value);
     setPrice(option.prices);
     setFormat(option.format);
-    console.log(option);
   };
 
   function getPrice() {

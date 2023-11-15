@@ -59,8 +59,7 @@ const Purchase = () => {
   const columns = [
     columnItem(0, "ID", "_id"),
     columnItem(1, "Nom", "name"),
-    columnItem(2, "Facture", "invoice_number"),
-    columnItem(3, "Prix Achat", "unitPrice"),
+
     {
       ...columnItem(4, "Format", "format"),
       filters: [
@@ -89,7 +88,7 @@ const Purchase = () => {
       ],
       onFilter: (value, record) => record.category.indexOf(value) === 0,
     },
-
+    columnItem(2, "Facture", "invoice_number"),
     columnItem(5, "Quantité", "quantity"),
     {
       ...columnItem(7, "Date", "date"),
@@ -291,9 +290,18 @@ const Purchase = () => {
 
           <Input id="format" value={editingProduct?.format}></Input>
 
-          <Input value={editingProduct?.purchase_price} />
+          <Input
+            value={editingProduct?.invoice_number}
+            placeholder="numero de facture"
+            onChange={(e) => {
+              setEditingProduct((pre) => {
+                return { ...pre, invoice_number: e.target.value };
+              });
+            }}
+          />
           <Input
             value={editingProduct?.quantity}
+            placeholder="Quantité"
             onChange={(e) => {
               setEditingProduct((pre) => {
                 return { ...pre, quantity: e.target.value };

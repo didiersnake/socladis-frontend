@@ -16,6 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { selectAllTeams } from "../teams/teamSlice";
 import addStockloadAction from "./actions/addStockloadAction";
+import { selectAllStockProducts } from "./aStockSlice";
 
 const AddItem = ({ itemDetails, handelOnChange, setItem, onDelete }) => {
   const allProducts = useSelector(selectAllProducts);
@@ -108,6 +109,7 @@ const { Title } = Typography;
 const StockLoad = () => {
   const [team, setTeam] = useState();
   const [date, setDate] = useState();
+  const stock = useSelector(selectAllStockProducts);
   const [item, setItem] = useState([
     {
       name: "",
@@ -148,29 +150,42 @@ const StockLoad = () => {
     setItem(data);
   };
 
+  const checkQty = () => {
+    const stock_qty = item.map(
+      (item) => stock.find((pdt) => pdt.name === item.name).quantity
+    );
+    return item.filter(
+      (item, index) => parseInt(item.quantity) > parseInt(stock_qty[index])
+    );
+  };
   const handleAddStockLoad = async () => {
     if (team && item && date) {
-      try {
-        await dispatch(
-          addStockloadAction(
-            team,
-            item.map((obj) =>
-              Object.fromEntries(
-                Object.entries(obj).map(([key, val]) => [key, String(val)])
-              )
-            ),
-            date
-          )
-        );
-        iMessage("success", "Success");
-      } catch (error) {
-        if (error.response.status === 400) {
-          iMessage("error", "Veillez remplir tous les champs ");
+      if (checkQty().length === 0) {
+        try {
+          await dispatch(
+            addStockloadAction(
+              team,
+              item.map((obj) =>
+                Object.fromEntries(
+                  Object.entries(obj).map(([key, val]) => [key, String(val)])
+                )
+              ),
+              date
+            )
+          );
+          iMessage("success", "Success");
+        } catch (error) {
+          if (error.response.status === 500) {
+            iMessage("error", "Veillez remplir tous les champs ");
+          }
         }
-        if (error.response.status === 500) {
-          iMessage("error", "Veillez remplir tous les champs ");
-        }
+      } else {
+        const arr = checkQty();
+        const pdt = arr[0].name;
+        iMessage("error", `${pdt} insufisant en stock`);
       }
+    } else {
+      iMessage("error", "Veillez remplir tous les champs ");
     }
   };
 

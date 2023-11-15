@@ -256,6 +256,7 @@ const EmptyStock = () => {
             <Input
               id="quantity"
               value={editingProduct?.cashier}
+              placeholder="Casiers"
               onChange={(e) =>
                 setEditingProduct((pre) => {
                   return { ...pre, cashier: e.target.value };
@@ -265,6 +266,7 @@ const EmptyStock = () => {
             <Input
               id="quantity"
               value={editingProduct?.bottle}
+              placeholder="bouteille"
               onChange={(e) =>
                 setEditingProduct((pre) => {
                   return { ...pre, bottle: e.target.value };
@@ -274,6 +276,7 @@ const EmptyStock = () => {
             <Input
               id="quantity"
               value={editingProduct?.plastic}
+              placeholder="Plastics"
               onChange={(e) =>
                 setEditingProduct((pre) => {
                   return { ...pre, plastic: e.target.value };

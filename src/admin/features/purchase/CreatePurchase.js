@@ -29,6 +29,7 @@ const CreatePurchase = () => {
   const [category, setCategory] = useState();
   const [cost_price, setCostPrice] = useState();
   const [quantity, setQuantity] = useState();
+  const [invoice, setInvoice] = useState();
 
   const [componentSize, setComponentSize] = useState("large");
   const onFormLayoutChange = ({ size }) => {
@@ -47,7 +48,6 @@ const CreatePurchase = () => {
 
   const handleAddPurchase = async () => {
     try {
-      console.log(name);
       if (name && date && quantity) {
         await dispatch(
           addPurchase(
@@ -56,13 +56,15 @@ const CreatePurchase = () => {
             format,
             quantity.toString(),
             category,
-            date
+            date,
+            invoice
           )
         );
         setName("");
         setCategory("");
         setCostPrice("");
         setDate("");
+        setInvoice("");
         setFormat("");
         setQuantity("");
         iMessage("success", "Success");
@@ -170,6 +172,22 @@ const CreatePurchase = () => {
           ]}
         >
           <Input id="costPrice" value={cost_price} />
+        </Form.Item>
+
+        <Form.Item
+          label="Facture"
+          rules={[
+            {
+              required: true,
+              message: "Entrez le numero de facture",
+            },
+          ]}
+        >
+          <Input
+            id="factures"
+            value={invoice}
+            onChange={(e) => setInvoice(e.target.value)}
+          />
         </Form.Item>
 
         <Form.Item

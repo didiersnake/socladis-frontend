@@ -101,19 +101,11 @@ const InvoiceView = () => {
           </div>
 
           <div className="grid grid-cols-4 px-12 mt-4 border border-black outline">
-            <p className="col-span-2 font-semibold">Mode de paiement </p>
             <p className="font-semibold "># Facture</p>
             <p className="font-semibold ">Equipe </p>
           </div>
 
           <div className="grid grid-cols-4 px-12">
-            <div className="col-span-2 ">
-              {invoice?.payment_method.map((i, index) => (
-                <Text key={index} className="px-1 ">
-                  {i}
-                </Text>
-              ))}
-            </div>
             <Text>{invoice.invoice_number} </Text>
             <Text>{team} </Text>
           </div>
@@ -125,35 +117,54 @@ const InvoiceView = () => {
             columns={columns}
           />
 
-          <table class="table-auto w-1/3 text-start border-spacing-2  ml-auto">
-            <thead>
-              <tr></tr>
-            </thead>
+          <div className="flex justify-center w-2/3 gap-6 ml-auto ">
+            <table class="table-auto w-1/3 text-start border-spacing-2  ml-auto">
+              <thead>
+                <tr></tr>
+              </thead>
 
-            <tbody>
-              <tr>
-                <td className="font-semibold ">Total HT</td>
-                <td>{Number(invoice.total_without_tax).toFixed(2)}</td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td className="font-semibold ">Total HT</td>
+                  <td>{Number(invoice.total_without_tax).toFixed(2)}</td>
+                </tr>
 
-              <tr>
-                <td className="font-semibold ">Montant TVA</td>
-                <td> {Number(invoice.VAT_amount).toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td className="font-semibold ">Précompte</td>
-                <td>{Number(invoice.withdrawal_amount).toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td className="font-semibold ">Ristoune</td>
-                <td>{Number(invoice.ristourne).toFixed(2)}</td>
-              </tr>
-              <tr className="p-1 outline ">
-                <td className="font-semibold ">Total TTC</td>
-                <td>{format(Number(invoice.total_with_tax).toFixed(2))}</td>
-              </tr>
-            </tbody>
-          </table>
+                <tr>
+                  <td className="font-semibold ">Montant TVA</td>
+                  <td> {Number(invoice.VAT_amount).toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td className="font-semibold ">Précompte</td>
+                  <td>{Number(invoice.withdrawal_amount).toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td className="font-semibold ">Ristoune</td>
+                  <td>{Number(invoice.ristourne).toFixed(2)}</td>
+                </tr>
+                <tr className="p-1 outline ">
+                  <td className="font-semibold ">Total TTC</td>
+                  <td>{format(Number(invoice.total_with_tax).toFixed(2))}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div>
+              <h3>Paiement</h3>
+              <div>
+                <p>
+                  Cash : {Number(invoice?.payment_method[0]?.cash)?.toFixed(2)}
+                </p>
+                <p>
+                  Credit :
+                  {Number(invoice?.payment_method[0]?.credit)?.toFixed(2)}
+                </p>
+                <p>
+                  Ristourne :
+                  {Number(invoice?.payment_method[0]?.ristourn)?.toFixed(2)}
+                </p>
+                <p>Emballages : {invoice?.payment_method[0]?.emballages}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

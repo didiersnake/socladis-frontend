@@ -20,6 +20,7 @@ import format from "../../utils/currency";
 import { formatDate } from "../../utils/formatDate";
 import addInvoice from "./actions/addInvoice";
 import addTeamInvoice from "./actions/addTeamInvoice";
+import { selectAllStockProducts } from "../../admin/features/stock/aStockSlice";
 
 const CreateInvoice = () => {
   const users = useSelector(selectAllUser);
@@ -40,12 +41,12 @@ const CreateInvoice = () => {
   const [location, setLocation] = useState("");
   const [group, setGroup] = useState("");
   const [date, setDate] = useState("");
-  const [paymentMode, setPaymentMode] = useState([]);
-  const [cash, setCash] = useState(0);
-  const [credit, setCredit] = useState(0);
-  const [emballages, setEmballages] = useState(0);
-  const [ristourn, setRistourn] = useState(0);
+  let _cash;
+  let credit;
+  let emballages;
+  let ristourn;
   const [type, setType] = useState();
+  const stock = useSelector(selectAllStockProducts);
 
   const [item, setItem] = useState([
     {
@@ -111,51 +112,60 @@ const CreateInvoice = () => {
 
   const handleInvoiceConfirm = async () => {
     if (type === "Magasin") {
-      try {
-        await dispatch(
-          addInvoice(
-            name,
-            item.map((obj) =>
-              Object.fromEntries(
-                Object.entries(obj).map(([key, val]) => [key, String(val)])
-              )
-            ),
-            total_without_tax.toString(),
-            VAT_amount.toString(),
-            withdrawal_amount().toString(),
-            total_with_tax.toString(),
-            ristourne.toString(),
-            "",
-            date,
-            paymentMode.map((obj) =>
-              Object.fromEntries(
-                Object.entries(obj).map(([key, val]) => [key, String(val)])
+      if (checkQty().length === 0) {
+        try {
+          await dispatch(
+            addInvoice(
+              name,
+              item.map((obj) =>
+                Object.fromEntries(
+                  Object.entries(obj).map(([key, val]) => [key, String(val)])
+                )
+              ),
+              total_without_tax.toString(),
+              VAT_amount.toString(),
+              withdrawal_amount().toString(),
+              total_with_tax.toString(),
+              ristourne.toString(),
+              "",
+              date,
+              [
+                {
+                  cash: _cash ? _cash : 0,
+                  credit: credit ? credit : 0,
+                  ristourn: ristourn ? ristourn : 0,
+                  emballages: emballages ? emballages : 0,
+                },
+              ].map((obj) =>
+                Object.fromEntries(
+                  Object.entries(obj).map(([key, val]) => [key, String(val)])
+                )
               )
             )
-          )
-        );
-        setName("");
-        setDate("");
-        setItem([
-          {
-            name: "",
-            quantity: 1,
-            price: 0,
-            total: 0,
-          },
-        ]);
-        setOpen(false);
-        iMessage("success", "Facture Enregistrer");
-      } catch (error) {
-        if (error.response.status === 400) {
+          );
+          setName("");
+          setDate("");
+          setType("");
+          setItem([
+            {
+              name: "",
+              quantity: 1,
+              price: 0,
+              total: 0,
+            },
+          ]);
           setOpen(false);
-          iMessage("error", "Stock Insufisant pour vendre");
+          iMessage("success", "Facture Enregistrer");
+        } catch (error) {
+          if (error.response.status === 500) {
+            iMessage("error", "Veillez remplir tous les champs ");
+          }
         }
-        if (error.response.status === 500) {
-          iMessage("error", "Veillez remplir tous les champs ");
-        }
-
-        console.log(error.response);
+      } else {
+        const arr = checkQty();
+        const pdt = arr[0].name;
+        iMessage("error", `${pdt} insufisant en stock`);
+        setOpen(false);
       }
     }
 
@@ -176,7 +186,14 @@ const CreateInvoice = () => {
             ristourne.toString(),
             "",
             date,
-            paymentMode.map((obj) =>
+            [
+              {
+                cash: _cash,
+                credit: credit,
+                ristourn: ristourn,
+                emballages: emballages,
+              },
+            ].map((obj) =>
               Object.fromEntries(
                 Object.entries(obj).map(([key, val]) => [key, String(val)])
               )
@@ -185,6 +202,7 @@ const CreateInvoice = () => {
         );
         setName("");
         setDate("");
+        setType("");
         setItem([
           {
             name: "",
@@ -196,10 +214,6 @@ const CreateInvoice = () => {
         setOpen(false);
         iMessage("success", "Facture Enregistrer");
       } catch (error) {
-        if (error.response.status === 400) {
-          setOpen(false);
-          iMessage("error", "Stock Insufisant pour vendre");
-        }
         if (error.response.status === 500) {
           iMessage("error", "Veillez remplir tous les champs ");
         }
@@ -259,15 +273,6 @@ const CreateInvoice = () => {
             return accumulator + currentValue;
           }, 0)
       );
-
-      setPaymentMode([
-        {
-          cash: cash,
-          credit: credit,
-          ristourn: ristourn,
-          emballages: emballages,
-        },
-      ]);
       showModal();
     } else {
       iMessage(
@@ -277,8 +282,16 @@ const CreateInvoice = () => {
     }
   };
 
+  const checkQty = () => {
+    const stock_qty = item.map(
+      (item) => stock.find((pdt) => pdt.name === item.name).quantity
+    );
+    return item.filter(
+      (item, index) => parseInt(item.quantity) > parseInt(stock_qty[index])
+    );
+  };
+
   const handleInvoiceCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
 
@@ -299,13 +312,6 @@ const CreateInvoice = () => {
             <p className="font-semibold ">{`Type de facture : ${type} `}</p>
             <p className="font-semibold ">{`Date : ${formatDate(date)} `}</p>
 
-            <div className="flex items-start justify-between ">
-              <p className="font-semibold ">{`cash : ${paymentMode[0]?.cash}`}</p>
-              <p className="font-semibold ">{`credit : ${paymentMode[0]?.credit}`}</p>
-              <p className="font-semibold ">{`ristourne : ${paymentMode[0]?.ristourn}`}</p>
-              <p className="font-semibold ">{`emballages : ${paymentMode[0]?.emballages}`}</p>
-            </div>
-
             <Table dataSource={item} columns={columns} />
 
             <p className="text-red-500 ">
@@ -324,6 +330,44 @@ const CreateInvoice = () => {
                 {format(total_with_tax.toFixed(2))}
               </p>
             </div>
+
+            <h3 className="text-base ">Mode de paiement </h3>
+            <div className="grid grid-cols-2 gap-1">
+              <label>Cash</label>
+              <Input
+                name="cash"
+                onChange={(e) => (_cash = e.target.value)}
+                value={_cash}
+                placeholder="Montant Cash"
+                min={0}
+              />
+              <label>Credit</label>
+
+              <Input
+                name="credit"
+                onChange={(e) => (credit = e.target.value)}
+                placeholder="Montant Credit"
+                value={credit}
+                min={0}
+              />
+              <label>Ristoune</label>
+
+              <Input
+                name="ristourn"
+                onChange={(e) => (ristourn = e.target.value)}
+                value={ristourn}
+                placeholder="Montant Ristourne"
+                min={0}
+              />
+              <label>Emballages</label>
+
+              <Input
+                name="emballage"
+                onChange={(e) => (emballages = e.target.value)}
+                value={emballages}
+                placeholder="Montant Emballages"
+              />
+            </div>
           </div>
         </Modal>
       </>
@@ -331,17 +375,17 @@ const CreateInvoice = () => {
   };
 
   return (
-    <>
+    <div className="px-4 ">
       {contextHolder}
       <div className="py-6">
         <Button
-          className="mx-36 "
+          className="mx-auto "
           onClick={() => navigate(-1)}
           icon={<ArrowLeftOutlined />}
         ></Button>
       </div>
 
-      <Card bodyStyle={{ color: "gray" }} className="px-12 py-8 mb-24 mx-36">
+      <Card bodyStyle={{ color: "gray" }} className="px-12 py-8 mx-auto mb-24">
         <div className="flex items-center justify-between ">
           <Title level={4}>Formulaire de facture</Title>
         </div>
@@ -349,6 +393,7 @@ const CreateInvoice = () => {
         <div>
           <h3>Type de facture</h3>
           <Select
+            className="w-1/4 "
             name="type"
             onChange={(e) => setType(e)}
             value={type}
@@ -448,48 +493,15 @@ const CreateInvoice = () => {
           + Ajouter un champ
         </Button>
 
-        <div className="grid w-1/3 gap-1">
-          <h3 className="text-base ">Mode de paiement </h3>
-          <Input
-            name="cash"
-            onChange={(e) => setCash(e.target.value)}
-            value={cash}
-            placeholder="Montant Cash"
-            min={0}
-          />
-          <Input
-            name="credit"
-            onChange={(e) => setCredit(e.target.value)}
-            placeholder="Montant Credit"
-            value={credit}
-            min={0}
-          />
-          <Input
-            name="ristourn"
-            onChange={(e) => setRistourn(e.target.value)}
-            value={ristourn}
-            placeholder="Montant Ristourne"
-            defaultValue={"0"}
-            min={0}
-          />
-          <Input
-            name="emballage"
-            onChange={(e) => setEmballages(e.target.value)}
-            value={emballages}
-            placeholder="Montant Emballages"
-            defaultValue={0}
-          />
-        </div>
-
         <div className="py-4 ">
-          <Button className="w-1/3" type="primary" onClick={handleInvoice}>
+          <Button type="primary" onClick={handleInvoice}>
             Enregistrer et generez une facture
           </Button>
         </div>
 
         <ConfirmInvoiceModal name={name} date={date} />
       </Card>
-    </>
+    </div>
   );
 };
 export default CreateInvoice;

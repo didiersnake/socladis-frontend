@@ -108,7 +108,7 @@ const Avaris = () => {
       ],
       onFilter: (value, record) => record.format.indexOf(value) === 0,
     },
-    columnItem(6, "Nombre", "quantity"),
+    columnItem(6, "Quantité", "quantity"),
     {
       ...columnItem(7, "Date", "date"),
       render: (iDate) => {
@@ -310,6 +310,7 @@ const Avaris = () => {
           <Input
             id="quantity"
             value={editingProduct?.quantity}
+            placeholder="Quantité"
             onChange={(e) =>
               setEditingProduct((pre) => {
                 return { ...pre, quantity: e.target.value };
