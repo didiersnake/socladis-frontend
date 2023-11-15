@@ -16,7 +16,7 @@ const Teams = () => {
 
   const readTeams = async () => {
     try {
-      await dispatch(readTeamAction);
+      await dispatch(readTeamAction());
     } catch (error) {
       console.log(error.response);
     }

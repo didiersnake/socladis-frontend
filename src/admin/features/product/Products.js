@@ -1,4 +1,4 @@
-import React, { lazy, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Table, Modal, message, Input, Select } from "antd";
 import Container from "../../components/Container";
@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAllProducts } from "./productSlice";
 import format from "../../../utils/currency";
 import editProductAction from "./actions/editProductAction";
-
-const readProductAction = lazy(() => import("./actions/readProductAction"));
+import readProductAction from "./actions/readProductAction";
 
 const Products = () => {
   const navigate = useNavigate();

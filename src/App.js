@@ -1,60 +1,43 @@
 import { Layout } from "./components/Layout";
-import { lazy } from "react";
+
 import { Routes, Route } from "react-router-dom";
 import Reconciliation from "./admin/features/reconciliation/Reconciliation";
-
-const Dashboard = lazy(() => import("./admin/pages/Dashboard"));
-const Stock = lazy(() => import("./features/stock/Stock"));
-const AStock = lazy(() => import("./admin/features/stock/AStock"));
-const Issues = lazy(() => import("./features/stock/Avaris"));
-const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
-const Login = lazy(() => import("./features/auth/Login"));
-const RLayout = lazy(() => import("./admin/components/RLayout"));
-const Users = lazy(() => import("./features/users/Users"));
-const AddUser = lazy(() => import("./features/users/AddUser"));
-const Products = lazy(() => import("./admin/features/product/Products"));
-const AddProduct = lazy(() => import("./admin/features/product/AddProduct"));
-const AddStockItem = lazy(() => import("./admin/features/stock/AddStockItem"));
-const CreateInvoice = lazy(() => import("./features/sales/CreateInvoice"));
-const Invoice = lazy(() => import("./features/sales/Invoice"));
-const Avaris = lazy(() => import("./admin/features/avaris/Avaris"));
-const Teams = lazy(() => import("./admin/features/teams/Teams"));
-const CreateTeam = lazy(() => import("./admin/features/teams/CreateTeam"));
-const ReturnLoad = lazy(() => import("./admin/features/stock/ReturnLoad"));
-const StockLoad = lazy(() => import("./admin/features/stock/StockLoad"));
-const AddAvarisItem = lazy(() =>
-  import("./admin/features/avaris/AddAvarisItem")
-);
-const InvoiceView = lazy(() => import("./features/sales/InvoiceView"));
-const Purchase = lazy(() => import("./admin/features/purchase/Purchase"));
-const CreatePurchase = lazy(() =>
-  import("./admin/features/purchase/CreatePurchase")
-);
-const AddEmptyItem = lazy(() =>
-  import("./admin/features/empty_stock/AddEmptyItem")
-);
-const EmptyStock = lazy(() =>
-  import("./admin/features/empty_stock/EmptyStock")
-);
-const Sales = lazy(() => import("./admin/features/ventes/Sales"));
-const Income = lazy(() => import("./admin/features/finances/income/Income"));
-const Expense = lazy(() =>
-  import("./admin/features/finances/expenses/Expense")
-);
-const AddExpense = lazy(() =>
-  import("./admin/features/finances/expenses/AddExpense")
-);
-const AddIncome = lazy(() =>
-  import("./admin/features/finances/income/AddIncome")
-);
-const Empty = lazy(() => import("./features/stock/Empty"));
-const LoadingAvaris = lazy(() =>
-  import("./admin/features/avaris/LoadingAvaris")
-);
-const LowStock = lazy(() => import("./admin/features/stock/LowStock"));
-const Ristournes = lazy(() => import("./admin/pages/Ristournes"));
-const StoreAvaris = lazy(() => import("./admin/features/avaris/StoreAvaris"));
-const Reports = lazy(() => import("./admin/pages/Reports"));
+import Dashboard from "./admin/pages/Dashboard";
+import Stock from "./features/stock/Stock";
+import AStock from "./admin/features/stock/AStock";
+import Issues from "./features/stock/Avaris";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./features/auth/Login";
+import RLayout from "./admin/components/RLayout";
+import Users from "./features/users/Users";
+import AddUser from "./features/users/AddUser";
+import Products from "./admin/features/product/Products";
+import AddProduct from "./admin/features/product/AddProduct";
+import AddStockItem from "./admin/features/stock/AddStockItem";
+import CreateInvoice from "./features/sales/CreateInvoice";
+import Invoice from "./features/sales/Invoice";
+import Avaris from "./admin/features/avaris/Avaris";
+import Teams from "./admin/features/teams/Teams";
+import CreateTeam from "./admin/features/teams/CreateTeam";
+import ReturnLoad from "./admin/features/stock/ReturnLoad";
+import StockLoad from "./admin/features/stock/StockLoad";
+import AddAvarisItem from "./admin/features/avaris/AddAvarisItem";
+import InvoiceView from "./features/sales/InvoiceView";
+import Purchase from "./admin/features/purchase/Purchase";
+import CreatePurchase from "./admin/features/purchase/CreatePurchase";
+import AddEmptyItem from "./admin/features/empty_stock/AddEmptyItem";
+import EmptyStock from "./admin/features/empty_stock/EmptyStock";
+import Sales from "./admin/features/ventes/Sales";
+import Income from "./admin/features/finances/income/Income";
+import Expense from "./admin/features/finances/expenses/Expense";
+import AddExpense from "./admin/features/finances/expenses/AddExpense";
+import AddIncome from "./admin/features/finances/income/AddIncome";
+import Empty from "./features/stock/Empty";
+import LoadingAvaris from "./admin/features/avaris/LoadingAvaris";
+import LowStock from "./admin/features/stock/LowStock";
+import Ristournes from "./admin/pages/Ristournes";
+import StoreAvaris from "./admin/features/avaris/StoreAvaris";
+import Reports from "./admin/pages/Reports";
 
 function App() {
   return (
