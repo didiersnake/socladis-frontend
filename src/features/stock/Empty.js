@@ -86,7 +86,7 @@ const Empty = () => {
   };
 
   return (
-    <div className="pb-6 mx-16 my-10 ">
+    <div className="px-4 pb-6 mx-auto my-10 ">
       <div className="">
         <Button
           className=""

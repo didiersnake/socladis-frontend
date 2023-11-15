@@ -174,6 +174,8 @@ const StockLoad = () => {
             )
           );
           iMessage("success", "Success");
+          setDate("");
+          setTeam("");
         } catch (error) {
           if (error.response.status === 500) {
             iMessage("error", "Veillez remplir tous les champs ");

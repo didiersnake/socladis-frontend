@@ -69,8 +69,9 @@ function App() {
         <Route element={<ProtectedRoute role={"EMPLOYEE"} />}>
           <Route path="products" element={""}>
             <Route index element={<Stock />} />
-
             <Route path="create" element={<AddStockItem />} />
+            <Route path="load" element={<StockLoad />} />
+            <Route path="return" element={<ReturnLoad />} />
             <Route path="issues">
               <Route index element={<Issues />} />
               <Route path="create" element={<AddAvarisItem />} />

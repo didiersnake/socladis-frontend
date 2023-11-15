@@ -95,10 +95,20 @@ const Stock = () => {
     .sort((a, b) => b.date.localeCompare(a.date));
 
   return (
-    <div style={{ padding: "30px 70px" }}>
+    <div style={{ padding: "30px 16px" }}>
       <div className="flex items-center justify-between pb-8 ">
         <h2>Magasin</h2>
         <div className="flex justify-around ">
+          <Button type="link" danger>
+            <Link className="px-4 " to={"load"}>
+              Chargement
+            </Link>
+          </Button>
+          <Button type="link" danger>
+            <Link className="px-4 " to={"return"}>
+              Retour
+            </Link>
+          </Button>
           <Button type="link" danger>
             <Link className="px-4 " to={"issues"}>
               Avaris
@@ -113,10 +123,6 @@ const Stock = () => {
       </div>
       <>
         <div className="flex justify-between mb-2 ">
-          {/*  <Button type="primary" onClick={() => navigate("create")}>
-            Ajouter un produit
-          </Button> */}
-
           {/* search bar */}
           <Input.Search
             style={{ maxWidth: 300 }}

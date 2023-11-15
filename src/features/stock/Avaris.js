@@ -187,7 +187,7 @@ const Avaris = () => {
       ></Table>
     </>
   );
-  return <div className="pb-6 mx-16 my-10 ">{content}</div>;
+  return <div className="px-4 pb-6 mx-auto my-10 ">{content}</div>;
 };
 
 export default Avaris;

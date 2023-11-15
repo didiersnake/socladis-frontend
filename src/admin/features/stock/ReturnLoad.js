@@ -163,6 +163,8 @@ const ReturnLoad = () => {
           )
         );
         iMessage("success", "Success");
+        setDate("");
+        setTeam("");
       } else {
         iMessage(
           "error",
