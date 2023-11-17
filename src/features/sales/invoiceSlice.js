@@ -22,7 +22,7 @@ const invoiceSlice = createSlice({
     },
     deleteInvoice(state, action) {
       state.invoices = state.invoices.filter(
-        (product) => product.id !== action.payload.id
+        (product) => product._id !== action.payload._id
       );
     },
   },

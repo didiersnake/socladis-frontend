@@ -225,6 +225,16 @@ const Products = () => {
           </Select>
 
           <Input
+            placeholder="prix d'achat TTC"
+            value={editingProduct?.unitPrice}
+            onChange={(e) => {
+              setEditingProduct((pre) => {
+                return { ...pre, unitPrice: e.target.value };
+              });
+            }}
+          />
+
+          <Input
             placeholder="prix grossiste"
             value={(grossiste = editingProduct?.sale_price[0].grossiste)}
             onChange={(e) => {

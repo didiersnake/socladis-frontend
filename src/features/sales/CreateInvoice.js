@@ -158,7 +158,7 @@ const CreateInvoice = () => {
           iMessage("success", "Facture Enregistrer");
         } catch (error) {
           if (error.response.status === 500) {
-            iMessage("error", "Veillez remplir tous les champs ");
+            iMessage("error", "Verifiez votre connexion internet ");
           }
         }
       } else {
@@ -215,7 +215,7 @@ const CreateInvoice = () => {
         iMessage("success", "Facture Enregistrer");
       } catch (error) {
         if (error.response.status === 500) {
-          iMessage("error", "Veillez remplir tous les champs ");
+          iMessage("error", "Verifiez votre connexion internet ");
         }
       }
     }
@@ -224,8 +224,8 @@ const CreateInvoice = () => {
   const onNameSearch = (val) => {
     let filtered = users.filter(
       (obj) =>
-        obj.roles.toString() === "CLIENT" &&
-        obj.name.toString().toLowerCase().includes(val.toLowerCase())
+        obj.roles?.toString() === "CLIENT" &&
+        obj.name?.toString().toLowerCase().includes(val.toLowerCase())
     );
     setNameOptions(filtered);
   };

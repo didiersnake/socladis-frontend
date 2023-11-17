@@ -6,7 +6,6 @@ const readAvarisAction = () => async (dispatch) => {
 
   const stock = response.data;
   dispatch(setAvarisItems(stock));
-  console.log(stock);
 };
 
 export default readAvarisAction;

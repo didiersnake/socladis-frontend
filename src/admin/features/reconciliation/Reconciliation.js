@@ -29,7 +29,7 @@ const Reconciliation = () => {
     <div className="flex flex-col gap-8">
       <div className="py-4 text-center px-14 bg-slate-900 ">
         <Title level={4} style={{ color: "white" }}>
-          Generer Rapport
+          Generer Reconciliation
         </Title>
       </div>
       <Form

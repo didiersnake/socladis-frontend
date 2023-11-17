@@ -1,17 +1,21 @@
 import React, { lazy, useEffect, useState } from "react";
-import { Button, DatePicker, Input, Table } from "antd";
+import { Button, DatePicker, Input, Table, message } from "antd";
 import { formatDate } from "../../../utils/formatDate";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllInvoices } from "../../../features/sales/invoiceSlice";
+import {
+  deleteInvoice,
+  selectAllInvoices,
+} from "../../../features/sales/invoiceSlice";
 import format from "../../../utils/currency";
-import { EyeOutlined, FilterOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined, FilterOutlined } from "@ant-design/icons";
 import readInvoice from "../../../features/sales/actions/readInvoice";
+import api from "../../../app/api/axios";
 const Container = lazy(() => import("../../components/Container"));
 
 const Sales = () => {
   const [searchText, setSearchText] = useState("");
-
+  const [messageApi, contextHolder] = message.useMessage();
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [isFiltering, setIsFiltering] = useState(false);
@@ -41,12 +45,34 @@ const Sales = () => {
     readUsers();
   }, []);
 
+  const iMessage = (type, content) => {
+    setTimeout(() => {
+      messageApi.open({
+        type: type,
+        content: content,
+      });
+    }, 1000);
+  };
+
   const number_of_items = (item) =>
     item["products"]
       .map((product) => Number(product.quantity))
       .reduce((accumulator, current) => {
         return accumulator + current;
       }, 0);
+
+  const handleDelete = async (item) => {
+    try {
+      await api.delete(`/api/current/sales/${item?._id}`, {});
+      dispatch(deleteInvoice(item));
+      iMessage("success", "Supprimé");
+    } catch (error) {
+      if (error?.response?.status === 500) {
+        iMessage("error", "Verifiez votre connexion internet ");
+      }
+      console.log(error.response);
+    }
+  };
 
   const columns = [
     columnItem(1, "ID", "_id"),
@@ -81,9 +107,16 @@ const Sales = () => {
       ...columnItem(9, "Actions"),
       render: (record) => {
         return (
-          <>
-            <EyeOutlined onClick={() => navigate(record._id)} />
-          </>
+          <div>
+            <EyeOutlined
+              style={{ margin: 12 }}
+              onClick={() => navigate(record._id)}
+            />
+            <DeleteOutlined
+              style={{ margin: 12, color: "red" }}
+              onClick={() => handleDelete(record)}
+            />
+          </div>
         );
       },
     },
@@ -109,6 +142,7 @@ const Sales = () => {
 
   let content = (
     <>
+      {contextHolder}
       <div className="flex justify-between mb-2 ">
         <div></div> {/* search bar */}
         <div className="flex gap-4 ">

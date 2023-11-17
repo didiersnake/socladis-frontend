@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { Button, Input, Select, Form, Card, Typography } from "antd";
+import {
+  Button,
+  Input,
+  Select,
+  Form,
+  Card,
+  Typography,
+  AutoComplete,
+} from "antd";
 import { createUserAction } from "./actions/createUserAction";
 import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { selectAllTeams } from "../../admin/features/teams/teamSlice";
+import { selectAllUser } from "./userSlice";
 
 const { Title } = Typography;
 
@@ -15,6 +24,7 @@ export const AddUser = () => {
     setComponentSize(size);
   };
   const navigate = useNavigate();
+  const users = useSelector(selectAllUser);
   const allgroups = useSelector(selectAllTeams);
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
@@ -27,6 +37,7 @@ export const AddUser = () => {
   const [location, setLocation] = useState("");
   const [group, setGroup] = useState("");
   const [password, setPassword] = useState("");
+  const [nameOptions, setNameOptions] = useState([]);
 
   const employee = "EMPLOYEE";
   const customer = "CLIENT";
@@ -43,6 +54,17 @@ export const AddUser = () => {
       });
     }, 1000);
   };
+
+  const onNameSearch = (val) => {
+    let filtered = users.filter(
+      (obj) =>
+        obj.roles?.toString() === "CLIENT" &&
+        obj.name?.toString().toLowerCase().includes(val.toLowerCase())
+    );
+    setNameOptions(filtered);
+  };
+
+  const onNameSelect = (value, option) => {};
 
   const handleAddUser = async () => {
     try {
@@ -136,7 +158,26 @@ export const AddUser = () => {
             },
           ]}
         >
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <AutoComplete
+            size="large"
+            className="w-full"
+            options={nameOptions?.map((name) => ({
+              label: name.name,
+              value: name.name,
+            }))}
+            onSearch={onNameSearch}
+            onSelect={onNameSelect}
+          >
+            <Input
+              name="name"
+              size="large"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            />
+          </AutoComplete>
+          {/* <Input value={name} onChange={(e) => setName(e.target.value)} /> */}
         </Form.Item>
 
         <Form.Item label="Rôle">
@@ -258,7 +299,7 @@ export const AddUser = () => {
     </div>
   );
   return (
-    <div className="min-h-screen bg-white px-44">
+    <div className="min-h-screen px-2 mx-auto bg-white">
       <Button
         className="my-4"
         onClick={() => navigate(-1)}
