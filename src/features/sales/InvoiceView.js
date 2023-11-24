@@ -94,10 +94,10 @@ const InvoiceView = () => {
           </div>
 
           <div className="grid grid-cols-4 px-12 ">
-            <Text>{userCode}</Text>
-            <Text>{user_phone}</Text>
-            <Text>{user_tax_system}</Text>
-            <Text>{user_category}</Text>
+            <Text>{userCode ? userCode : ""}</Text>
+            <Text>{user_phone ? user_phone : ""}</Text>
+            <Text>{user_tax_system ? user_tax_system : ""}</Text>
+            <Text>{user_category ? user_category : ""}</Text>
           </div>
 
           <div className="grid grid-cols-4 px-12 mt-4 border border-black outline">
@@ -107,7 +107,7 @@ const InvoiceView = () => {
 
           <div className="grid grid-cols-4 px-12">
             <Text>{invoice.invoice_number} </Text>
-            <Text>{team} </Text>
+            <Text>{team ? team : ""} </Text>
           </div>
 
           <Table

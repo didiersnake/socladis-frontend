@@ -40,6 +40,7 @@ const CreateInvoice = () => {
   const [tax_system, setTaxSystem] = useState("");
   const [location, setLocation] = useState("");
   const [group, setGroup] = useState("");
+  const [inv_num, setInvNum] = useState("");
   const [date, setDate] = useState("");
   let _cash;
   let credit;
@@ -107,6 +108,15 @@ const CreateInvoice = () => {
     return result;
   };
 
+  const payment_method = [
+    {
+      cash: _cash ? _cash : 0,
+      credit: credit ? credit : 0,
+      ristourn: ristourn ? ristourn : 0,
+      emballages: emballages ? emballages : 0,
+    },
+  ];
+
   const total_with_tax =
     VAT_amount + total_without_tax + ristourne + withdrawal_amount();
 
@@ -129,18 +139,12 @@ const CreateInvoice = () => {
               ristourne.toString(),
               "",
               date,
-              [
-                {
-                  cash: _cash ? _cash : 0,
-                  credit: credit ? credit : 0,
-                  ristourn: ristourn ? ristourn : 0,
-                  emballages: emballages ? emballages : 0,
-                },
-              ].map((obj) =>
+              payment_method.map((obj) =>
                 Object.fromEntries(
                   Object.entries(obj).map(([key, val]) => [key, String(val)])
                 )
-              )
+              ),
+              inv_num
             )
           );
           setName("");
@@ -157,9 +161,10 @@ const CreateInvoice = () => {
           setOpen(false);
           iMessage("success", "Facture Enregistrer");
         } catch (error) {
-          if (error.response.status === 500) {
+          if (error?.response?.status === 500) {
             iMessage("error", "Verifiez votre connexion internet ");
           }
+          iMessage("error", "Verifiez votre connexion internet ");
         }
       } else {
         const arr = checkQty();
@@ -186,18 +191,12 @@ const CreateInvoice = () => {
             ristourne.toString(),
             "",
             date,
-            [
-              {
-                cash: _cash,
-                credit: credit,
-                ristourn: ristourn,
-                emballages: emballages,
-              },
-            ].map((obj) =>
+            payment_method.map((obj) =>
               Object.fromEntries(
                 Object.entries(obj).map(([key, val]) => [key, String(val)])
               )
-            )
+            ),
+            inv_num
           )
         );
         setName("");
@@ -214,9 +213,10 @@ const CreateInvoice = () => {
         setOpen(false);
         iMessage("success", "Facture Enregistrer");
       } catch (error) {
-        if (error.response.status === 500) {
+        if (error?.response?.status === 500) {
           iMessage("error", "Verifiez votre connexion internet ");
         }
+        iMessage("error", "Verifiez votre connexion internet ");
       }
     }
   };
@@ -224,8 +224,8 @@ const CreateInvoice = () => {
   const onNameSearch = (val) => {
     let filtered = users.filter(
       (obj) =>
-        obj.roles?.toString() === "CLIENT" &&
-        obj.name?.toString().toLowerCase().includes(val.toLowerCase())
+        obj?.roles?.toString() === "CLIENT" &&
+        obj?.name?.toString().toLowerCase().includes(val.toLowerCase())
     );
     setNameOptions(filtered);
   };
@@ -265,7 +265,7 @@ const CreateInvoice = () => {
   };
 
   const handleInvoice = () => {
-    if (name && date && type) {
+    if (name && date && type && inv_num) {
       setTotalWithoutTax(
         item
           .map((item) => item.total)
@@ -275,10 +275,7 @@ const CreateInvoice = () => {
       );
       showModal();
     } else {
-      iMessage(
-        "error",
-        "Veillez remplir tous les champs ou vérifier votre connexion Internet"
-      );
+      iMessage("error", "Veillez remplir tous les champs ");
     }
   };
 
@@ -430,7 +427,7 @@ const CreateInvoice = () => {
                 setLocation("");
                 setTaxSystem("");
               }}
-              placeholder="entrez le nom du client..."
+              placeholder="Entrez le nom du client..."
             />
           </AutoComplete>
         </div>
@@ -443,6 +440,14 @@ const CreateInvoice = () => {
               value={date}
               showTime={false}
               format={"DD/MM/YYYY"}
+            />
+          </div>
+          <div>
+            <h3 className="text-base ">Numero de facture </h3>
+            <Input
+              value={inv_num}
+              onChange={(e) => setInvNum(e.target.value)}
+              placeholder="numer de facture"
             />
           </div>
         </div>

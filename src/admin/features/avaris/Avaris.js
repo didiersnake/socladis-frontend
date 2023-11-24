@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { EditOutlined, FilterOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  FilterOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Table,
@@ -13,11 +17,12 @@ import {
 import Container from "../../components/Container";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllAvarisProducts } from "./avarisSlice";
+import { deleteProduct, selectAllAvarisProducts } from "./avarisSlice";
 import editAvarisAction from "./actions/editAvarisAction";
 import { selectAllProducts } from "../product/productSlice";
 import { formatDate } from "../../../utils/formatDate";
 import readAvarisAction from "./actions/readAvarisAction";
+import api from "../../../app/api/axios";
 
 const Avaris = () => {
   const [isEditing, setIsEditing] = useState(false); //toggle edit button state
@@ -62,6 +67,19 @@ const Avaris = () => {
   useEffect(() => {
     readAvaris();
   });
+
+  const handleDelete = async (item) => {
+    try {
+      await api.delete(`api/current/avari/${item?._id}`, {});
+      dispatch(deleteProduct(item));
+      iMessage("success", "Supprimé");
+    } catch (error) {
+      if (error?.response?.status === 500) {
+        iMessage("error", "Verifiez votre connexion internet ");
+      }
+      console.log(error.response);
+    }
+  };
 
   const columns = [
     columnItem(0, "ID", "_id"),
@@ -121,9 +139,14 @@ const Avaris = () => {
         return (
           <>
             <EditOutlined
+              style={{ margin: 12 }}
               onClick={() => {
                 onEditProduct(record);
               }}
+            />
+            <DeleteOutlined
+              style={{ margin: 12, color: "red" }}
+              onClick={() => handleDelete(record)}
             />
           </>
         );

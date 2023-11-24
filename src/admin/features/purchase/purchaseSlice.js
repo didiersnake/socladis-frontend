@@ -22,7 +22,7 @@ const purchaseSlice = createSlice({
     },
     deletePurchase(state, action) {
       state.purchaseItems = state.purchaseItems.filter(
-        (purchase) => purchase.id !== action.payload.id
+        (purchase) => purchase._id !== action.payload._id
       );
     },
   },

@@ -21,7 +21,7 @@ const emptyStockSlice = createSlice({
     },
     deleteProduct(state, action) {
       state.emptyStockItems = state.emptyStockItems.filter(
-        (product) => product.id !== action.payload.id
+        (product) => product._id !== action.payload._id
       );
     },
   },

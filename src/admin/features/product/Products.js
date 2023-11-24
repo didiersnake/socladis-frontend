@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Table, Modal, message, Input, Select } from "antd";
 import Container from "../../components/Container";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllProducts } from "./productSlice";
+import { deleteProduct, selectAllProducts } from "./productSlice";
 import format from "../../../utils/currency";
 import editProductAction from "./actions/editProductAction";
 import readProductAction from "./actions/readProductAction";
+import api from "../../../app/api/axios";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -33,6 +34,18 @@ const Products = () => {
   useEffect(() => {
     readProducts();
   }, []);
+
+  const handleDelete = async (item) => {
+    try {
+      await api.delete(`api/current/product/${item?._id}`, {});
+      dispatch(deleteProduct(item));
+      iMessage("success", "Supprimé");
+    } catch (error) {
+      if (error?.response?.status === 500) {
+        iMessage("error", "Verifiez votre connexion internet ");
+      }
+    }
+  };
 
   function columnItem(key, title, dataIndex) {
     return {
@@ -87,9 +100,14 @@ const Products = () => {
         return (
           <>
             <EditOutlined
+              style={{ margin: 12 }}
               onClick={() => {
                 onEditProduct(record);
               }}
+            />
+            <DeleteOutlined
+              style={{ margin: 12, color: "red" }}
+              onClick={() => handleDelete(record)}
             />
           </>
         );

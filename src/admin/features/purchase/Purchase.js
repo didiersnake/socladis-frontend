@@ -4,19 +4,25 @@ import {
   DatePicker,
   Input,
   Modal,
+  Select,
   Table,
   message,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined, FilterOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  FilterOutlined,
+} from "@ant-design/icons";
 import { formatDate } from "../../../utils/formatDate";
 import Container from "../../components/Container";
-import { selectAllPurchase } from "./purchaseSlice";
+import { deletePurchase, selectAllPurchase } from "./purchaseSlice";
 import editPurchaseAction from "./actions/editPurchaseAction";
 import { selectAllProducts } from "../product/productSlice";
 import readPurchaseAction from "./actions/readPurchaseAction";
+import api from "../../../app/api/axios";
 
 const Purchase = () => {
   const [isEditing, setIsEditing] = useState(false); //toggle edit button state
@@ -56,6 +62,18 @@ const Purchase = () => {
     readStockItems();
   }, []);
 
+  const handleDelete = async (item) => {
+    try {
+      await api.delete(`api/current/achat/${item?._id}`, {});
+      dispatch(deletePurchase(item));
+      iMessage("success", "Supprimé");
+    } catch (error) {
+      if (error?.response?.status === 500) {
+        iMessage("error", "Verifiez votre connexion internet ");
+      }
+    }
+  };
+
   const columns = [
     columnItem(0, "ID", "_id"),
     columnItem(1, "Nom", "name"),
@@ -88,6 +106,8 @@ const Purchase = () => {
       ],
       onFilter: (value, record) => record.category.indexOf(value) === 0,
     },
+    columnItem(1, "Type d'achat", "purchase_type"),
+
     columnItem(2, "Facture", "invoice_number"),
     columnItem(5, "Quantité", "quantity"),
     {
@@ -102,6 +122,7 @@ const Purchase = () => {
         return (
           <>
             <EditOutlined
+              style={{ margin: 12 }}
               onClick={() => {
                 onEditProduct(record);
               }}
@@ -286,9 +307,21 @@ const Purchase = () => {
           >
             <Input name="name" value={editingProduct?.name} type="text" />
           </AutoComplete>
-          <Input id="category" value={editingProduct?.category}></Input>
-
           <Input id="format" value={editingProduct?.format}></Input>
+          <Input id="category" value={editingProduct?.category}></Input>
+          <Select
+            name="type"
+            onChange={(e) =>
+              setEditingProduct((pre) => {
+                return { ...pre, purchase_type: e };
+              })
+            }
+            value={editingProduct?.purchase_type}
+          >
+            <Select.Option value="Achat">Achat</Select.Option>
+            <Select.Option value="Commission">Commission</Select.Option>
+            <Select.Option value="Promotion">Promotion</Select.Option>
+          </Select>
 
           <Input
             value={editingProduct?.invoice_number}

@@ -1,4 +1,13 @@
-import { Card, DatePicker, Form, Input, Modal, Table, Typography } from "antd";
+import {
+  Button,
+  Card,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Table,
+  Typography,
+} from "antd";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -111,8 +120,6 @@ const Ristournes = () => {
     };
   });
 
-  console.log(allRistournes);
-
   const total_ristourn = data
     .map((item) => Number(item.ristourne))
     .reduce((acc, curr) => {
@@ -124,8 +131,56 @@ const Ristournes = () => {
     console.log(values);
   };
 
-  const layout = {
-    labelCol: {},
+  const handleExportPdf = () => {
+    setLoader(true);
+    exportPdf(name);
+  };
+
+  const handleRistourneExport = () => {
+    handleExportPdf();
+    setOpen(false);
+  };
+
+  const RistourneModal = ({ name }) => {
+    return (
+      <>
+        <Modal
+          open={open}
+          okText="Exporter Pdf"
+          onOk={handleRistourneExport}
+          onCancel={() => setOpen(false)}
+        >
+          <div className="p-5 actual-receipt">
+            <div className="text-center px-14 bg-slate-900">
+              <Title level={4} style={{ color: "white" }}>
+                Socladis sarl
+              </Title>
+            </div>
+            <div className="flex items-start justify-between w-3/4 ">
+              <p className="">Client</p>
+              <p className="font-semibold ">{name}</p>
+            </div>
+            <div className="flex items-start justify-between w-3/4 ">
+              <p className="">Period</p>
+              <p className="font-semibold ">
+                {formatDate(start_date)} - {formatDate(end_date)}
+              </p>
+            </div>
+
+            <Table pagination={false} dataSource={data} columns={columns} />
+
+            <div className="flex items-center justify-between ml-52">
+              <p className="font-semibold ">Total </p>
+              <p className="font-semibold ">{format(total_ristourn)}</p>
+            </div>
+            <div className="flex items-center justify-between ml-52">
+              <p className="font-semibold "> </p>
+              <p className="">{formatDate(new Date())}</p>
+            </div>
+          </div>
+        </Modal>
+      </>
+    );
   };
 
   let content = (
@@ -138,7 +193,6 @@ const Ristournes = () => {
       <div className="flex items-end justify-around ">
         <div>
           <Form
-            {...layout}
             name="nest-messages"
             onFinish={onFinish}
             style={{
@@ -204,54 +258,6 @@ const Ristournes = () => {
       />
     </div>
   );
-
-  const handleExportPdf = () => {
-    setLoader(true);
-    exportPdf("Rapport Ristournes");
-    setLoader(true);
-  };
-
-  const handleRistourneExport = () => {
-    handleExportPdf();
-    setOpen(false);
-  };
-
-  const RistourneModal = ({ name }) => {
-    return (
-      <>
-        <Modal
-          title="Total Ristourne"
-          open={open}
-          okText="Exporter Pdf"
-          onOk={handleRistourneExport}
-          onCancel={() => setOpen(false)}
-        >
-          <div className="p-5 actual-receipt">
-            <div className="text-center px-14 bg-slate-900">
-              <Title level={4} style={{ color: "white" }}>
-                Socladis sarl
-              </Title>
-            </div>
-            <div className="flex items-start justify-between w-1/2 ">
-              <p className="font-semibold ">Client</p>
-              <p className="font-semibold ">{name}</p>
-            </div>
-            <div className="flex items-start justify-between w-1/2 ">
-              <p className="font-semibold ">Date</p>
-              <p className="font-semibold ">{formatDate(new Date())}</p>
-            </div>
-
-            <Table pagination={false} dataSource={data} columns={columns} />
-
-            <div className="flex items-center justify-between ml-52">
-              <p className="font-semibold ">Total </p>
-              <p className="font-semibold ">{format(total_ristourn)}</p>
-            </div>
-          </div>
-        </Modal>
-      </>
-    );
-  };
 
   return (
     <div className="min-h-screen px-2 py-6 mx-auto bg-white">

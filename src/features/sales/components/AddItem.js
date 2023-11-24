@@ -21,8 +21,8 @@ const AddItem = ({
   const onProductSearch = (val) => {
     let filtered = allProducts.filter(
       (obj) =>
-        obj._id !== 0 &&
-        obj.name.toString().toLowerCase().includes(val.toLowerCase())
+        obj?._id !== 0 &&
+        obj?.name.toString().toLowerCase().includes(val.toLowerCase())
     );
     setProductOptions(filtered);
   };

@@ -6,6 +6,7 @@ const readProductAction = () => async (dispatch) => {
 
   const products = response.data;
   dispatch(setProducts(products));
+  console.log(products);
 };
 
 export default readProductAction;

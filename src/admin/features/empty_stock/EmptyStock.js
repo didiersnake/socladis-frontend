@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, DatePicker, Input, Modal, Select, Table, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined, FilterOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  FilterOutlined,
+} from "@ant-design/icons";
 import Container from "../../components/Container";
 import { formatDate } from "../../../utils/formatDate";
-import { selectAllEmptyStock } from "./emptyStockSlice";
+import { deleteProduct, selectAllEmptyStock } from "./emptyStockSlice";
 import { selectAllTeams } from "../teams/teamSlice";
 import editEmptyStockAction from "./actions/editEmptyStockAction";
 import readEmptyStockAction from "./actions/readEmptyStockAction";
+import api from "../../../app/api/axios";
 
 const EmptyStock = () => {
   const [isEditing, setIsEditing] = useState(false); //toggle edit button state
@@ -54,6 +59,19 @@ const EmptyStock = () => {
     }
   };
 
+  const handleDelete = async (item) => {
+    try {
+      await api.delete(`/api/current/empty/store/${item?._id}`, {});
+      dispatch(deleteProduct(item));
+      iMessage("success", "Supprimé");
+    } catch (error) {
+      if (error?.response?.status === 500) {
+        iMessage("error", "Verifiez votre connexion internet ");
+      }
+      console.log(error.response);
+    }
+  };
+
   const columns = [
     columnItem(0, "ID", "_id"),
     {
@@ -87,9 +105,14 @@ const EmptyStock = () => {
         return (
           <>
             <EditOutlined
+              style={{ margin: 12 }}
               onClick={() => {
                 onEditProduct(record);
               }}
+            />
+            <DeleteOutlined
+              style={{ margin: 12, color: "red" }}
+              onClick={() => handleDelete(record)}
             />
           </>
         );

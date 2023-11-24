@@ -7,6 +7,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Select,
   message,
 } from "antd";
 import React, { useState } from "react";
@@ -30,6 +31,7 @@ const CreatePurchase = () => {
   const [cost_price, setCostPrice] = useState();
   const [quantity, setQuantity] = useState();
   const [invoice, setInvoice] = useState();
+  const [purchase_type, setPurchaseType] = useState();
 
   const [componentSize, setComponentSize] = useState("large");
   const onFormLayoutChange = ({ size }) => {
@@ -48,7 +50,7 @@ const CreatePurchase = () => {
 
   const handleAddPurchase = async () => {
     try {
-      if (name && date && quantity) {
+      if (name && date && quantity && purchase_type) {
         await dispatch(
           addPurchase(
             name,
@@ -57,7 +59,8 @@ const CreatePurchase = () => {
             quantity.toString(),
             category,
             date,
-            invoice
+            invoice,
+            purchase_type
           )
         );
         setName("");
@@ -68,15 +71,16 @@ const CreatePurchase = () => {
         setFormat("");
         setQuantity("");
         iMessage("success", "Success");
+      } else {
+        iMessage("error", "Veillez remplir tous les champs");
       }
     } catch (error) {
-      if (error.response.status === 500) {
+      if (error?.response?.status === 500) {
         iMessage(
           "error",
           "Veillez remplir tous les champs ou vérifier votre connexion Internet"
         );
       }
-      console.log(error);
     }
   };
 
@@ -160,6 +164,26 @@ const CreatePurchase = () => {
 
         <Form.Item label="Format">
           <Input id="format" value={format} />
+        </Form.Item>
+
+        <Form.Item
+          label="Type d'achat"
+          rules={[
+            {
+              required: true,
+              message: "Entrez la quantité en stock",
+            },
+          ]}
+        >
+          <Select
+            name="type"
+            onChange={(e) => setPurchaseType(e)}
+            value={purchase_type}
+          >
+            <Select.Option value="Achat">Achat</Select.Option>
+            <Select.Option value="Commission">Commission</Select.Option>
+            <Select.Option value="Promotion">Promotion</Select.Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
