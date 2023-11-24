@@ -106,7 +106,7 @@ const InvoiceView = () => {
           </div>
 
           <div className="grid grid-cols-4 px-12">
-            <Text>{invoice.invoice_number} </Text>
+            <Text>{invoice?.invoice_number} </Text>
             <Text>{team ? team : ""} </Text>
           </div>
 

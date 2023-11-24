@@ -26,7 +26,6 @@ const addPurchase =
 
     const purchase = response.data[0].stockInfo;
     dispatch(createPurchase(purchase));
-    console.log(purchase);
   };
 
 export default addPurchase;

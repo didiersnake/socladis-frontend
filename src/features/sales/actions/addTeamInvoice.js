@@ -12,7 +12,8 @@ const addTeamInvoice =
     ristourne,
     status,
     date,
-    payment_method
+    payment_method,
+    invoice_number
   ) =>
   async (dispatch) => {
     const response = await api.post("/api/new/second/sales", {
@@ -26,6 +27,7 @@ const addTeamInvoice =
       status,
       date,
       payment_method,
+      invoice_number,
     });
 
     const invoice = response.data[0].saleInfo;

@@ -202,6 +202,7 @@ const CreateInvoice = () => {
         setName("");
         setDate("");
         setType("");
+        setInvNum("");
         setItem([
           {
             name: "",
@@ -308,6 +309,7 @@ const CreateInvoice = () => {
 
             <p className="font-semibold ">{`Type de facture : ${type} `}</p>
             <p className="font-semibold ">{`Date : ${formatDate(date)} `}</p>
+            <p className="font-semibold ">{`Numero facture : ${inv_num} `}</p>
 
             <Table dataSource={item} columns={columns} />
 
