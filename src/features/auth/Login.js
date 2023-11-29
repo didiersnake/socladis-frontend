@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 import { useDispatch } from "react-redux";
 import { loginAction, redirect } from "./actions/loginAction";
+import { loadData } from "../../utils/loadData";
 
 const Login = () => {
   const onFinishFailed = (errorInfo) => {
@@ -57,6 +58,7 @@ const Login = () => {
     try {
       await dispatch(loginAction(name, password));
 
+      loadData();
       //redirect to respective page
       const userRole = redirect();
       userRole === "admin"
