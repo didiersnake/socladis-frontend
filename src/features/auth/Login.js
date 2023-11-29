@@ -76,6 +76,7 @@ const Login = () => {
         console.log("Unauthorized");
       } else {
         console.log("Login failed");
+        iMessage("error", "Verifiez votre connexion internet");
       }
     }
   };
