@@ -41,9 +41,7 @@ const AddItem = ({
         ? Number(price[0]?.Semi_grossiste)
         : customerCategory === "detaillant"
         ? Number(price[0]?.detaillant)
-        : customerCategory === "random"
-        ? Number(price[0]?.detaillant)
-        : 0;
+        : Number(price[0]?.detaillant);
     } else {
       return 0;
     }

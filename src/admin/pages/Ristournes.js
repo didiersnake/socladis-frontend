@@ -1,13 +1,4 @@
-import {
-  Button,
-  Card,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Typography,
-} from "antd";
+import { Card, DatePicker, Form, Input, Modal, Table, Typography } from "antd";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -41,6 +32,27 @@ const Ristournes = () => {
   const invoices = useSelector(selectAllInvoices);
   const [searchText, setSearchText] = useState();
   const [dataSource, setDataSource] = useState();
+  // Read all customers in invoices
+  const allInvoiceCustomers = invoices.reduce((result, invoice) => {
+    const { clientName } = invoice;
+
+    // Create an array for the clientName if it doesn't exist in the result object
+    result[clientName] = result[clientName] || [];
+
+    // Push the current invoice to the array associated with the clientName
+    result[clientName].push(invoice);
+
+    return result;
+  }, {});
+
+  function columnItem(key, title, dataIndex) {
+    return {
+      key,
+      title,
+      dataIndex,
+    };
+  }
+
   const columns = [
     {
       title: "Date",
@@ -69,15 +81,6 @@ const Ristournes = () => {
       key: "4",
     },
   ];
-
-  function columnItem(key, title, dataIndex) {
-    return {
-      key,
-      title,
-      dataIndex,
-    };
-  }
-
   const columns_1 = [
     columnItem(2, "Nom", "name"),
     columnItem(4, "Ristourne", "ristourne"),
@@ -93,6 +96,7 @@ const Ristournes = () => {
         return (
           <>
             <EyeOutlined
+              key={record.name}
               onClick={() => {
                 setName(record.name);
                 setOpen(true);
@@ -104,11 +108,27 @@ const Ristournes = () => {
     },
   ];
 
-  const data = filterByDateRange(invoices).filter(
+  const ristourne_data = filterByDateRange(invoices).filter(
     (sale) => sale.clientName === name
   );
 
-  const allRistournes = allCustomers.map((cust) => {
+  //Get ristourne from all invoices
+  //iterate allInvoicesCustomers return ristourne and name
+  const allRistournes1 = Object.entries(allInvoiceCustomers).map(
+    ([key, value]) => {
+      return {
+        name: key,
+        ristourne: filterByDateRange(value)
+          .map((item) => Number(item.ristourne))
+          .reduce((acc, curr) => {
+            return acc + curr;
+          }, 0),
+      };
+    }
+  );
+
+  //Get ristourne from customers list
+  /*  const allRistournes = allCustomers.map((cust) => {
     return {
       name: cust.name,
       ristourne: filterByDateRange(invoices)
@@ -118,9 +138,9 @@ const Ristournes = () => {
           return acc + curr;
         }, 0),
     };
-  });
+  }); */
 
-  const total_ristourn = data
+  const total_ristourn = ristourne_data
     .map((item) => Number(item.ristourne))
     .reduce((acc, curr) => {
       return acc + curr;
@@ -128,12 +148,62 @@ const Ristournes = () => {
 
   const onFinish = (values) => {
     setOpen(true);
-    console.log(values);
   };
 
   const handleExportPdf = () => {
     setLoader(true);
     exportPdf(name);
+  };
+
+  const RistourneView = ({ name }) => {
+    return (
+      <>
+        <h2 className="text-center ">Apercu PDF</h2>
+        <div className="p-12 actual-receipt">
+          <div className="py-2 text-center px-14 bg-slate-900">
+            <Title level={4} style={{ color: "white" }}>
+              Socladis sarl
+            </Title>
+          </div>
+          <Title level={5}>État de Ristourne</Title>
+          <div className="flex items-start justify-between w-1/4 ">
+            <p className="">Client</p>
+            <p className="font-semibold ">{name}</p>
+          </div>
+          <div className="flex items-start justify-between w-1/4 ">
+            <p className="">Period</p>
+            <p className="font-semibold ">
+              {start_date && formatDate(start_date)} -{" "}
+              {end_date && formatDate(end_date)}
+            </p>
+          </div>
+
+          <Table
+            pagination={false}
+            dataSource={ristourne_data}
+            columns={columns}
+          />
+
+          <div className="grid grid-cols-4 ">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div className="flex justify-between ">
+              <p className="font-semibold ">Total </p>
+              <p className="font-semibold ">{format(total_ristourn)}</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between ml-52">
+            <p className="font-semibold "> </p>
+            <p className="">{formatDate(new Date())}</p>
+          </div>
+          <div className="grid grid-cols-2">
+            <p>Signature employée </p>
+            <p>Signature clients </p>
+          </div>
+        </div>
+      </>
+    );
   };
 
   const handleRistourneExport = () => {
@@ -150,12 +220,13 @@ const Ristournes = () => {
           onOk={handleRistourneExport}
           onCancel={() => setOpen(false)}
         >
-          <div className="p-5 actual-receipt">
+          <div className="p-5">
             <div className="text-center px-14 bg-slate-900">
               <Title level={4} style={{ color: "white" }}>
                 Socladis sarl
               </Title>
             </div>
+            <Title level={5}>État de Ristourne</Title>
             <div className="flex items-start justify-between w-3/4 ">
               <p className="">Client</p>
               <p className="font-semibold ">{name}</p>
@@ -163,11 +234,16 @@ const Ristournes = () => {
             <div className="flex items-start justify-between w-3/4 ">
               <p className="">Period</p>
               <p className="font-semibold ">
-                {formatDate(start_date)} - {formatDate(end_date)}
+                {start_date && formatDate(start_date)} -{" "}
+                {end_date && formatDate(end_date)}
               </p>
             </div>
 
-            <Table pagination={false} dataSource={data} columns={columns} />
+            <Table
+              pagination={false}
+              dataSource={ristourne_data}
+              columns={columns}
+            />
 
             <div className="flex items-center justify-between ml-52">
               <p className="font-semibold ">Total </p>
@@ -176,6 +252,10 @@ const Ristournes = () => {
             <div className="flex items-center justify-between ml-52">
               <p className="font-semibold "> </p>
               <p className="">{formatDate(new Date())}</p>
+            </div>
+            <div className="grid grid-cols-2">
+              <p>Signature employée </p>
+              <p>Signature clients </p>
             </div>
           </div>
         </Modal>
@@ -242,7 +322,7 @@ const Ristournes = () => {
           onChange={(e) => {
             setSearchText(e.target.value);
             setDataSource(
-              allRistournes.filter((record) =>
+              allRistournes1.filter((record) =>
                 record?.name
                   .toLowerCase()
                   .includes(e.target.value.toLowerCase())
@@ -253,7 +333,7 @@ const Ristournes = () => {
       </div>
 
       <Table
-        dataSource={!searchText ? allRistournes : dataSource}
+        dataSource={!searchText ? allRistournes1 : dataSource}
         columns={columns_1}
       />
     </div>
@@ -264,6 +344,9 @@ const Ristournes = () => {
       <Card className="rounded-md ">{content}</Card>
 
       <RistourneModal name={name} />
+      <div className="">
+        <RistourneView name={name} />
+      </div>
     </div>
   );
 };

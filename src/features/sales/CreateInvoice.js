@@ -81,12 +81,14 @@ const CreateInvoice = () => {
   const [total_without_tax, setTotalWithoutTax] = useState(0);
   const VAT_amount = total_without_tax * 0.1925;
   const ristourne =
-    100 *
-    item
-      .map((product) => Number(product.quantity))
-      .reduce((accumulator, current) => {
-        return accumulator + current;
-      }, 0);
+    tax_system && tax_system !== "random"
+      ? 100 *
+        item
+          .map((product) => Number(product?.quantity))
+          .reduce((accumulator, current) => {
+            return accumulator + current;
+          }, 0)
+      : 0;
 
   const withdrawal_amount = () => {
     let result = 0;
@@ -403,7 +405,6 @@ const CreateInvoice = () => {
           </Select>
           <h3 className="text-base ">Nom du client</h3>
           <AutoComplete
-            size="large"
             className="w-full"
             options={nameOptions.map((name) => ({
               label: name.name,
@@ -420,7 +421,6 @@ const CreateInvoice = () => {
           >
             <Input
               name="name"
-              size="large"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);

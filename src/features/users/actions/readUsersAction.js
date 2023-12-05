@@ -6,7 +6,6 @@ const readUsersAction = () => async (dispatch) => {
 
   const users = response.data;
   dispatch(setUsers(users));
-  console.log(users);
 };
 
 export default readUsersAction;

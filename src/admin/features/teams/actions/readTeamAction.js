@@ -6,7 +6,6 @@ const readTeamAction = () => async (dispatch) => {
 
   const team = response.data;
   dispatch(setTeams(team));
-  console.log(team);
 };
 
 export default readTeamAction;

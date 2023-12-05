@@ -569,9 +569,8 @@ const Dashbord = () => {
     return (
       <div className="grid grid-cols-2 col-span-2 gap-2 rounded-lg">
         {dashboard_inventory_statistics.map((item, index) => (
-          <Link>
+          <Link key={index + 1}>
             <ColCard
-              key={index + 1}
               icon={<ColCardIcon iconName={item.icon} color={item.color} />}
               title={item.title}
               value={item.value}
@@ -603,9 +602,8 @@ const Dashbord = () => {
     return (
       <div className="grid grid-cols-2 col-span-2 gap-2 rounded-lg">
         {dashboard_sales_statistics.map((item, index) => (
-          <Link>
+          <Link key={index + 1}>
             <ColCard
-              key={index + 1}
               title={item.title}
               value={item.value}
               icon={item.icon}
