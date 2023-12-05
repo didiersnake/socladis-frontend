@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Table, Modal, message, Input, Select } from "antd";
 import Container from "../../components/Container";
@@ -9,6 +8,7 @@ import format from "../../../utils/currency";
 import editProductAction from "./actions/editProductAction";
 import readProductAction from "./actions/readProductAction";
 import api from "../../../app/api/axios";
+import { useEffect, useState } from "react";
 
 const Products = () => {
   const navigate = useNavigate();
