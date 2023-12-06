@@ -81,7 +81,7 @@ const CreateInvoice = () => {
   const [total_without_tax, setTotalWithoutTax] = useState(0);
   const VAT_amount = total_without_tax * 0.1925;
   const ristourne =
-    tax_system && tax_system !== "random"
+    category && category !== "random"
       ? 100 *
         item
           .map((product) => Number(product?.quantity))
