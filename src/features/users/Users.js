@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Button, Table, Input, message, Modal, Select } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { Button, Table, Input, message, Modal, Select, Typography } from "antd";
 import Container from "../../admin/components/Container";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +7,9 @@ import readUsersAction from "./actions/readUsersAction";
 import { EditOutlined } from "@ant-design/icons";
 import editUserActon from "./actions/editUserActon";
 import { selectAllUser } from "./userSlice";
+import exportPdf from "../../utils/exportPdf";
 
+const { Title } = Typography;
 const Users = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -16,6 +18,7 @@ const Users = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [messageApi, contextHolder] = message.useMessage(); // message state
   const [searchText, setSearchText] = useState("");
+  const [show_customer, setShowCustomer] = useState(false);
 
   const [dataSource, setDataSource] = useState(allUsers);
 
@@ -36,6 +39,10 @@ const Users = () => {
   useEffect(() => {
     readUsers();
   }, []);
+
+  const customer_list = allUsers.filter(
+    (obj) => obj.roles.toString() === "CLIENT"
+  );
 
   function columnItem(key, title, dataIndex) {
     return {
@@ -64,7 +71,7 @@ const Users = () => {
       ],
       onFilter: (value, record) => record.roles.indexOf(value) === 0,
     },
-    columnItem(9, "Code", "uniqueCode"),
+    columnItem(9, "NIU", "uniqueCode"),
 
     {
       title: "Category",
@@ -177,6 +184,14 @@ const Users = () => {
     setEditingUser(null);
   };
 
+  const componentRef = useRef();
+
+  const handleExport = async () => {
+    setShowCustomer(true);
+    await exportPdf(componentRef, "Socladis clients.pdf");
+    setShowCustomer(false);
+  };
+
   let content = (
     <>
       {contextHolder}
@@ -184,6 +199,8 @@ const Users = () => {
         <Button type="primary" onClick={() => navigate("create")}>
           Ajouter un Utilisateur
         </Button>
+
+        <Button onClick={handleExport}> Exporter liste des clients</Button>
         {/* search bar */}
         <Input.Search
           style={{ maxWidth: 300 }}
@@ -201,11 +218,47 @@ const Users = () => {
           }}
         />
       </div>
+
       <Table
         className="capitalize "
         columns={columns.filter((col) => col.dataIndex !== "_id")}
         dataSource={!searchText ? allUsers : dataSource}
       ></Table>
+
+      <div
+        ref={componentRef}
+        className={show_customer ? "actual-receipt" : "hidden"}
+      >
+        <Title level={2} className="text-center">
+          Socladis sarl
+        </Title>
+
+        <Title className="text-center" level={5}>
+          Liste des clients
+        </Title>
+
+        <table className="border-spacing-y-1 border-spacing-x-12">
+          <tr>
+            <th>#</th>
+            <th>Nom</th>
+            <th>NIU</th>
+            <th>Regime Fiscal</th>
+            <th>Category</th>
+          </tr>
+
+          {customer_list.map((item, index) => {
+            return (
+              <tr>
+                <td>{index + 1}</td>
+                <td>{item?.name}</td>
+                <td>{item?.uniqueCode}</td>
+                <td>{item?.tax_system}</td>
+                <td>{item?.category}</td>
+              </tr>
+            );
+          })}
+        </table>
+      </div>
       <Modal
         title="Modifier le produit"
         open={isEditing}

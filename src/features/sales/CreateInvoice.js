@@ -124,7 +124,7 @@ const CreateInvoice = () => {
 
   const handleInvoiceConfirm = async () => {
     if (type === "Magasin") {
-      if (checkQty().length === 0) {
+      if (checkQty()?.length === 0) {
         try {
           await dispatch(
             addInvoice(

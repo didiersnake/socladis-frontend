@@ -1,8 +1,17 @@
-import { Card, DatePicker, Form, Input, Modal, Table, Typography } from "antd";
-import React, { useState } from "react";
+import {
+  Button,
+  Card,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Table,
+  Typography,
+} from "antd";
+import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { selectAllUser } from "../../features/users/userSlice";
+//import { selectAllUser } from "../../features/users/userSlice";
 import { formatDate } from "../../utils/formatDate";
 import { selectAllInvoices } from "../../features/sales/invoiceSlice";
 import format from "../../utils/currency";
@@ -11,6 +20,8 @@ import { EyeOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 const Ristournes = () => {
+  const componentRef = useRef();
+
   const [start_date, setStartDate] = useState();
   const [end_date, setEndDate] = useState();
   const [name, setName] = useState();
@@ -27,8 +38,8 @@ const Ristournes = () => {
     });
   };
 
-  const users = useSelector(selectAllUser);
-  const allCustomers = users.filter((obj) => obj.roles.toString() === "CLIENT");
+  //const users = useSelector(selectAllUser);
+  //const allCustomers = users.filter((obj) => obj.roles.toString() === "CLIENT");
   const invoices = useSelector(selectAllInvoices);
   const [searchText, setSearchText] = useState();
   const [dataSource, setDataSource] = useState();
@@ -126,6 +137,15 @@ const Ristournes = () => {
       };
     }
   );
+  //total rsitourne on entered period
+  const total_ristourn_period = allRistournes1
+    .map((item) => {
+      return item.ristourne;
+    })
+    .reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+  console.log(total_ristourn_period);
 
   //Get ristourne from customers list
   /*  const allRistournes = allCustomers.map((cust) => {
@@ -150,39 +170,54 @@ const Ristournes = () => {
     setOpen(true);
   };
 
-  const handleExportPdf = () => {
-    setLoader(true);
-    exportPdf(name);
-  };
-
   const RistourneView = ({ name }) => {
     return (
       <>
         <h2 className="text-center ">Apercu PDF</h2>
-        <div className="p-12 actual-receipt">
-          <div className="py-2 text-center px-14 bg-slate-900">
-            <Title level={4} style={{ color: "white" }}>
+        <div ref={componentRef} id="content" className="px-12 actual-receipt">
+          <div className="text-center px-14">
+            <Title level={1} style={{ color: "black" }}>
               Socladis sarl
             </Title>
           </div>
-          <Title level={5}>État de Ristourne</Title>
-          <div className="flex items-start justify-between w-1/4 ">
-            <p className="">Client</p>
+          <Title className="text-center " level={5}>
+            État de Ristourne
+          </Title>
+          <div className="flex items-start justify-between ">
             <p className="font-semibold ">{name}</p>
           </div>
-          <div className="flex items-start justify-between w-1/4 ">
-            <p className="">Period</p>
+          <div className="flex items-start justify-between ">
             <p className="font-semibold ">
-              {start_date && formatDate(start_date)} -{" "}
+              {start_date && formatDate(start_date)} ---{" "}
               {end_date && formatDate(end_date)}
             </p>
           </div>
 
-          <Table
+          {/* <Table
             pagination={false}
             dataSource={ristourne_data}
             columns={columns}
-          />
+          /> */}
+
+          <table className="w-full m-auto text-center table-auto border-spacing-y-1">
+            <tr>
+              <th>Date</th>
+              <th>Facture</th>
+              <th>Quantité</th>
+              <th>Ristourne</th>
+            </tr>
+
+            {ristourne_data.map((item) => {
+              return (
+                <tr>
+                  <td>{formatDate(item.date)}</td>
+                  <td>{item?.invoice_number}</td>
+                  <td>{item?.ristourne / 100}</td>
+                  <td>{item?.ristourne}</td>
+                </tr>
+              );
+            })}
+          </table>
 
           <div className="grid grid-cols-4 ">
             <div></div>
@@ -193,17 +228,21 @@ const Ristournes = () => {
               <p className="font-semibold ">{format(total_ristourn)}</p>
             </div>
           </div>
-          <div className="flex items-center justify-between ml-52">
-            <p className="font-semibold "> </p>
-            <p className="">{formatDate(new Date())}</p>
-          </div>
-          <div className="grid grid-cols-2">
-            <p>Signature employée </p>
-            <p>Signature clients </p>
+          <div className="grid grid-cols-3">
+            <div className="flex items-center justify-around col-span-2 ">
+              <p>Signature employée </p>
+              <p>Signature clients </p>
+            </div>
+            <p className="text-end">{formatDate(new Date())}</p>
           </div>
         </div>
       </>
     );
+  };
+
+  const handleExportPdf = () => {
+    setLoader(true);
+    exportPdf(componentRef, `${name}.pdf`);
   };
 
   const handleRistourneExport = () => {
@@ -336,6 +375,11 @@ const Ristournes = () => {
         dataSource={!searchText ? allRistournes1 : dataSource}
         columns={columns_1}
       />
+
+      <div className="text-end">
+        Total ristourn sur la periond
+        <h3> {format(total_ristourn_period)}</h3>
+      </div>
     </div>
   );
 
@@ -344,6 +388,7 @@ const Ristournes = () => {
       <Card className="rounded-md ">{content}</Card>
 
       <RistourneModal name={name} />
+
       <div className="">
         <RistourneView name={name} />
       </div>

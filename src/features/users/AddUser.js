@@ -187,7 +187,7 @@ export const AddUser = () => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Code Client">
+        <Form.Item label="NIU">
           <Input
             disabled={roles === employee}
             value={uniqueId}
