@@ -129,8 +129,9 @@ const Sales = () => {
   const filterByDateRange = () => {
     if (startDate && endDate) {
       setIsFiltering(true);
+
       setDataSource(
-        orderedInvoices.filter((item) => {
+        dataSource.filter((item) => {
           let s_date = new Date(startDate).getTime();
           let e_date = new Date(endDate).getTime();
           let a_date = new Date(item.date).getTime();
@@ -184,13 +185,21 @@ const Sales = () => {
             value={searchText}
             onChange={(e) => {
               setSearchText(e.target.value);
-              setDataSource(
-                dataSource.filter((record) =>
-                  record?.clientName
-                    .toLowerCase()
-                    .includes(e.target.value.toLowerCase())
-                )
-              );
+              isFiltering
+                ? setDataSource(
+                    dataSource.filter((record) =>
+                      record?.clientName
+                        .toLowerCase()
+                        .includes(e.target.value.toLowerCase())
+                    )
+                  )
+                : setDataSource(
+                    allInvoices.filter((record) =>
+                      record?.clientName
+                        .toLowerCase()
+                        .includes(e.target.value.toLowerCase())
+                    )
+                  );
             }}
           />
         </div>
