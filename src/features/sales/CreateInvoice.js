@@ -110,15 +110,6 @@ const CreateInvoice = () => {
     return result;
   };
 
-  const payment_method = [
-    {
-      cash: _cash ? _cash : 0,
-      credit: credit ? credit : 0,
-      ristourn: ristourn ? ristourn : 0,
-      emballages: emballages ? emballages : 0,
-    },
-  ];
-
   const total_with_tax =
     VAT_amount + total_without_tax + ristourne + withdrawal_amount();
 
@@ -126,6 +117,15 @@ const CreateInvoice = () => {
     if (type === "Magasin") {
       if (checkQty()?.length === 0) {
         try {
+          const payment_method = [
+            {
+              cash: _cash ? _cash : 0,
+              credit: credit ? credit : 0,
+              ristourn: ristourn ? ristourn : 0,
+              emballages: emballages ? emballages : 0,
+            },
+          ];
+
           await dispatch(
             addInvoice(
               name,
@@ -178,6 +178,14 @@ const CreateInvoice = () => {
 
     if (type === "Commercial") {
       try {
+        const payment_method = [
+          {
+            cash: _cash ? _cash : 0,
+            credit: credit ? credit : 0,
+            ristourn: ristourn ? ristourn : 0,
+            emballages: emballages ? emballages : 0,
+          },
+        ];
         await dispatch(
           addTeamInvoice(
             name,

@@ -185,7 +185,7 @@ const Sales = () => {
             onChange={(e) => {
               setSearchText(e.target.value);
               setDataSource(
-                orderedInvoices.filter((record) =>
+                dataSource.filter((record) =>
                   record?.clientName
                     .toLowerCase()
                     .includes(e.target.value.toLowerCase())
