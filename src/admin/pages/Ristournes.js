@@ -17,6 +17,7 @@ import { selectAllInvoices } from "../../features/sales/invoiceSlice";
 import format from "../../utils/currency";
 import exportPdf from "../../utils/exportPdf";
 import { EyeOutlined } from "@ant-design/icons";
+import { selectAllUser } from "../../features/users/userSlice";
 
 const { Title } = Typography;
 const Ristournes = () => {
@@ -41,6 +42,7 @@ const Ristournes = () => {
   //const users = useSelector(selectAllUser);
   //const allCustomers = users.filter((obj) => obj.roles.toString() === "CLIENT");
   const invoices = useSelector(selectAllInvoices);
+  const user = useSelector(selectAllUser);
   const [searchText, setSearchText] = useState();
   const [dataSource, setDataSource] = useState();
   // Read all customers in invoices
@@ -123,6 +125,8 @@ const Ristournes = () => {
     (sale) => sale.clientName === name
   );
 
+  const userData = user.find((user) => user.name === name);
+
   //Get ristourne from all invoices
   //iterate allInvoicesCustomers return ristourne and name
   const allRistournes1 = Object.entries(allInvoiceCustomers).map(
@@ -170,7 +174,7 @@ const Ristournes = () => {
     setOpen(true);
   };
 
-  const RistourneView = ({ name }) => {
+  const RistourneView = ({ name, phone, niu }) => {
     return (
       <>
         <h2 className="text-center ">Apercu PDF</h2>
@@ -186,18 +190,23 @@ const Ristournes = () => {
           <div className="flex items-start justify-between ">
             <p className="font-semibold ">{name}</p>
           </div>
-          <div className="flex items-start justify-between ">
-            <p className="font-semibold ">
-              {start_date && formatDate(start_date)} ---{" "}
-              {end_date && formatDate(end_date)}
+          <div className="flex items-start justify-between w-1/4 ">
+            <p>
+              Tel : <span className="font-semibold">{phone}</span>
+            </p>
+            <p>
+              NIU : <span className="font-semibold">{niu}</span>
             </p>
           </div>
-
-          {/* <Table
-            pagination={false}
-            dataSource={ristourne_data}
-            columns={columns}
-          /> */}
+          <div className="flex items-start justify-between ">
+            <p>
+              Period :{" "}
+              <span className="font-semibold ">
+                {start_date && formatDate(start_date)} ---{" "}
+                {end_date && formatDate(end_date)}
+              </span>
+            </p>
+          </div>
 
           <table className="w-full m-auto text-center table-auto border-spacing-y-1">
             <tr>
@@ -390,7 +399,11 @@ const Ristournes = () => {
       <RistourneModal name={name} />
 
       <div className="">
-        <RistourneView name={name} />
+        <RistourneView
+          name={name}
+          phone={userData?.phone}
+          niu={userData?.uniqueCode}
+        />
       </div>
     </div>
   );
