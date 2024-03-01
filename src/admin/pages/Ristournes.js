@@ -1,13 +1,4 @@
-import {
-  Button,
-  Card,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Typography,
-} from "antd";
+import { Button, Card, DatePicker, Form, Input, Modal, Table, Typography } from "antd";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -121,26 +112,22 @@ const Ristournes = () => {
     },
   ];
 
-  const ristourne_data = filterByDateRange(invoices).filter(
-    (sale) => sale.clientName === name
-  );
+  const ristourne_data = filterByDateRange(invoices).filter((sale) => sale.clientName === name);
 
   const userData = user.find((user) => user.name === name);
 
   //Get ristourne from all invoices
   //iterate allInvoicesCustomers return ristourne and name
-  const allRistournes1 = Object.entries(allInvoiceCustomers).map(
-    ([key, value]) => {
-      return {
-        name: key,
-        ristourne: filterByDateRange(value)
-          .map((item) => Number(item.ristourne))
-          .reduce((acc, curr) => {
-            return acc + curr;
-          }, 0),
-      };
-    }
-  );
+  const allRistournes1 = Object.entries(allInvoiceCustomers).map(([key, value]) => {
+    return {
+      name: key,
+      ristourne: filterByDateRange(value)
+        .map((item) => Number(item.ristourne))
+        .reduce((acc, curr) => {
+          return acc + curr;
+        }, 0),
+    };
+  });
   //total rsitourne on entered period
   const total_ristourn_period = allRistournes1
     .map((item) => {
@@ -174,7 +161,7 @@ const Ristournes = () => {
     setOpen(true);
   };
 
-  const RistourneView = ({ name, phone, niu }) => {
+  const RistourneView = ({ name, phone, niu, group }) => {
     return (
       <>
         <h2 className="text-center ">Apercu PDF</h2>
@@ -190,20 +177,22 @@ const Ristournes = () => {
           <div className="flex items-start justify-between ">
             <p className="font-semibold ">{name}</p>
           </div>
-          <div className="flex items-start justify-between w-1/4 ">
+          <div className="flex items-start justify-between w-1/3 ">
             <p>
               Tel : <span className="font-semibold">{phone}</span>
             </p>
             <p>
               NIU : <span className="font-semibold">{niu}</span>
             </p>
+            <p>
+              Equipe : <span className="font-semibold">{group}</span>
+            </p>
           </div>
           <div className="flex items-start justify-between ">
             <p>
               Period :{" "}
               <span className="font-semibold ">
-                {start_date && formatDate(start_date)} ---{" "}
-                {end_date && formatDate(end_date)}
+                {start_date && formatDate(start_date)} --- {end_date && formatDate(end_date)}
               </span>
             </p>
           </div>
@@ -262,12 +251,7 @@ const Ristournes = () => {
   const RistourneModal = ({ name }) => {
     return (
       <>
-        <Modal
-          open={open}
-          okText="Exporter Pdf"
-          onOk={handleRistourneExport}
-          onCancel={() => setOpen(false)}
-        >
+        <Modal open={open} okText="Exporter Pdf" onOk={handleRistourneExport} onCancel={() => setOpen(false)}>
           <div className="p-5">
             <div className="text-center px-14 bg-slate-900">
               <Title level={4} style={{ color: "white" }}>
@@ -282,16 +266,11 @@ const Ristournes = () => {
             <div className="flex items-start justify-between w-3/4 ">
               <p className="">Period</p>
               <p className="font-semibold ">
-                {start_date && formatDate(start_date)} -{" "}
-                {end_date && formatDate(end_date)}
+                {start_date && formatDate(start_date)} - {end_date && formatDate(end_date)}
               </p>
             </div>
 
-            <Table
-              pagination={false}
-              dataSource={ristourne_data}
-              columns={columns}
-            />
+            <Table pagination={false} dataSource={ristourne_data} columns={columns} />
 
             <div className="flex items-center justify-between ml-52">
               <p className="font-semibold ">Total </p>
@@ -337,12 +316,7 @@ const Ristournes = () => {
                 },
               ]}
             >
-              <DatePicker
-                onChange={(dateString) => setStartDate(dateString)}
-                value={start_date}
-                showTime={false}
-                format={"DD/MM/YYYY"}
-              />
+              <DatePicker onChange={(dateString) => setStartDate(dateString)} value={start_date} showTime={false} format={"DD/MM/YYYY"} />
             </Form.Item>
             <Form.Item
               name={["user", "end_date"]}
@@ -354,12 +328,7 @@ const Ristournes = () => {
                 },
               ]}
             >
-              <DatePicker
-                onChange={(dateString) => setEndDate(dateString)}
-                value={end_date}
-                showTime={false}
-                format={"DD/MM/YYYY"}
-              />
+              <DatePicker onChange={(dateString) => setEndDate(dateString)} value={end_date} showTime={false} format={"DD/MM/YYYY"} />
             </Form.Item>
           </Form>
         </div>
@@ -369,21 +338,12 @@ const Ristournes = () => {
           value={searchText}
           onChange={(e) => {
             setSearchText(e.target.value);
-            setDataSource(
-              allRistournes1.filter((record) =>
-                record?.name
-                  .toLowerCase()
-                  .includes(e.target.value.toLowerCase())
-              )
-            );
+            setDataSource(allRistournes1.filter((record) => record?.name.toLowerCase().includes(e.target.value.toLowerCase())));
           }}
         />
       </div>
 
-      <Table
-        dataSource={!searchText ? allRistournes1 : dataSource}
-        columns={columns_1}
-      />
+      <Table dataSource={!searchText ? allRistournes1 : dataSource} columns={columns_1} />
 
       <div className="text-end">
         Total ristourn sur la periond
@@ -399,11 +359,7 @@ const Ristournes = () => {
       <RistourneModal name={name} />
 
       <div className="">
-        <RistourneView
-          name={name}
-          phone={userData?.phone}
-          niu={userData?.uniqueCode}
-        />
+        <RistourneView name={name} phone={userData?.phone} niu={userData?.uniqueCode} group={userData?.group} />
       </div>
     </div>
   );
