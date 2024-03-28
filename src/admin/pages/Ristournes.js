@@ -334,7 +334,7 @@ const Ristournes = () => {
             name="nest-messages"
             onFinish={onFinish}
             style={{
-              minWidth: 500,
+              maxWidth: 500,
             }}
           >
             {/* <Form.Item
