@@ -1,4 +1,4 @@
-import { Button, Card, DatePicker, Form, Input, Modal, Table, Typography } from "antd";
+import { Card, DatePicker, Form, Input, Modal, Table, Typography, Select, Checkbox } from "antd";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -14,17 +14,35 @@ const { Title } = Typography;
 const Ristournes = () => {
   const componentRef = useRef();
 
-  const [start_date, setStartDate] = useState();
-  const [end_date, setEndDate] = useState();
   const [name, setName] = useState();
-
+  const [sequence, SetSequence] = useState();
   const [open, setOpen] = useState(false);
-  const [loader, setLoader] = useState();
 
+  let startDate;
+  let endDate;
   const filterByDateRange = (data) => {
+    let year = new Date().getFullYear().toString();
+    switch (sequence) {
+      case "1":
+        startDate = `${year}/01/01`;
+        endDate = `${year}/03/31`;
+        break;
+      case "2":
+        startDate = `${year}/04/01`;
+        endDate = `${year}/06/30`;
+        break;
+      case "3":
+        startDate = `${year}/07/01`;
+        endDate = `${year}/09/30`;
+        break;
+      case "4":
+        startDate = `${year}/10/01`;
+        endDate = `${year}/12/31`;
+        break;
+    }
     return data.filter((item) => {
-      let s_date = new Date(start_date).getTime();
-      let e_date = new Date(end_date).getTime();
+      let s_date = new Date(startDate).getTime();
+      let e_date = new Date(endDate).getTime();
       let a_date = new Date(item.date).getTime();
       return a_date >= s_date && a_date <= e_date;
     });
@@ -86,6 +104,19 @@ const Ristournes = () => {
     },
   ];
   const columns_1 = [
+    {
+      ...columnItem(8, "Trimestre Payé"),
+      render: (record) => {
+        return (
+          <div key={record.name} className="space-x-1">
+            <Checkbox></Checkbox>
+            <Checkbox></Checkbox>
+            <Checkbox></Checkbox>
+            <Checkbox></Checkbox>
+          </div>
+        );
+      },
+    },
     columnItem(2, "Nom", "name"),
     columnItem(4, "Ristourne", "ristourne"),
     {
@@ -128,6 +159,7 @@ const Ristournes = () => {
         }, 0),
     };
   });
+
   //total rsitourne on entered period
   const total_ristourn_period = allRistournes1
     .map((item) => {
@@ -192,7 +224,7 @@ const Ristournes = () => {
             <p>
               Period :{" "}
               <span className="font-semibold ">
-                {start_date && formatDate(start_date)} --- {end_date && formatDate(end_date)}
+                {startDate && formatDate(startDate)} --- {endDate && formatDate(endDate)}
               </span>
             </p>
           </div>
@@ -239,7 +271,6 @@ const Ristournes = () => {
   };
 
   const handleExportPdf = () => {
-    setLoader(true);
     exportPdf(componentRef, `${name}.pdf`);
   };
 
@@ -266,7 +297,7 @@ const Ristournes = () => {
             <div className="flex items-start justify-between w-3/4 ">
               <p className="">Period</p>
               <p className="font-semibold ">
-                {start_date && formatDate(start_date)} - {end_date && formatDate(end_date)}
+                {startDate && formatDate(startDate)} - {endDate && formatDate(endDate)}
               </p>
             </div>
 
@@ -303,11 +334,11 @@ const Ristournes = () => {
             name="nest-messages"
             onFinish={onFinish}
             style={{
-              maxWidth: 500,
+              minWidth: 500,
             }}
           >
-            <Form.Item
-              name={["user", "start_date"]}
+            {/* <Form.Item
+              name={["user", "startDate"]}
               label="Date de début"
               rules={[
                 {
@@ -316,7 +347,7 @@ const Ristournes = () => {
                 },
               ]}
             >
-              <DatePicker onChange={(dateString) => setStartDate(dateString)} value={start_date} showTime={false} format={"DD/MM/YYYY"} />
+              <DatePicker onChange={(dateString) => setStartDate(dateString)} value={startDate} showTime={false} format={"DD/MM/YYYY"} />
             </Form.Item>
             <Form.Item
               name={["user", "end_date"]}
@@ -328,7 +359,37 @@ const Ristournes = () => {
                 },
               ]}
             >
-              <DatePicker onChange={(dateString) => setEndDate(dateString)} value={end_date} showTime={false} format={"DD/MM/YYYY"} />
+              <DatePicker
+                onChange={(dateString) => {
+                  setEndDate(dateString);
+                }}
+                value={end_date}
+                showTime={false}
+                format={"DD/MM/YYYY"}
+              />
+            </Form.Item> */}
+            <Form.Item
+              name={["user", "sequence"]}
+              label="Trimestre"
+              rules={[
+                {
+                  required: true,
+                  message: "Trimestre",
+                },
+              ]}
+            >
+              <Select
+                name="sequence"
+                onChange={(e) => {
+                  SetSequence(e);
+                }}
+                value={sequence}
+              >
+                <Select.Option value="1">Janvier-Mars</Select.Option>
+                <Select.Option value="2">Avril-Juin</Select.Option>
+                <Select.Option value="3">Juillet-Septembre</Select.Option>
+                <Select.Option value="4">Octobre-Decembre</Select.Option>
+              </Select>
             </Form.Item>
           </Form>
         </div>
