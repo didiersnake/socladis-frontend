@@ -209,7 +209,7 @@ const Ristournes = () => {
           <div className="flex items-start justify-between ">
             <p className="font-semibold ">{name}</p>
           </div>
-          <div className="flex items-start justify-between w-1/3 ">
+          <div className="flex items-start justify-between ">
             <p>
               Tel : <span className="font-semibold">{phone}</span>
             </p>

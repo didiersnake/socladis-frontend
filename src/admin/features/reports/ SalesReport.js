@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { selectAllInvoices } from "../../../features/sales/invoiceSlice";
 import format from "../../../utils/currency";
 import exportPdf from "../../../utils/exportPdf";
@@ -12,6 +12,7 @@ const { Title } = Typography;
 const SalesReport = ({ start_date, end_date }) => {
   const data = useSelector(selectAllInvoices);
   const [loader, setLoader] = useState();
+  const componentRef = useRef();
   const filteredData = filterByDateRange(data, start_date, end_date);
   const total_income = filteredData
     .map((item) => Number(item.total_with_tax))
@@ -38,7 +39,7 @@ const SalesReport = ({ start_date, end_date }) => {
 
   const handleExportPdf = () => {
     setLoader(true);
-    exportPdf("Rapport Ventes");
+    exportPdf(componentRef, "Rapport Ventes");
     setLoader(false);
   };
 
@@ -80,7 +81,7 @@ const SalesReport = ({ start_date, end_date }) => {
     },
 
     {
-      ...columnItem(5, "Total AVT", "total_with_tax"),
+      ...columnItem(5, "Total TTC", "total_with_tax"),
       render: (item) => {
         return format(item);
       },
@@ -88,38 +89,33 @@ const SalesReport = ({ start_date, end_date }) => {
   ];
 
   let content = (
-    <div className="flex flex-col gap-8">
-      <div className="text-center px-14 bg-slate-900">
-        <Title level={4} style={{ color: "white" }}>
+    <div className="flex flex-col gap-4" ref={componentRef}>
+      <div className="text-center px-14">
+        <Title level={4}>
           Rapport ventes sur la periode du
           {` ${formatDate(start_date)}`} au
           {` ${formatDate(end_date)}`}
         </Title>
       </div>
-      <div className="grid grid-cols-4 mx-24">
-        <div className="flex items-center gap-4 ">
+      <div className="grid grid-cols-4">
+        <div className="flex items-center gap-2 ">
           <p> Totol HT </p>
-          <h4> {income_without_tax.toFixed(2)} </h4>
+          <p> {income_without_tax.toFixed(2)} </p>
         </div>
-        <div className="flex items-center gap-4 ">
-          <p> Totol Précompte </p>
-          <h4> {withdrawal_amount.toFixed(2)} </h4>
+        <div className="flex items-center gap-2 ">
+          <p> Précompte </p>
+          <p> {withdrawal_amount.toFixed(2)} </p>
         </div>
-        <div className="flex items-center gap-4 ">
+        <div className="flex items-center gap-2 ">
           <p> Ristournes </p>
-          <h4> {ristourne.toFixed(2)} </h4>
+          <p> {ristourne.toFixed(2)} </p>
         </div>
-        <div className="flex items-center gap-4 ">
+        <div className="flex items-center gap-2 ">
           <p> Totol TTC </p>
-          <h4> {total_income.toFixed(2)} </h4>
+          <p> {total_income.toFixed(2)} </p>
         </div>
       </div>
-      <Table
-        pagination={false}
-        className="capitalize "
-        columns={columns}
-        dataSource={filteredData}
-      ></Table>
+      <Table size="small" pagination={false} className="capitalize " columns={columns} dataSource={filteredData}></Table>
     </div>
   );
 

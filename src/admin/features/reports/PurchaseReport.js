@@ -1,5 +1,5 @@
 import { Button, Card, Table, Typography } from "antd";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { filterByDateRange } from "../../../utils/dateFilters";
 import { useSelector } from "react-redux";
 import { selectAllExpenses } from "../finances/expenses/expenseSlice";
@@ -18,10 +18,10 @@ function columnItem(key, title, dataIndex) {
 const { Title } = Typography;
 const PurchaseReport = ({ start_date, end_date }) => {
   const data = useSelector(selectAllExpenses);
+  const componentRef = useRef();
+
   const [loader, setLoader] = useState();
-  const filteredData = filterByDateRange(data, start_date, end_date).filter(
-    (exp) => exp.modif === "versement a la banque" && exp
-  );
+  const filteredData = filterByDateRange(data, start_date, end_date).filter((exp) => exp.modif === "versement a la banque" && exp);
   const total_fuel_expense = filteredData
     .map((exp) => exp.modif === "versement a la banque" && Number(exp.amount))
     .reduce((acc, curr) => {
@@ -51,32 +51,27 @@ const PurchaseReport = ({ start_date, end_date }) => {
   ];
 
   let content = (
-    <div className="flex flex-col gap-8">
-      <div className="text-center px-14 bg-slate-900">
-        <Title level={4} style={{ color: "white" }}>
+    <div className="flex flex-col gap-8" ref={componentRef}>
+      <div className="text-center px-14">
+        <Title level={4}>
           Rapport des Achat sur la periode du
           {` ${formatDate(start_date)}`} au
           {` ${formatDate(end_date)}`}
         </Title>
       </div>
-      <div className="grid grid-cols-2 mx-24">
+      <div className="grid grid-cols-2">
         <div className="flex items-center gap-4 ">
           <p> Totol depense en achat de produits </p>
           <h4> {total_fuel_expense.toFixed(2)} </h4>
         </div>
       </div>
-      <Table
-        pagination={false}
-        className="capitalize "
-        columns={columns}
-        dataSource={filteredData}
-      ></Table>
+      <Table size="small" pagination={false} className="capitalize " columns={columns} dataSource={filteredData}></Table>
     </div>
   );
 
   const handleExportPdf = () => {
     setLoader(true);
-    exportPdf("Rapport Achats");
+    exportPdf(componentRef, "Rapport Achats");
     setLoader(false);
   };
 

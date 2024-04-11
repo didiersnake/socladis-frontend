@@ -1,5 +1,5 @@
 import { Button, Card, Table, Typography } from "antd";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectAllAvarisProducts } from "../avaris/avarisSlice";
 import { filterByDateRange } from "../../../utils/dateFilters";
@@ -17,12 +17,11 @@ function columnItem(key, title, dataIndex) {
 const { Title } = Typography;
 const StoreAvaris = ({ start_date, end_date }) => {
   const data = useSelector(selectAllAvarisProducts);
+  const componentRef = useRef();
   const [loader, setLoader] = useState();
-  const filteredData = filterByDateRange(data, start_date, end_date).filter(
-    (item) => {
-      return item.type.toLowerCase() === "magasin" && item;
-    }
-  );
+  const filteredData = filterByDateRange(data, start_date, end_date).filter((item) => {
+    return item.type.toLowerCase() === "magasin" && item;
+  });
 
   const total_store_avaris = filteredData
     .map((item) => {
@@ -53,9 +52,9 @@ const StoreAvaris = ({ start_date, end_date }) => {
   ];
 
   let content = (
-    <div className="flex flex-col gap-8">
-      <div className="text-center px-14 bg-slate-900">
-        <Title level={4} style={{ color: "white" }}>
+    <div className="flex flex-col gap-8" ref={componentRef}>
+      <div className="text-center px-14">
+        <Title level={4}>
           Rapport avaris au magasin sur la periode du
           {` ${formatDate(start_date)}`} au
           {` ${formatDate(end_date)}`}
@@ -67,18 +66,13 @@ const StoreAvaris = ({ start_date, end_date }) => {
           <h4> {total_store_avaris} </h4>
         </div>
       </div>
-      <Table
-        pagination={false}
-        className="capitalize "
-        columns={columns}
-        dataSource={filteredData}
-      ></Table>
+      <Table size="small" pagination={false} className="capitalize " columns={columns} dataSource={filteredData}></Table>
     </div>
   );
 
   const handleExportPdf = () => {
     setLoader(true);
-    exportPdf("Rapport Avaris Magasin");
+    exportPdf(componentRef, "Rapport Avaris Magasin");
     setLoader(false);
   };
   return (

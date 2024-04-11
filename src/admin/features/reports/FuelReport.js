@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { filterByDateRange } from "../../../utils/dateFilters";
 import { selectAllExpenses } from "../finances/expenses/expenseSlice";
@@ -17,10 +17,9 @@ function columnItem(key, title, dataIndex) {
 const { Title } = Typography;
 const FuelReport = ({ start_date, end_date }) => {
   const data = useSelector(selectAllExpenses);
+  const componentRef = useRef();
   const [loader, setLoader] = useState();
-  const filteredData = filterByDateRange(data, start_date, end_date).filter(
-    (exp) => exp.modif === "carburant" && exp
-  );
+  const filteredData = filterByDateRange(data, start_date, end_date).filter((exp) => exp.modif === "carburant" && exp);
   const total_fuel_expense = filteredData
     .map((exp) => exp.modif === "carburant" && Number(exp.amount))
     .reduce((acc, curr) => {
@@ -50,9 +49,9 @@ const FuelReport = ({ start_date, end_date }) => {
   ];
 
   let content = (
-    <div className="flex flex-col gap-8">
-      <div className="text-center px-14 bg-slate-900">
-        <Title level={4} style={{ color: "white" }}>
+    <div className="flex flex-col gap-8" ref={componentRef}>
+      <div className="text-center px-14">
+        <Title level={4}>
           Rapport depense carburant sur la periode du
           {` ${formatDate(start_date)}`} au
           {` ${formatDate(end_date)}`}
@@ -64,18 +63,13 @@ const FuelReport = ({ start_date, end_date }) => {
           <h4> {total_fuel_expense.toFixed(2)} </h4>
         </div>
       </div>
-      <Table
-        pagination={false}
-        className="capitalize "
-        columns={columns}
-        dataSource={filteredData}
-      ></Table>
+      <Table size="small" pagination={false} className="capitalize " columns={columns} dataSource={filteredData}></Table>
     </div>
   );
 
   const handleExportPdf = () => {
     setLoader(true);
-    exportPdf("Rapport Depense Carburant");
+    exportPdf(componentRef, "Rapport Depense Carburant");
     setLoader(false);
   };
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectAllAvarisProducts } from "../avaris/avarisSlice";
 import { filterByDateRange } from "../../../utils/dateFilters";
@@ -19,11 +19,10 @@ const { Title } = Typography;
 const DeliveryAvaris = ({ start_date, end_date }) => {
   const data = useSelector(selectAllAvarisProducts);
   const [loader, setLoader] = useState();
-  const filteredData = filterByDateRange(data, start_date, end_date).filter(
-    (item) => {
-      return item.type.toLowerCase() === "livraison" && item;
-    }
-  );
+  const componentRef = useRef();
+  const filteredData = filterByDateRange(data, start_date, end_date).filter((item) => {
+    return item.type.toLowerCase() === "livraison" && item;
+  });
 
   const total_deluvery_avaris = filteredData
     .map((item) => {
@@ -54,9 +53,9 @@ const DeliveryAvaris = ({ start_date, end_date }) => {
   ];
 
   let content = (
-    <div className="flex flex-col gap-8">
-      <div className="text-center px-14 bg-slate-900">
-        <Title level={4} style={{ color: "white" }}>
+    <div className="flex flex-col gap-8" ref={componentRef}>
+      <div className="text-center px-14">
+        <Title level={4}>
           Rapport avaris a la livraison sur la periode du
           {` ${formatDate(start_date)}`} au
           {` ${formatDate(end_date)}`}
@@ -68,18 +67,13 @@ const DeliveryAvaris = ({ start_date, end_date }) => {
           <h4> {total_deluvery_avaris} </h4>
         </div>
       </div>
-      <Table
-        pagination={false}
-        className="capitalize "
-        columns={columns}
-        dataSource={filteredData}
-      ></Table>
+      <Table size="small" pagination={false} className="capitalize " columns={columns} dataSource={filteredData}></Table>
     </div>
   );
 
   const handleExportPdf = () => {
     setLoader(true);
-    exportPdf("Rapport Avaris Livraison");
+    exportPdf(componentRef, "Rapport Avaris Livraison");
     setLoader(false);
   };
   return (

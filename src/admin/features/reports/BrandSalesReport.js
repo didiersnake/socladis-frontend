@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { selectAllProducts } from "../product/productSlice";
 import { useSelector } from "react-redux";
 import { filterByDateRange } from "../../../utils/dateFilters";
@@ -12,6 +12,7 @@ const BrandSalesReport = ({ start_date, end_date }) => {
   const products = useSelector(selectAllProducts);
   const [loader, setLoader] = useState();
   const sales = useSelector(selectAllInvoices);
+  const componentRef = useRef();
   const filteredData = filterByDateRange(sales, start_date, end_date);
 
   const productsLabel = products.map((i) => i.name);
@@ -33,9 +34,9 @@ const BrandSalesReport = ({ start_date, end_date }) => {
     );
 
   let content = (
-    <div className="flex flex-col gap-8">
-      <div className="text-center px-14 bg-slate-900">
-        <Title level={4} style={{ color: "white" }}>
+    <div className="flex flex-col gap-2" ref={componentRef}>
+      <div className="text-center px-14">
+        <Title level={4}>
           Rapport de ventes selon les marques sur la periode du
           {` ${formatDate(start_date)}`} au
           {` ${formatDate(end_date)}`}
@@ -81,7 +82,7 @@ const BrandSalesReport = ({ start_date, end_date }) => {
 
   const handleExportPdf = () => {
     setLoader(true);
-    exportPdf("Rapport Marques Vendu");
+    exportPdf(componentRef, "Rapport Marques Vendu");
     setLoader(false);
   };
 
