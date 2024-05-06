@@ -6,14 +6,49 @@ import { formatDate } from "../../../utils/formatDate";
 import { useSelector } from "react-redux";
 import { filterByDateRange } from "../../../utils/dateFilters";
 import { Button, Card, Table, Typography } from "antd";
+import { selectAllUser } from "../../../features/users/userSlice";
 
 const { Title } = Typography;
 
 const SalesReport = ({ start_date, end_date }) => {
   const data = useSelector(selectAllInvoices);
+  const users = useSelector(selectAllUser).filter((user) => user.roles === "CLIENT");
   const [loader, setLoader] = useState();
   const componentRef = useRef();
   const filteredData = filterByDateRange(data, start_date, end_date);
+
+  const number_of_items = (item) =>
+    item["products"]
+      .map((product) => Number(product.quantity))
+      .reduce((accumulator, current) => {
+        return accumulator + current;
+      }, 0);
+
+  const allUsersData = users.map((user) => {
+    let userSales = filteredData.filter((user1) => user.name === user1.clientName);
+    let userQuantity = userSales
+      .map((user) => Number(number_of_items(user)))
+      .reduce((acc, curr) => {
+        return acc + curr;
+      }, 0);
+    let userRistourne = userSales
+      .map((user) => Number(user.ristourne))
+      .reduce((acc, curr) => {
+        return acc + curr;
+      }, 0);
+    let userTHT = userSales
+      .map((user) => Number(user.total_without_tax))
+      .reduce((acc, curr) => {
+        return acc + curr;
+      }, 0);
+    let userTTC = userSales
+      .map((user) => Number(user.total_with_tax))
+      .reduce((acc, curr) => {
+        return acc + curr;
+      }, 0);
+
+    return { clientName: user.name, ristourne: userRistourne, quantity: userQuantity, total_without_tax: userTHT, total_with_tax: userTTC };
+  });
   const total_income = filteredData
     .map((item) => Number(item.total_with_tax))
     .reduce((acc, curr) => {
@@ -51,27 +86,14 @@ const SalesReport = ({ start_date, end_date }) => {
     };
   }
 
-  const number_of_items = (item) =>
-    item["products"]
-      .map((product) => Number(product.quantity))
-      .reduce((accumulator, current) => {
-        return accumulator + current;
-      }, 0);
-
   const columns = [
-    {
-      ...columnItem(7, "Date", "date"),
-      render: (iDate) => {
-        return formatDate(iDate);
-      },
-    },
     columnItem(2, "Nom", "clientName"),
-    {
-      ...columnItem(5, "Quantité", ""),
-      render: (item, record) => {
-        return number_of_items(record);
-      },
-    },
+    columnItem(5, "Quantité", "quantity"),
+    // {
+    //   // render: (item, record) => {
+    //   //   return number_of_items(record);
+    //   // },
+    // },
     columnItem(4, "Ristourne", "ristourne"),
     {
       ...columnItem(5, "Total HT", "total_without_tax"),
@@ -115,7 +137,7 @@ const SalesReport = ({ start_date, end_date }) => {
           <p> {total_income.toFixed(2)} </p>
         </div>
       </div>
-      <Table size="small" pagination={false} className="capitalize " columns={columns} dataSource={filteredData}></Table>
+      <Table size="small" pagination={false} className="capitalize " columns={columns} dataSource={allUsersData}></Table>
     </div>
   );
 

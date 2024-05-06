@@ -1,4 +1,4 @@
-import { Card, DatePicker, Form, Input, Modal, Table, Typography, Select, Checkbox } from "antd";
+import { Card, Button, Form, Input, Modal, Table, Typography, Select, Checkbox } from "antd";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -13,15 +13,17 @@ import { selectAllUser } from "../../features/users/userSlice";
 const { Title } = Typography;
 const Ristournes = () => {
   const componentRef = useRef();
+  const componentRef01 = useRef();
 
   const [name, setName] = useState();
   const [sequence, SetSequence] = useState();
   const [open, setOpen] = useState(false);
+  const [year, setYear] = useState();
+  const [loader, setLoader] = useState();
 
   let startDate;
   let endDate;
   const filterByDateRange = (data) => {
-    let year = new Date().getFullYear().toString();
     switch (sequence) {
       case "1":
         startDate = `${year}/01/01`;
@@ -75,6 +77,29 @@ const Ristournes = () => {
     };
   }
 
+  //Get ristourne from all invoices
+  //iterate allInvoicesCustomers return ristourne and name
+  const allRistournes1 = Object.entries(allInvoiceCustomers).map(([key, value]) => {
+    let r = filterByDateRange(value)
+      .map((item) => Number(item.ristourne))
+      .reduce((acc, curr) => {
+        return acc + curr;
+      }, 0);
+    return {
+      name: key,
+      ristourne: r,
+    };
+  });
+
+  const [allRistourn, setAllRistourne] = useState(
+    allRistournes1.map((item) => {
+      return {
+        ...item,
+        payed: false,
+      };
+    })
+  );
+
   const columns = [
     {
       title: "Date",
@@ -103,16 +128,27 @@ const Ristournes = () => {
       key: "4",
     },
   ];
+
+  const editRistournPaymentStatus = (name) => {
+    setAllRistourne(
+      allRistourn.map((item) => {
+        if (item.name === name) {
+          return {
+            ...item,
+            payed: true,
+          };
+        }
+        return item;
+      })
+    );
+  };
   const columns_1 = [
     {
-      ...columnItem(8, "Trimestre Payé"),
+      ...columnItem(8, "Payé"),
       render: (record) => {
         return (
           <div key={record.name} className="space-x-1">
-            <Checkbox></Checkbox>
-            <Checkbox></Checkbox>
-            <Checkbox></Checkbox>
-            <Checkbox></Checkbox>
+            <Checkbox checked={record.payed}></Checkbox>
           </div>
         );
       },
@@ -146,19 +182,6 @@ const Ristournes = () => {
   const ristourne_data = filterByDateRange(invoices).filter((sale) => sale.clientName === name);
 
   const userData = user.find((user) => user.name === name);
-
-  //Get ristourne from all invoices
-  //iterate allInvoicesCustomers return ristourne and name
-  const allRistournes1 = Object.entries(allInvoiceCustomers).map(([key, value]) => {
-    return {
-      name: key,
-      ristourne: filterByDateRange(value)
-        .map((item) => Number(item.ristourne))
-        .reduce((acc, curr) => {
-          return acc + curr;
-        }, 0),
-    };
-  });
 
   //total rsitourne on entered period
   const total_ristourn_period = allRistournes1
@@ -369,6 +392,40 @@ const Ristournes = () => {
               />
             </Form.Item> */}
             <Form.Item
+              name={["user", "year"]}
+              label="Année"
+              rules={[
+                {
+                  required: true,
+                  message: "Année",
+                },
+              ]}
+            >
+              <Select
+                name="year"
+                placeholder="année"
+                onChange={(e) => {
+                  setYear(e);
+                }}
+                value={year}
+              >
+                <Select.Option value="2022">2022</Select.Option>
+                <Select.Option value="2023">2023</Select.Option>
+                <Select.Option value="2024">2024</Select.Option>
+                <Select.Option value="2025">2025</Select.Option>
+                <Select.Option value="2026">2026</Select.Option>
+                <Select.Option value="2027">2027</Select.Option>
+                <Select.Option value="2028">2028</Select.Option>
+                <Select.Option value="2029">2029</Select.Option>
+                <Select.Option value="2030">2030</Select.Option>
+                <Select.Option value="2031">2031</Select.Option>
+                <Select.Option value="2032">2031</Select.Option>
+                <Select.Option value="2033">2032</Select.Option>
+                <Select.Option value="2034">2033</Select.Option>
+                <Select.Option value="2035">2035</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
               name={["user", "sequence"]}
               label="Trimestre"
               rules={[
@@ -380,6 +437,7 @@ const Ristournes = () => {
             >
               <Select
                 name="sequence"
+                placeholder="Trimestre"
                 onChange={(e) => {
                   SetSequence(e);
                 }}
@@ -403,8 +461,23 @@ const Ristournes = () => {
           }}
         />
       </div>
-
-      <Table dataSource={!searchText ? allRistournes1 : dataSource} columns={columns_1} />
+      <Button
+        className="my-4"
+        type="primary"
+        onClick={() => {
+          setLoader(true);
+          exportPdf(componentRef01, `Ristourne Trimestre ${sequence} ${year}.pdf`);
+          setLoader(false);
+        }}
+      >
+        {!loader ? "Exporter liste de ristourne en PFD" : "Telechargement..."}
+      </Button>
+      <div ref={componentRef01}>
+        <p className="text-center uppercase py-3">
+          Ristourne sur la periode du trimestre {sequence} {year}
+        </p>
+        <Table dataSource={!searchText ? allRistournes1 : dataSource} columns={columns_1} pagination={false} size="small" />
+      </div>
 
       <div className="text-end">
         Total ristourn sur la periond
