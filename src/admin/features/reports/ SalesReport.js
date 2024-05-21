@@ -119,24 +119,6 @@ const SalesReport = ({ start_date, end_date }) => {
           {` ${formatDate(end_date)}`}
         </Title>
       </div>
-      <div className="grid grid-cols-4">
-        <div className="flex items-center gap-2 ">
-          <p> Totol HT </p>
-          <p> {income_without_tax.toFixed(2)} </p>
-        </div>
-        <div className="flex items-center gap-2 ">
-          <p> Précompte </p>
-          <p> {withdrawal_amount.toFixed(2)} </p>
-        </div>
-        <div className="flex items-center gap-2 ">
-          <p> Ristournes </p>
-          <p> {ristourne.toFixed(2)} </p>
-        </div>
-        <div className="flex items-center gap-2 ">
-          <p> Totol TTC </p>
-          <p> {total_income.toFixed(2)} </p>
-        </div>
-      </div>
       <Table size="small" pagination={false} className="capitalize " columns={columns} dataSource={allUsersData}></Table>
     </div>
   );
