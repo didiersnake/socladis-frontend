@@ -38,6 +38,7 @@ import LowStock from "./admin/features/stock/LowStock";
 import Ristournes from "./admin/pages/Ristournes";
 import StoreAvaris from "./admin/features/avaris/StoreAvaris";
 import Reports from "./admin/pages/Reports";
+import UserInvoiceList from "./features/users/UserInvoiceList";
 
 function App() {
   return (
@@ -131,6 +132,7 @@ function App() {
 
             <Route path="users">
               <Route index element={<Users />} />
+              <Route path=":userId" element={<UserInvoiceList />} />
               <Route path="create" element={<AddUser />} />
             </Route>
 

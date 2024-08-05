@@ -4,7 +4,7 @@ import Container from "../../admin/components/Container";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import readUsersAction from "./actions/readUsersAction";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import editUserActon from "./actions/editUserActon";
 import { selectAllUser } from "./userSlice";
 import exportPdf from "../../utils/exportPdf";
@@ -40,9 +40,7 @@ const Users = () => {
     readUsers();
   }, []);
 
-  const customer_list = allUsers.filter(
-    (obj) => obj.roles.toString() === "CLIENT"
-  );
+  const customer_list = allUsers.filter((obj) => obj.roles.toString() === "CLIENT");
 
   function columnItem(key, title, dataIndex) {
     return {
@@ -131,6 +129,8 @@ const Users = () => {
                 onEditUser(record);
               }}
             />
+
+            <EyeOutlined style={{ marginLeft: 22 }} onClick={() => navigate(record._id)} />
           </>
         );
       },
@@ -208,27 +208,14 @@ const Users = () => {
           allowClear
           onChange={(e) => {
             setSearchText(e.target.value);
-            setDataSource(
-              allUsers.filter((record) =>
-                record?.name
-                  .toLowerCase()
-                  .includes(e.target.value.toLowerCase())
-              )
-            );
+            setDataSource(allUsers.filter((record) => record?.name.toLowerCase().includes(e.target.value.toLowerCase())));
           }}
         />
       </div>
 
-      <Table
-        className="capitalize "
-        columns={columns.filter((col) => col.dataIndex !== "_id")}
-        dataSource={!searchText ? allUsers : dataSource}
-      ></Table>
+      <Table className="capitalize " columns={columns.filter((col) => col.dataIndex !== "_id")} dataSource={!searchText ? allUsers : dataSource}></Table>
 
-      <div
-        ref={componentRef}
-        className={show_customer ? "actual-receipt" : "hidden"}
-      >
+      <div ref={componentRef} className={show_customer ? "actual-receipt" : "hidden"}>
         <Title level={2} className="text-center">
           Socladis sarl
         </Title>
@@ -332,9 +319,7 @@ const Users = () => {
               }}
             >
               <Select.Option value="grossiste">Grossiste</Select.Option>
-              <Select.Option value="semi-grossiste">
-                Semi Grossiste
-              </Select.Option>
+              <Select.Option value="semi-grossiste">Semi Grossiste</Select.Option>
               <Select.Option value="detaillant">Detaillant</Select.Option>
               <Select.Option value="random">Random</Select.Option>
             </Select>
@@ -400,13 +385,7 @@ const Users = () => {
       </Modal>
     </>
   );
-  return (
-    <Container
-      content={content}
-      iconName={"grid_4-1"}
-      contentName={"Utilisateurs"}
-    />
-  );
+  return <Container content={content} iconName={"grid_4-1"} contentName={"Utilisateurs"} />;
 };
 
 export default Users;

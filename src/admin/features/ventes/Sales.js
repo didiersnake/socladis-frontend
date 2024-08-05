@@ -3,10 +3,7 @@ import { Button, DatePicker, Input, Table, message } from "antd";
 import { formatDate } from "../../../utils/formatDate";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteInvoice,
-  selectAllInvoices,
-} from "../../../features/sales/invoiceSlice";
+import { deleteInvoice, selectAllInvoices } from "../../../features/sales/invoiceSlice";
 import format from "../../../utils/currency";
 import { DeleteOutlined, EyeOutlined, FilterOutlined } from "@ant-design/icons";
 import readInvoice from "../../../features/sales/actions/readInvoice";
@@ -92,7 +89,7 @@ const Sales = () => {
     },
 
     {
-      ...columnItem(5, "Total AVT", "total_with_tax"),
+      ...columnItem(5, "Total TTC", "total_with_tax"),
       render: (item) => {
         return format(item);
       },
@@ -108,23 +105,15 @@ const Sales = () => {
       render: (record) => {
         return (
           <div>
-            <EyeOutlined
-              style={{ margin: 12 }}
-              onClick={() => navigate(record._id)}
-            />
-            <DeleteOutlined
-              style={{ margin: 12, color: "red" }}
-              onClick={() => handleDelete(record)}
-            />
+            <EyeOutlined style={{ margin: 12 }} onClick={() => navigate(record._id)} />
+            <DeleteOutlined style={{ margin: 12, color: "red" }} onClick={() => handleDelete(record)} />
           </div>
         );
       },
     },
   ];
 
-  let orderedInvoices = allInvoices
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date));
+  let orderedInvoices = allInvoices.slice().sort((a, b) => b.date.localeCompare(a.date));
 
   const filterByDateRange = () => {
     if (startDate && endDate) {
@@ -171,13 +160,7 @@ const Sales = () => {
               format={"DD/MM/YYYY"}
             />
 
-            <Button
-              type="primary"
-              size="small"
-              style={{ padding: "1px 4px" }}
-              icon={<FilterOutlined />}
-              onClick={filterByDateRange}
-            ></Button>
+            <Button type="primary" size="small" style={{ padding: "1px 4px" }} icon={<FilterOutlined />} onClick={filterByDateRange}></Button>
           </div>
           <Input.Search
             style={{ maxWidth: 300 }}
@@ -186,20 +169,8 @@ const Sales = () => {
             onChange={(e) => {
               setSearchText(e.target.value);
               isFiltering
-                ? setDataSource(
-                    dataSource.filter((record) =>
-                      record?.clientName
-                        .toLowerCase()
-                        .includes(e.target.value.toLowerCase())
-                    )
-                  )
-                : setDataSource(
-                    allInvoices.filter((record) =>
-                      record?.clientName
-                        .toLowerCase()
-                        .includes(e.target.value.toLowerCase())
-                    )
-                  );
+                ? setDataSource(dataSource.filter((record) => record?.clientName.toLowerCase().includes(e.target.value.toLowerCase())))
+                : setDataSource(allInvoices.filter((record) => record?.clientName.toLowerCase().includes(e.target.value.toLowerCase())));
             }}
           />
         </div>
@@ -213,9 +184,7 @@ const Sales = () => {
     </>
   );
 
-  return (
-    <Container content={content} iconName={"grid_4-1"} contentName={"Ventes"} />
-  );
+  return <Container content={content} iconName={"grid_4-1"} contentName={"Ventes"} />;
 };
 
 export default Sales;
