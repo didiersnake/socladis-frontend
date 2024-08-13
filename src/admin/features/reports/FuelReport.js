@@ -51,6 +51,7 @@ const FuelReport = ({ start_date, end_date }) => {
   let content = (
     <div className="flex flex-col gap-8" ref={componentRef}>
       <div className="text-center px-14">
+        <div className="text-lg font-bold text-center capitalize">Socladis Sarl</div>
         <Title level={4}>
           Rapport depense carburant sur la periode du
           {` ${formatDate(start_date)}`} au
